@@ -510,7 +510,7 @@ export default {
   data() {
     return {
       lodings: false,
-      distributionStatus: 1,
+      distributionStatus: 2,
       activeName: "first",
       search: {
         textarea: "",
@@ -595,7 +595,7 @@ export default {
             this.search.time[0] + " 00:00:00",
             timeFormat(this.search.time[1], 1) + " 00:00:00",
             this.search.phoneNumber,
-            '',
+            "",
             this.distributionStatus
           );
         } else {
@@ -617,7 +617,7 @@ export default {
             "",
             "",
             this.search.phoneNumber,
-            '',
+            "",
             this.distributionStatus
           );
         } else {
@@ -752,12 +752,13 @@ export default {
     },
     handleClick(tab, event) {
       tab.name === "second"
-        ? (this.distributionStatus = 2)
-        : (this.distributionStatus = 1);
+        ? (this.distributionStatus = 1)
+        : (this.distributionStatus = 2);
       this.lodings = true;
       this.getData(
         this.npage,
         this.pagesize,
+        "",
         "",
         "",
         "",
@@ -772,6 +773,7 @@ export default {
     this.getData(
       this.npage,
       this.pagesize,
+      "",
       "",
       "",
       "",
