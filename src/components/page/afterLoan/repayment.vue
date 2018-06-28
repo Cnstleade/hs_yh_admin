@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 import {
   getExeceedtimeapplyList,
   getExeceedtimeapplyListbycollector,
@@ -285,9 +285,20 @@ export default {
     },
     handleConfig() {
       if (this.trevewer) {
-        execeedtimeDistribute(this.dynamicTags.join(","), this.trevewer)
+        execeedtimeDistribute(
+          this.dynamicTags.length == 1
+            ? this.dynamicTags[0] + ","
+            : this.dynamicTags.join(","),
+          this.trevewer
+        )
           .then(res => {
-            console.log(res);
+            if (res.data.code == 200) {
+              this.$message({
+                message: "分配成功",
+                type: "success"
+              });
+              this.dialogVisible = false;
+            }
           })
           .catch(err => {
             this.$message.error("催收员必须存在");

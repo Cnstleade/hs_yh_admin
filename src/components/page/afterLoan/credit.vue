@@ -99,13 +99,13 @@
                         </template>                          
                       </el-table-column>
                       <el-table-column prop="status" label="是否逾期" align="center" 
-                         :filters="[{ value: 1, text: '借款' }, { value: 2, text: '逾期' }, { value: 3, text: '归还' }]"
+                         :filters="[{ value: 0, text: '放款中 ' }, { value: 1, text: '放款成功' }, { value: 2, text: '逾期' }, { value: 3, text: '还款成功' }, { value: 4, text: '放款失败' }, { value: 5, text: '还款中' }, { value: 6, text: '还款失败' }]"
                          :filter-method="filterStauts"                      
                       >
                         <template slot-scope="scope">
                             <el-tag
-                                :type="scope.row.status===1?'':scope.row.status===2?'danger':'success'"
-                            >{{scope.row.status===1?'借款':scope.row.status===2?'逾期':'归还 '}}</el-tag>
+                                :type="scope.row.status===0?'':scope.row.status===1?'success':scope.row.status===2?'danger':scope.row.status===4?'success':scope.row.status===4?'info':scope.row.status===5?'':'warning'"
+                            >{{scope.row.status===0?'放款中':scope.row.status===1?'放款成功':scope.row.status===2?'逾期':scope.row.status===3?'还款成功':scope.row.status===4?'放款失败':scope.row.status===5?'还款中':'还款失败'}}</el-tag>
                         </template>                         
                       </el-table-column>
                       <el-table-column prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
@@ -276,7 +276,10 @@ export default {
     },
     filterCashOutType(value, row) {
       return row.cash_outType === value;
-    }
+    },
+    filterStauts(value, row){
+      return row.status === value;      
+    }    
   },
   mounted() {
     this.getData(this.npage, this.pagesize);

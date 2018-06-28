@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
 // axios.defaults.baseURL = 'http:192.168.43.247:8082';
 
 
@@ -305,14 +305,16 @@ export function getCustUserList(npage, pagesize, source, realName, phoneNumber, 
 }
 
 //后台管理模块 / admin 贷后管理 全部列表
-export function getExeceedtimeapplyList(npage, pagesize, begainTimeString, endTimeString, phoneNumber, execeedtimeType) {
+export function getExeceedtimeapplyList(npage, pagesize, begainTimeString, endTimeString, phonenumber, execeedtimeType, distributionStatus, collectorId) {
   let data = {
     npage,
     pagesize,
     begainTimeString,
     endTimeString,
-    phoneNumber,
-    execeedtimeType
+    phonenumber,
+    execeedtimeType,
+    distributionStatus,
+    collectorId
   };
   return axios({
     url: '/sys/execeedtimeapplyList',
