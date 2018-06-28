@@ -135,7 +135,7 @@
           <el-form-item label="请选择审核员">
             <el-select v-model="assessorForm.assessor" placeholder="请选择审核员">
               <template v-for="item in assessorList">
-                <el-option :label="item.username" :value="item.uid"></el-option>
+                <el-option :label="item.username" :value="item.uid" :key="item.uid"></el-option>
               </template>
             </el-select>
           </el-form-item>

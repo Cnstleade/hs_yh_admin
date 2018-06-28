@@ -225,6 +225,7 @@ export default {
         });
     },
     handleConfig() {
+      let _this = this;
       if (this.trevewer) {
         execeedtimeDistribute(
           this.dynamicTags.length == 1
@@ -238,7 +239,16 @@ export default {
                 message: "分配成功",
                 type: "success"
               });
-              this.dialogVisible = false;
+              _this.dialogVisible = false;
+              _this.getData(
+                this.npage,
+                this.pagesize,
+                "",
+                "",
+                "",
+                "",
+                this.distributionStatus
+              );
             }
           })
           .catch(err => {

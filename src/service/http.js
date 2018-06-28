@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
 // axios.defaults.baseURL = 'http:192.168.43.247:8082';
 
 
@@ -408,13 +408,14 @@ export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString,
 }
 
 //后台管理模块 / admin 贷后管理 操作管理
-export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber, ) {
+export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber,distributionStatus ) {
   let data = {
     npage,
     pagesize,
     begainTimeString,
     endTimeString,
     phonenumber,
+    distributionStatus
   };
   return axios({
     url: '/sys/execeedtimeapplyListbycollector',
@@ -495,6 +496,33 @@ export function getLoanorders(npage, pagesize, begainTimeString, endTimeString, 
   };
   return axios({
     url: '/sys/loanorderList',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /admin 贷后管理 重新分配催收员
+export function getExeceedtimeapplyListbycollectorR(userId, id) {
+  let data = {
+    userId,
+    id
+  };
+  return axios({
+    url: '/sys/execeedtime_distributeafresh',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / admin 贷后管理 逾期催收操作列表 添加催收记录
+export function getAddcollectdetail(id, detail, result) {
+  let data = {
+    id,
+    detail,
+    result
+  };
+  return axios({
+    url: '/sys/addcollectdetail',
     method: 'post',
     data: qs.stringify(data)
   })

@@ -65,7 +65,7 @@
             <el-table-column prop="approveAmt" label="审核金额" align="center" sortable ></el-table-column>
             <el-table-column prop="collectorUserName" label="催收员" align="center"  >
                 <template slot-scope="scope">
-                    {{scope.row.collectorUserName?collectorUserName:'暂无催收员'}}
+                    {{scope.row.collectorUserName?scope.row.collectorUserName:'暂无催收员'}}
                 </template>
             </el-table-column>            
             <el-table-column type="expand" label="更多详情" width="80" >
@@ -227,7 +227,7 @@
             <el-table-column prop="approveAmt" label="审核金额" align="center" sortable ></el-table-column>
             <el-table-column prop="collectorUserName" label="催收员" align="center"  >
                 <template slot-scope="scope">
-                    {{scope.row.collectorUserName?collectorUserName:'暂无催收员'}}
+                    {{scope.row.collectorUserName?scope.row.collectorUserName:'暂无催收员'}}
                 </template>
             </el-table-column>            
             <el-table-column type="expand" label="更多详情" width="80" >
@@ -386,7 +386,8 @@ import {
   getExeceedtimeapplyList,
   httpExeceedtimeapplydetail,
   httpGetrevewerlist,
-  execeedtimeDistribute
+  execeedtimeDistribute,
+  getExeceedtimeapplyListbycollectorR
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -568,31 +569,68 @@ export default {
         .then(res => {
           let data = res.data;
           this.trevewerlist = data;
+          console.log(trevewerlist);
         })
         .catch(err => {
           this.$message.error("催收员列表获取失败请刷新页面或联系客服");
         });
     },
     handleConfig() {
+      let _this = this;
       if (this.trevewer) {
-        execeedtimeDistribute(
-          this.dynamicTags.length == 1
-            ? this.dynamicTags[0] + ","
-            : this.dynamicTags.join(","),
-          this.trevewer
-        )
-          .then(res => {
-            if (res.data.code == 200) {
-              this.$message({
-                message: "分配成功",
-                type: "success"
-              });
-              this.dialogVisible = false;
-            }
-          })
-          .catch(err => {
-            this.$message.error("催收员必须存在");
-          });
+        if (this.distributionStatus == 1) {
+          execeedtimeDistribute(
+            this.dynamicTags.length == 1
+              ? this.dynamicTags[0] + ","
+              : this.dynamicTags.join(","),
+            this.trevewer
+          )
+            .then(res => {
+              if (res.data.code == 200) {
+                this.$message({
+                  message: "分配成功",
+                  type: "success"
+                });
+                _this.dialogVisible = false;
+                _this.getData(
+                  this.npage,
+                  this.pagesize,
+                  "",
+                  "",
+                  "",
+                  "",
+                  this.distributionStatus
+                );
+              }
+            })
+            .catch(err => {
+              this.$message.error("催收员必须存在");
+            });
+        } else {
+          getExeceedtimeapplyListbycollectorR(
+            this.trevewer,
+            this.dynamicTags[0]
+          )
+            .then(res => {
+              if (res.data.code == 200) {
+                this.$message({
+                  message: "分配成功",
+                  type: "success"
+                });
+                _this.dialogVisible = false;
+                _this.getData(
+                  this.npage,
+                  this.pagesize,
+                  "",
+                  "",
+                  "",
+                  "",
+                  this.distributionStatus
+                );
+              }
+            })
+            .catch();
+        }
       } else {
         this.$message.error("催收员必须存在");
       }
