@@ -57,14 +57,14 @@
             </el-table-column>
             <el-table-column prop="applyAmt" label="申请金额" align="center" sortable></el-table-column>
             <el-table-column prop="approveAmt" label="审核金额" align="center" sortable></el-table-column>
-            <el-table-column prop="status" label="状态" align="center"
-                    :filters="[{ value: 4, text: '放款中' }, { value: 5, text: '已打款' }, { value: 6, text: '还款' }, { value: 7, text: '逾期' }, { value: 8, text: '完结' }]"
+            <el-table-column prop="status" label="订单状态" align="center"
+                    :filters="[{ value: 4, text: '借款中' },  { value: 8, text: '完结' }]"
                     :filter-method="filterStatus"
               >
                 <template slot-scope="scope">
                     <el-tag
-                        :type="scope.row.status===4?'success':scope.row.status===5?'info':scope.row.status===6?'warning':scope.row.status===7?'danger':scope.row.status===8?'':''"
-                    >{{scope.row.status===4?'放款中':scope.row.status===5?'已打款':scope.row.status===6?'还款':scope.row.status===7?'逾期':scope.row.status===8?'完结':''}}</el-tag>
+                        :type="scope.row.status===4?'success':scope.row.status===8?'':''"
+                    >{{scope.row.status===4?'借款中':scope.row.status===8?'完结':''}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="cash_outType" label="提现状态" align="center"
@@ -173,9 +173,8 @@ export default {
         time: null,
         order: "",
         orders: [
-          { label: "还款中", value: 5 },
-          { label: "逾期", value: 6 },
-          { label: "完结", value: 7 }
+          { label: "借款中", value: 4 },
+          { label: "完结", value: 8 }
         ],
         tixian: "",
         tixians: [

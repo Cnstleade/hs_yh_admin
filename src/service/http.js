@@ -406,7 +406,7 @@ export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString,
 }
 
 //后台管理模块 / admin 贷后管理 操作管理
-export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber,) {
+export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber, ) {
   let data = {
     npage,
     pagesize,
@@ -471,11 +471,28 @@ export function httpGetUserDetail(custUserId) {
 //后台管理模块 / admin 运营中心 客户详细信息
 export function htt() {
   let data = {
-    username:'21313',
-    password:'12312'
+    username: '21313',
+    password: '12312'
   };
   return axios({
     url: '/sys/login',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//后台管理模块 /admin 订单管理 订单列表
+export function getLoanorders(npage, pagesize, begainTimeString, endTimeString, phonenumber) {
+  let data = {
+    npage,
+    pagesize,
+    begainTimeString,
+    endTimeString,
+    phonenumber
+  };
+  return axios({
+    url: '/sys/loanorderList',
     method: 'post',
     data: qs.stringify(data)
   })
