@@ -11,6 +11,13 @@
     <el-tab-pane label="进行中催收订单" name="first">
         <el-row class="m20" >
             <el-col   class="col-flex-end">
+                    <el-button-group>
+                      <el-button type="info" @click="changeExeceedtimeType(0)">重置</el-button>
+                      <el-button type="primary" @click="changeExeceedtimeType(1)">M1</el-button>
+                      <el-button type="success" @click="changeExeceedtimeType(2)">M2</el-button>
+                      <el-button type="warning" @click="changeExeceedtimeType(3)">M3</el-button>
+                      <el-button type="danger" @click="changeExeceedtimeType(4)">M3+</el-button>
+                    </el-button-group>               
                     <div class="l20">
                         <el-input
                         style="padding:0px 10px 0px 0px"
@@ -148,6 +155,13 @@
     <el-tab-pane label="已完成催收订单" name="second">
               <el-row class="m20" >
             <el-col   class="col-flex-end">
+                    <el-button-group>
+                      <el-button type="info" @click="changeExeceedtimeType(0)">重置</el-button>
+                      <el-button type="primary" @click="changeExeceedtimeType(1)">M1</el-button>
+                      <el-button type="success" @click="changeExeceedtimeType(2)">M2</el-button>
+                      <el-button type="warning" @click="changeExeceedtimeType(3)">M3</el-button>
+                      <el-button type="danger" @click="changeExeceedtimeType(4)">M3+</el-button>
+                    </el-button-group>               
                     <div class="l20">
                         <el-input
                         style="padding:0px 10px 0px 0px"
@@ -543,6 +557,7 @@ export default {
       begainTimeString,
       endTimeString,
       phoneNumber,
+      execeedtimeType,
       distributionStatus
     ) {
       let _this = this;
@@ -552,6 +567,7 @@ export default {
         begainTimeString,
         endTimeString,
         phoneNumber,
+        execeedtimeType,
         distributionStatus
       )
         .then(res => {
@@ -579,6 +595,7 @@ export default {
             this.search.time[0] + " 00:00:00",
             timeFormat(this.search.time[1], 1) + " 00:00:00",
             this.search.phoneNumber,
+            '',
             this.distributionStatus
           );
         } else {
@@ -600,6 +617,7 @@ export default {
             "",
             "",
             this.search.phoneNumber,
+            '',
             this.distributionStatus
           );
         } else {

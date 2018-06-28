@@ -408,14 +408,15 @@ export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString,
 }
 
 //后台管理模块 / admin 贷后管理 操作管理
-export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber,distributionStatus ) {
+export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber,execeedtimeType,collectionStatus ) {
   let data = {
     npage,
     pagesize,
     begainTimeString,
     endTimeString,
     phonenumber,
-    distributionStatus
+    execeedtimeType,
+    collectionStatus
   };
   return axios({
     url: '/sys/execeedtimeapplyListbycollector',
