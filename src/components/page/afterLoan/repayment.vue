@@ -280,7 +280,7 @@ export default {
           this.trevewerlist = data;
         })
         .catch(err => {
-          this.$message.error("催收员列表获取失败请刷新页面或联系客服");
+      
         });
     },
     handleConfig() {

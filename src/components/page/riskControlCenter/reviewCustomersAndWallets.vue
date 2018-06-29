@@ -5,23 +5,26 @@
       <el-row>
         <el-col :span="12">
           <el-button-group>
-            <el-button v-for="(tab ,index) in tabs" :key="index" :class="{cur:iscur==index}"
-                       @click="iscur=index,tabChange((index + 1),tab.url)">{{tab.name}}
+            <el-button v-for="(tab ,index) in tabs"
+                       :key="index"
+                       :class="{cur:iscur==index}"
+                       @click="iscur=index,tabChange((index + 1),tab.url)">
+              {{tab.name}}
             </el-button>
           </el-button-group>
-          <!--<el-button type="primary" @click="handleOutlist">批量搁置</el-button>-->
         </el-col>
         <el-col :span="12" style="text-align: right">
           <el-date-picker
             v-model="dateTime"
             type="daterange"
+            @blur="chooseTime"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="timestamp">
           </el-date-picker>
-          <el-input placeholder="请输入关键字" style="width: 200px"></el-input>
-          <el-button icon="el-icon-search" type="primary"></el-button>
+          <el-input v-model="username" placeholder="请输入用户名" style="width: 200px"></el-input>
+          <el-button icon="el-icon-search" type="primary" @click="searchTable"></el-button>
         </el-col>
       </el-row>
     </template>
@@ -47,13 +50,6 @@
             </span>
           </template>
         </el-table-column>
-        <!--<el-table-column label="审核员" align="center">
-          <template slot-scope="scope">
-            <el-button type="danger" size="mini" plain @click="handleAssessor(scope.row)">
-              {{scope.row.operatorName}}
-            </el-button>
-          </template>
-        </el-table-column>-->
         <el-table-column label="来源" align="center">
           <template slot-scope="scope">
             <span>
@@ -108,9 +104,9 @@
         <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
                          width="150"></el-table-column>
         <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" v-if="this.showIndex != 1">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-info" @click="examine(scope.row.id)">查看</el-button>
+            <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -135,7 +131,7 @@
           <el-form-item label="请选择审核员">
             <el-select v-model="assessorForm.assessor" placeholder="请选择审核员">
               <template v-for="item in assessorList">
-                <el-option :label="item.username" :value="item.uid" :key="item.uid"></el-option>
+                <el-option :label="item.username" :value="item.uid"></el-option>
               </template>
             </el-select>
           </el-form-item>
@@ -147,51 +143,6 @@
       </el-dialog>
 
     </template>
-
-    <!--业务员对话框-->
-    <!--<template>
-      <el-dialog title="分配客户" :visible.sync="dialogSalesman">
-        <el-form>
-          <el-form-item label="查询">
-            <el-select placeholder="选择业务员">
-              <el-option label="业务员A" value="1"></el-option>
-              <el-option label="业务员B" value="2"></el-option>
-            </el-select>
-            <el-input placeholder="请输入关键字" style="width: 200px"></el-input>
-            <el-button type="primary" icon="el-icon-search"></el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="salesmanTable"
-          style="width: 100%">
-          <el-table-column
-            prop="userName"
-            label="用户名">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="名称">
-          </el-table-column>
-          <el-table-column
-            prop="email"
-            label="邮箱">
-          </el-table-column>
-          <el-table-column
-            prop="phone"
-            label="电话">
-          </el-table-column>
-          <el-table-column
-            prop="endLogTime"
-            label="最后登录时间">
-          </el-table-column>
-        </el-table>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogSalesman = false">取 消</el-button>
-          <el-button type="primary" @click="dialogSalesman = false">确 定</el-button>
-        </div>
-      </el-dialog>
-
-    </template>-->
 
     <!--客户信息表-->
     <template>
@@ -391,15 +342,13 @@
                   <div class="contactInfo">
                     <el-row>
                       <el-col :span="6">钱包信息:<span></span></el-col>
-                      <el-col :span="6">注册时间:<span>{{customerInformation.applyTime | dateServer}}</span></el-col>
-                      <el-col :span="6">上次登录时间:<span>{{customerInformation.createTime | dateServer}}</span></el-col>
+                      <el-col :span="6">注册时间:<span>{{walletInfo.joinDate | dateServer}}</span></el-col>
+                      <el-col :span="6">上次登录时间:<span>{{walletInfo.loginDate | dateServer}}</span></el-col>
                       <el-col :span="6">注册地:<span></span></el-col>
                     </el-row>
                     <el-row style="display: flex;align-items: center">
-                      <el-col :span="5">授信额度:<span>{{customerInformation.applyAmt}}</span></el-col>
-                      <el-col :span="5">审核金额:
-                        <el-input style="width: 100px" v-model="customerInformation.approveAmt"></el-input>
-                      </el-col>
+                      <el-col :span="5">授信额度:<span>{{walletInfo.creditLine}}</span></el-col>
+                      <el-col :span="5">审核金额:<span>{{walletInfo.auditMoney}}</span></el-col>
                       <el-col :span="5">签到额度:<span>10.00</span></el-col>
                       <el-col :span="5">电子合同:
                         <el-button type="primary">点击查看</el-button>
@@ -510,24 +459,18 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="2"><label>备注</label></el-col>
+              <el-col :span="2"><label>审核金额</label></el-col>
               <el-col :span="22">
-                <el-input type="textarea" :rows="2" placeholder="请填写备注信息" v-model="customerInformation.remark"></el-input>
+                <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="walletInfo.auditMoney"></el-input>
               </el-col>
             </el-row>
-            <!--<el-row>
-              <el-col :span="2"><label></label></el-col>
+            <el-row>
+              <el-col :span="2"><label>备注</label></el-col>
               <el-col :span="22">
-                <el-select v-model="value" placeholder="请选择快速回复语句">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+                <el-input type="textarea" :rows="2" placeholder="请填写备注信息"
+                          v-model="customerInformation.remark"></el-input>
               </el-col>
-            </el-row>-->
+            </el-row>
             <el-row class="title-style">
               <el-col :span="2"><label></label></el-col>
               <el-col :span="22">
@@ -676,6 +619,21 @@
             </template>
           </el-dialog>
         </template>
+
+        <!--提示对话框-->
+        <template>
+          <el-dialog
+            width="30%"
+            title="提示"
+            :visible.sync="AlertDialog"
+            append-to-body>
+            <div style="text-align: center;width: 100%">审核已结束，是否修改审核结果？</div>
+            <div style="text-align: right;margin-top: 20px">
+              <el-button @click="AlertDialog = false">否</el-button>
+              <el-button type="primary" @click="yesSure">是</el-button>
+            </div>
+          </el-dialog>
+        </template>
         <el-dialog
           id="report"
           width="70%"
@@ -717,7 +675,7 @@
                           2?'申请用户测出风险建议人工审核':'申请用户建议通过')}}
                         </strong>
                         <br/><span>
-                            <!-- 共发现15条异常信息 -->
+                            共发现15条异常信息
                            </span>
                       </el-row>
                     </el-col>
@@ -1591,24 +1549,32 @@
         modifyCredentials: false,
         modifyAlevanceInfo: false,
         CreditReport: false,
+        AlertDialog: false,
+
         loading: true,
+        username: '',  // 用户名搜索
         radio: 1,
         listId: null,
         currentPage: 1,
         pageSize: 10,
         total: null,
         iscur: 0,
+        showIndex: 1,
         showImg: false,
         imgSrc: "",
-        // remarks: "",
         labelWidth: "200px",
-        dateTime: [],
+        dateTime: [],  // 选中时间
+        startTime: '', // 开始时间
+        endTime: '',  // 结束时间
+
+        auditStatus: '',  //审核状态
         selectList: [],
         assessorForm: {
           assessor: null
         },
         assessorId: null,
         customerInformation: {}, // 客户信息表数据
+
         //报告
         showText: false,
         activeName: "third",
@@ -1656,27 +1622,20 @@
             hasVoice: "yes"
           }
         ],
-        options: [
-          {
-            value: "1",
-            label: "资料属实，允许通过"
-          },
-          {
-            value: "2",
-            label: "信用评分不足，不通过"
-          },
-          {
-            value: "3",
-            label: "审核有误，驳回"
-          }
-        ],
-        value: "",
+
+        // 钱包信息
+        walletInfo: {
+          joinDate: '',       //注册时间
+          loginDate: '',      //登陆时间
+          creditLine: '',     //授信额度
+          auditMoney: '',     //审核金额
+        },
         tabs: [
           {
             name: "全部",
             url: "/sys/loanapply"
           },
-          {
+          /*{
             name: "待分配",
             url: "/sys/allocatedList"
           },
@@ -1691,15 +1650,15 @@
           {
             name: "待驳回",
             url: "/sys/RejectedList"
-          },
+          },*/
           {
             name: "已通过",
             url: "/sys/getOverList"
           },
-          {
+          /*{
             name: "高风险",
             url: "/sys/RefuseList"
-          },
+          },*/
           {
             name: "其他",
             url: ""
@@ -1707,20 +1666,62 @@
         ]
       };
     },
+
     components: {
       "big-img": BigImg
     },
+
+    watch: {
+      // 监听输入变化
+      'walletInfo.auditMoney'(val, oldVal) {
+        if (val === '') {
+          Message({
+            message: '审核金额不能为空',
+            center: true
+          });
+          this.walletInfo.auditMoney = val;
+        } else if (val === '0') {
+          Message({
+            message: '审核金额不能为0',
+            center: true
+          });
+          this.walletInfo.auditMoney = val;
+        } else if (val < 0) {
+          Message({
+            message: '审核金额不能为负数',
+            center: true
+          });
+          this.walletInfo.auditMoney = this.walletInfo.creditLine;
+        } else if (val > this.walletInfo.creditLine) {
+          Message({
+            message: '审核金额不能大于授信额度',
+            center: true
+          });
+          this.walletInfo.auditMoney = this.walletInfo.creditLine;
+        } else if (this.walletInfo.creditLine > val > 0) {
+          this.walletInfo.auditMoney = val;
+        }
+        console.log(this.walletInfo.auditMoney);
+      }
+    },
+
     methods: {
+
+      // 截取整数部分
+      inpBlur() {
+        let val = this.walletInfo.auditMoney;
+        let num = parseInt(val);
+        this.walletInfo.auditMoney = num;
+      },
+
       // 查询全部订单
-      queryAllCustomersList() {
+      queryAllCustomersList(a, b) {
         let postDate = {
-          npage: this.currentPage,
-          pagesize: this.pageSize,
-          username: "",
-          mobile: "",
-          idNo: "",
-          startDateString: "",
-          finshDateString: "",
+          npage: a,
+          pagesize: b,
+          username: this.username,
+          startDateString: this.startTime,
+          finshDateString: this.endTime,
           channel: ""
         };
         $.ajax({
@@ -1729,13 +1730,24 @@
           data: postDate,
           success: data => {
             this.allCustomersData = data.rows;
-            // console.log(data.rows);
+            this.total = data.total;
             this.loading = false;
           },
           error: err => {
             console.log(err);
           }
         });
+      },
+
+      // 搜索
+      searchTable() {
+        this.queryAllCustomersList(this.currentPage, this.pageSize);
+      },
+
+      // 选择时间
+      chooseTime() {
+        this.startTime = this.getMyDate(this.dateTime[0]);
+        this.endTime = this.getMyDate(this.dateTime[1]);
       },
 
       // 查询审核员列表
@@ -1754,6 +1766,7 @@
 
       // 切换按钮刷新表单
       tabChange: function (index, url) {
+        this.showIndex = index;
         this.loading = true;
         let postDate = {
           npage: this.currentPage,
@@ -1838,19 +1851,13 @@
           day = newDate.getDate(),
           defualtDate = year + "-" + this.getzf(month) + "-" + this.getzf(day),
           defualtEndDate = timeFormat(defualtDate, -6);
-        this.dateTime.push(
-          new Date(defualtEndDate).getTime(),
-          new Date(defualtDate).getTime()
-        );
-      },
 
-      // select 事件触发
-      /*chooseSelect(val) {
-          this.selectList = [];
-          for (let i = 0; i < val.length; i++) {
-            this.selectList.push(val[i].id);
-          }
-        },*/
+        /*开始结束时间赋值*/
+        // this.startTime = defualtEndDate;
+        // this.endTime = defualtDate;
+
+        this.dateTime.push(new Date(defualtEndDate).getTime(), new Date(defualtDate).getTime());
+      },
 
       // 批量搁置
       setCurrent() {
@@ -1910,12 +1917,13 @@
       },
 
       // 查看客户信息
-      examine(id) {
-        this.listId = id;
+      examine(val) {
+        this.auditStatus = val.approveResult;
+        this.listId = Number(val.id);
         this.customerInformation = {};
         this.outerVisible = true;
         let param = {
-          id: id
+          id: this.listId
         };
         $.ajax({
           type: "POST",
@@ -1923,7 +1931,11 @@
           data: param,
           success: data => {
             this.customerInformation = data;
-            console.log(data);
+
+            this.walletInfo.joinDate = data.applyTime; //注册时间
+            this.walletInfo.loginDate = data.createTime; //登陆时间
+            this.walletInfo.creditLine = data.applyAmt; //授信额度
+            this.walletInfo.auditMoney = data.approveAmt; //审核金额
           },
           error: err => {
             Message({
@@ -1936,38 +1948,83 @@
 
       // 提交客户信息
       submitCustomerInfo() {
-        // console.log(this.radio, this.listId);
-        let _this = this;
-        let params = {
-          type: this.radio,
-          id: this.listId,
-          approveAmt: this.customerInformation.approveAmt,
-          remark: this.customerInformation.remark
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/updataLoanApply",
-          data: params,
-          success: data => {
-            _this.outerVisible = false;
-            Message({
-              message: data,
-              center: true
-            });
-            this.queryAllCustomersList();
-          },
-          error: err => {
-            Message({
-              message: err,
-              center: true
+        console.log(this.auditStatus);
+        if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
+          this.AlertDialog = true;
+        } else {
+          let mark = this.customerInformation.remark;
+          let monery = this.walletInfo.auditMoney;
+          if (mark != '' && monery != '' && monery > 0) {
+            let params = {
+              type: this.radio,
+              id: this.listId,
+              approveAmt: this.walletInfo.auditMoney,
+              remark: this.customerInformation.remark
+            };
+            $.ajax({
+              type: "POST",
+              url: config.baseURL + "/sys/updataLoanApply",
+              data: params,
+              success: data => {
+                this.AlertDialog = false;
+                this.outerVisible = false;
+                Message({
+                  message: data,
+                  center: true
+                });
+                this.queryAllCustomersList();
+              },
+              error: err => {
+                this.AlertDialog = false;
+                this.outerVisible = false;
+                Message({
+                  message: err.responseText,
+                  center: true
+                });
+              }
             });
           }
-        });
+        }
+      },
+
+      // 确认提交客户信息
+      yesSure() {
+        let mark = this.customerInformation.remark;
+        let monery = this.walletInfo.auditMoney;
+        if (mark != '' && monery != '') {
+          let params = {
+            type: this.radio,
+            id: this.listId,
+            approveAmt: monery,
+            remark: mark
+          };
+          $.ajax({
+            type: "POST",
+            url: config.baseURL + "/sys/updataLoanApply",
+            data: params,
+            success: data => {
+              this.AlertDialog = false;
+              this.outerVisible = false;
+              Message({
+                message: data,
+                center: true
+              });
+              this.queryAllCustomersList();
+            },
+            error: err => {
+              this.AlertDialog = false;
+              this.outerVisible = false;
+              Message({
+                message: err.responseText,
+                center: true
+              });
+            }
+          });
+        }
       },
 
       // 查看风控报告
       viewRiskManagementreport() {
-        let _this = this;
         let param = {
           id: this.listId
         };
@@ -1976,22 +2033,22 @@
           url: config.baseURL + "/sys/getCreditReport",
           data: param,
           success: data => {
-            console.log("风控报告数据：" + data);
+            // console.log("风控报告数据：" + data);
 
             if (data.tdReport) {
-              _this.baseInfo = data.tdReport;
+              this.baseInfo = data.tdReport;
             }
             if (data.mifengreport) {
               let date = data.mifengreport;
-              _this.userBasicInformation = date.mifengreportApplicationCheck;
-              console.log(_this.userBasicInformation);
-              _this.testTableData = date.list1;
-              _this.operatorTableData = date.list2;
-              _this.kinsfolkTableData = date.list6;
+              this.userBasicInformation = date.mifengreportApplicationCheck;
+              // console.log(this.userBasicInformation);
+              this.testTableData = date.list1;
+              this.operatorTableData = date.list2;
+              this.kinsfolkTableData = date.list6;
 
-              _this.linkmanTableData = date.list4;
-              _this.operatorDataTableData = date.list3;
-              _this.userInfo = date.mifengreportUserInfoCheck;
+              this.linkmanTableData = date.list4;
+              this.operatorDataTableData = date.list3;
+              this.userInfo = date.mifengreportUserInfoCheck;
             }
             this.CreditReport = true;
           },
@@ -2028,16 +2085,21 @@
         // 获取当前图片地址
         this.imgSrc = src;
       },
+
       viewImg() {
         this.showImg = false;
       },
 
       // 分页插件-数量改变事件
-      handleSizeChange() {
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.queryAllCustomersList(this.currentPage, this.pageSize);
       },
 
       // 分页插件-页数改变事件
-      handleCurrentChange() {
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.queryAllCustomersList(this.currentPage, this.pageSize);
       }
     },
     mounted() {
@@ -2045,14 +2107,23 @@
       this.setDefaultDate();
 
       // 查询全部列表
-      this.queryAllCustomersList();
+      this.queryAllCustomersList(this.currentPage, this.pageSize);
 
       // 审核人列表
       this.queryAssessorList();
     }
   };
 </script>
+<style>
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
 
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+</style>
 <style scoped>
   .cur {
     color: #fff;
