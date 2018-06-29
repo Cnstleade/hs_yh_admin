@@ -363,7 +363,15 @@ export default new Router({
                     meta: {
                       title: '高额预约客户',
                     }
-                  },                                                                                                                                                                                                                              
+                  }, 
+                  {
+                    // 电销列表
+                    path: '/electricityUserList',
+                    component: resolve => require(['../components/page/electricityCenter/electricityList'], resolve),
+                    meta: {
+                      title: '电销列表',
+                    }
+                  },                                                                                                                                                                                                                                                
             ]
         },
         {

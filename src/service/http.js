@@ -528,3 +528,15 @@ export function getAddcollectdetail(id, detail, result) {
     data: qs.stringify(data)
   })
 }
+
+//后台管理模块 /admin 电销中心 电销列表
+export function getEleUserList(pageNumber, pageSize) {
+  let data = {
+    pageNumber, pageSize
+  };
+  return axios({
+    url: '/electrical/userInfo',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}

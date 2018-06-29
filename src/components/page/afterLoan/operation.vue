@@ -12,11 +12,11 @@
         <el-row class="m20" >
             <el-col   class="col-flex-end">
                     <el-button-group>
-                      <el-button type="info" @click="changeExeceedtimeType(0)">重置</el-button>
-                      <el-button type="primary" @click="changeExeceedtimeType(1)">M1</el-button>
-                      <el-button type="success" @click="changeExeceedtimeType(2)">M2</el-button>
-                      <el-button type="warning" @click="changeExeceedtimeType(3)">M3</el-button>
-                      <el-button type="danger" @click="changeExeceedtimeType(4)">M3+</el-button>
+                      <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                      <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                      <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                      <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                      <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
                     </el-button-group>               
                     <div class="l20">
                         <el-input
@@ -74,6 +74,15 @@
                   border 
                   style="width: 100%"
                   >
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.overdueDay"  prop="id" label="等级" align="center" width="100">
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="(scope.row.overdue.overdueDay===0||scope.row.overdue.overdueDay===null)?'success':scope.row.overdue.overdueDay <  11 ?'primary':scope.row.status < 21?'info':scope.row.status < 31?'warning':'danger'"
+                            >
+                            {{(scope.row.overdue.overdueDay===0||scope.row.overdue.overdueDay===null)?'无':scope.row.overdue.overdueDay <  11 ?'M1':scope.row.status < 21?'M2':scope.row.status < 31?'M3':'M3+'}}
+                            </el-tag>
+                        </template> 
+                      </el-table-column>
                       <el-table-column prop="id" label="id" align="center" sortable></el-table-column>
                       <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable></el-table-column>
                       <el-table-column prop="borrowTime" label="提现时间" align="center" sortable>
@@ -91,8 +100,8 @@
                             >{{scope.row.status===0?'放款中':scope.row.status===1?'放款成功':scope.row.status===2?'逾期':scope.row.status===3?'还款成功':scope.row.status===4?'放款失败':scope.row.status===5?'还款中':'还款失败'}}</el-tag>
                         </template>                         
                       </el-table-column>
-                      <el-table-column prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
-                      <el-table-column prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.overdueDay" prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.lateFee" prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
                 </el-table>
                 <el-alert
                   title="催收情况"
@@ -156,11 +165,11 @@
               <el-row class="m20" >
             <el-col   class="col-flex-end">
                     <el-button-group>
-                      <el-button type="info" @click="changeExeceedtimeType(0)">重置</el-button>
-                      <el-button type="primary" @click="changeExeceedtimeType(1)">M1</el-button>
-                      <el-button type="success" @click="changeExeceedtimeType(2)">M2</el-button>
-                      <el-button type="warning" @click="changeExeceedtimeType(3)">M3</el-button>
-                      <el-button type="danger" @click="changeExeceedtimeType(4)">M3+</el-button>
+                      <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                      <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                      <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                      <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                      <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
                     </el-button-group>               
                     <div class="l20">
                         <el-input
@@ -218,6 +227,15 @@
                   border 
                   style="width: 100%"
                   >
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.overdueDay"  prop="id" label="等级" align="center" width="100">
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="(scope.row.overdue.overdueDay===0||scope.row.overdue.overdueDay===null)?'success':scope.row.overdue.overdueDay <  11 ?'primary':scope.row.status < 21?'info':scope.row.status < 31?'warning':'danger'"
+                            >
+                            {{(scope.row.overdue.overdueDay===0||scope.row.overdue.overdueDay===null)?'无':scope.row.overdue.overdueDay <  11 ?'M1':scope.row.status < 21?'M2':scope.row.status < 31?'M3':'M3+'}}
+                            </el-tag>
+                        </template> 
+                      </el-table-column>
                       <el-table-column prop="id" label="id" align="center" sortable></el-table-column>
                       <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable></el-table-column>
                       <el-table-column prop="borrowTime" label="提现时间" align="center" sortable>
@@ -235,8 +253,9 @@
                             >{{scope.row.status===0?'放款中':scope.row.status===1?'放款成功':scope.row.status===2?'逾期':scope.row.status===3?'还款成功':scope.row.status===4?'放款失败':scope.row.status===5?'还款中':'还款失败'}}</el-tag>
                         </template>                         
                       </el-table-column>
-                      <el-table-column prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
-                      <el-table-column prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.overdueDay" prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
+                      <el-table-column v-if="props.row.detail.withdraws.overdue&&props.row.detail.withdraws.overdue.lateFee" prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                 
                 </el-table>
                 <el-alert
                   title="催收情况"
