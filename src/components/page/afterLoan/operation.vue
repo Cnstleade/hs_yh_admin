@@ -439,12 +439,8 @@
                 :closable="false">
               </el-alert>               
               <el-tag
-                :key="tag"
-                v-for="tag in dynamicTags"
-                closable
-                :disable-transitions="false"
-                @close="handleClose(tag)">
-                {{tag}}
+                >
+                {{dynamicTags[0]}}
               </el-tag>
               <el-input
                 class="input-new-tag"
@@ -687,7 +683,7 @@ export default {
     handleConfig() {
       let _this = this;
       if (this.textarea !== "" && this.trevewer) {
-        getAddcollectdetail()
+        getAddcollectdetail(this.dynamicTags[0],this.textarea,this.trevewer)
           .then(res => {
             if (res.data.code == 200) {
               this.$message({
