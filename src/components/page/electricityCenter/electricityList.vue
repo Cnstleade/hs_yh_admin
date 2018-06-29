@@ -50,8 +50,8 @@
                       <el-table-column prop="custUserMobile" label="客户电话" align="center" ></el-table-column>
                       <el-table-column prop="type" label="进入电销类型" align="center" ></el-table-column>
                       <el-table-column prop="companyName" label="机构名" align="center" ></el-table-column>
-                      <el-table-column prop="companyName" label="客户姓名" align="center" ></el-table-column>
-                      <el-table-column prop="companyName" label="所剩金额" align="center" ></el-table-column>
+                      <el-table-column prop="custUserName" label="客户姓名" align="center" ></el-table-column>
+                      <el-table-column prop="money" label="所剩金额" align="center" ></el-table-column>
                     <el-table-column prop="cz"  align="center" label="操作"   >
                         <template slot-scope="scope">
                         <el-button
@@ -63,7 +63,6 @@
                     </el-table-column>   
         </el-table>  
         <el-row class="m20" v-if="total>0">
-            <el-button type="primary" style="float:left" @click="handelConfigAll" :disabled="multipleSelection.length==0">批量分配</el-button>
              <div style="float:right">
                  <el-pagination
                    @current-change="handleCurrentChange"
@@ -132,9 +131,7 @@
 </template>
 
 <script>
-import {
-  getEleUserList
-} from "../../../service/http";
+import { getEleUserList } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
 export default {
@@ -146,26 +143,28 @@ export default {
       npage: 1,
       pagesize: 10,
       total: 0,
-      dialogVisible: false,
+      dialogVisible: false
     };
   },
   methods: {
     getData(pageNumber, pageSize) {
       let _this = this;
+      this.loading =true;
       getEleUserList(pageNumber, pageSize)
         .then(res => {
           let data = res.data;
           if (data.code === 200) {
             let tableData = data.data.list;
+            console.log(this.tableData);
             _this.tableData = tableData;
             _this.total = data.data.total;
+            this.loading = false;
           } else {
           }
         })
         .catch();
     },
-    handleSearch() {
-    },
+    handleSearch() {},
     handleCurrentChange(val) {
       this.npage = val;
       this.handleSearch();
@@ -178,21 +177,17 @@ export default {
       this.execeedtimeType = i;
       this.handleSearch();
     },
-    handleAllocation(index, row) {
-    },
+    handleAllocation(index, row) {},
 
     handleConfig() {
       let _this = this;
     },
     filterStauts(value, row) {
       return row.status === value;
-    },
+    }
   },
   mounted() {
-    this.getData(
-      this.npage,
-      this.pagesize,
-    );
+    this.getData(this.npage, this.pagesize);
   }
 };
 </script>
