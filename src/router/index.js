@@ -383,6 +383,10 @@ export default new Router({
             component: resolve => require(['../components/page/404.vue'], resolve)
         },
         {
+            path: '/403',
+            component: resolve => require(['../components/page/403.vue'], resolve)
+        },
+        {
             path: '*',
             redirect: '/404'
         }

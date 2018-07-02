@@ -46,7 +46,7 @@
   /*遮罩层样式*/
   .img-view .img-layer {
     position: fixed;
-    z-index: 999;
+    z-index: 9999;
     top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.7);
@@ -57,12 +57,13 @@
 
   /*不限制图片大小，实现居中*/
   .img-view .img img {
-    max-width: 100%;
+    width: 300px;
+    height: 450px;
     display: block;
     position: absolute;
     left: 0;
     right: 0;
     margin: auto;
-    z-index: 1000;
+    z-index: 10000;
   }
 </style>

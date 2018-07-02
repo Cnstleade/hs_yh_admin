@@ -46,7 +46,7 @@
             class="m20"
             v-loading="loading"
           >
-            <el-table-column prop="id" label="订单号" align="center" sortable></el-table-column>
+            <el-table-column prop="id" label="订单号" align="center" sortable width="120"></el-table-column>
             <el-table-column prop="userName" label="姓名" align="center" ></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center"  width="200"></el-table-column>
@@ -67,14 +67,14 @@
                     >{{scope.row.status===4?'借款中':scope.row.status===8?'完结':''}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="cash_outType" label="提现状态" align="center"
-                    :filters="[{ value: 0, text: '没有提现' }, { value: 1, text: '未完全提现' }, { value: 2, text: '完全提现' }]"
+            <el-table-column prop="cash_outType" label="提现状态" align="center" width="132"
+                    :filters="[{ value: 0, text: '无提现记录' }, { value: 1, text: '有余额' }, { value: 2, text: '无余额' }]"
                     :filter-method="filterCashOutType"            
              >
                 <template slot-scope="scope">
                     <el-tag
                         :type="scope.row.cash_outType===0?'warning':scope.row.cash_outType===1?'info':'danger'"
-                    >{{scope.row.cash_outType===0?'没有提现':scope.row.cash_outType===1?'未完全提现':'完全提现'}}</el-tag>
+                    >{{scope.row.cash_outType===0?'无提现记录':scope.row.cash_outType===1?'有余额':'无余额'}}</el-tag>
                 </template>                
             </el-table-column>
             <el-table-column type="expand" label="更多详情" width="80" >

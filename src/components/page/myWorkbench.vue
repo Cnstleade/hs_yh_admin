@@ -1,6 +1,6 @@
 <template>
-    <div class="container" >
-        <template>
+    <div class="container"  >
+        <template >
             <el-row class="title">
                 <el-col :span="24">{{headName}}</el-col>
             </el-row>
@@ -37,11 +37,13 @@
 </template>
 
 <script>
-import '../../config/regexp';
+import "../../config/regexp";
+import bus from "../../config/bus";
 export default {
   name: "myWorkbench",
   data() {
     return {
+      loading: true,
       headName: "运营数据",
       headName1: "平台数据",
       operateData: [
@@ -133,6 +135,11 @@ export default {
         }
       ]
     };
+  },
+  created() {
+    bus.$on("error", msg => {
+      this.loading = true;
+    });
   }
 };
 </script>
@@ -184,7 +191,7 @@ export default {
   justify-content: center;
   border: 1px solid #ccc;
 }
-.fontStyle{
-    font-size: 1rem;
+.fontStyle {
+  font-size: 1rem;
 }
 </style>

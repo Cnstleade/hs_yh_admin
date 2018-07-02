@@ -1711,7 +1711,16 @@
       inpBlur() {
         let val = this.walletInfo.auditMoney;
         let num = parseInt(val);
-        this.walletInfo.auditMoney = num;
+        if(!isNaN(num)){
+          this.walletInfo.auditMoney = num;
+        }else{
+          Message({
+            message: '审核金额不能为空',
+            center: true
+          });
+          this.walletInfo.auditMoney = '';
+        }
+
       },
 
       // 查询全部订单
@@ -1948,25 +1957,34 @@
 
       // 提交客户信息
       submitCustomerInfo() {
-        console.log(this.auditStatus);
-        if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
-          this.AlertDialog = true;
-        } else {
-          let mark = this.customerInformation.remark;
-          let monery = this.walletInfo.auditMoney;
-          if (mark != '' && monery != '') {
+
+        let value = this.walletInfo.auditMoney;
+        let mark = this.customerInformation.remark;
+        console.log(this.auditStatus,value);
+
+        // 判断审核金额是否不为空或不为0 marks(必选)
+        if(value!='' || value != 0 && mark != ''){
+
+          // 判断审核状态是否为2，3，4
+          if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
+
+            // 弹出提示框
+            this.AlertDialog = true;
+
+          } else {
+
+            // 审核状态不为2，3，4时执行
             let params = {
               type: this.radio,
               id: this.listId,
-              approveAmt: this.walletInfo.auditMoney,
-              remark: this.customerInformation.remark
+              approveAmt: value,
+              remark: mark
             };
             $.ajax({
               type: "POST",
               url: config.baseURL + "/sys/updataLoanApply",
               data: params,
               success: data => {
-                this.AlertDialog = false;
                 this.outerVisible = false;
                 Message({
                   message: data,
@@ -1975,52 +1993,49 @@
                 this.queryAllCustomersList();
               },
               error: err => {
-                this.AlertDialog = false;
                 this.outerVisible = false;
                 Message({
-                  message: err.responseText,
+                  message: '提交失败',
                   center: true
                 });
               }
             });
           }
+        }else{
+          this.$message.error('审核金额和备注不能为空！');
         }
       },
 
       // 确认提交客户信息
       yesSure() {
-        let mark = this.customerInformation.remark;
-        let monery = this.walletInfo.auditMoney;
-        if (mark != '' && monery != '') {
-          let params = {
-            type: this.radio,
-            id: this.listId,
-            approveAmt: monery,
-            remark: mark
-          };
-          $.ajax({
-            type: "POST",
-            url: config.baseURL + "/sys/updataLoanApply",
-            data: params,
-            success: data => {
-              this.AlertDialog = false;
-              this.outerVisible = false;
-              Message({
-                message: data,
-                center: true
-              });
-              this.queryAllCustomersList();
-            },
-            error: err => {
-              this.AlertDialog = false;
-              this.outerVisible = false;
-              Message({
-                message: err.responseText,
-                center: true
-              });
-            }
-          });
-        }
+        let params = {
+          type: this.radio,
+          id: this.listId,
+          approveAmt: this.walletInfo.auditMoney,
+          remark: this.customerInformation.remark
+        };
+        $.ajax({
+          type: "POST",
+          url: config.baseURL + "/sys/updataLoanApply",
+          data: params,
+          success: data => {
+            this.AlertDialog = false;
+            this.outerVisible = false;
+            Message({
+              message: data,
+              center: true
+            });
+            this.queryAllCustomersList();
+          },
+          error: err => {
+            this.AlertDialog = false;
+            this.outerVisible = false;
+            Message({
+              message: '提交失败',
+              center: true
+            });
+          }
+        });
       },
 
       // 查看风控报告

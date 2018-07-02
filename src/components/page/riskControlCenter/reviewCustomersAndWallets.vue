@@ -3,7 +3,7 @@
   <div class="container">
     <template>
       <el-row>
-        <el-col :span="12">
+        <el-col :span="6">
           <el-button-group>
             <el-button v-for="(tab ,index) in tabs"
                        :key="index"
@@ -13,7 +13,7 @@
             </el-button>
           </el-button-group>
         </el-col>
-        <el-col :span="12" style="text-align: right">
+        <el-col :span="18" style="text-align: right">
           <el-date-picker
             v-model="dateTime"
             type="daterange"
@@ -58,7 +58,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="idNo" label="身份证号" align="center" width="150"></el-table-column>
-        <el-table-column prop="mobile" label="手机号" align="center" width="100"></el-table-column>
+        <el-table-column prop="mobile" label="手机号" align="center" width="120"></el-table-column>
         <!--<el-table-column prop="mobileDetails" label="手机详情" align="center"></el-table-column>-->
         <el-table-column label="贷款状态" align="center">
           <template slot-scope="scope">
@@ -168,9 +168,9 @@
                 <el-col :span="20">
                   <h3>基本信息</h3>
                 </el-col>
-                <el-col :span="4" align="right">
+                <!--<el-col :span="4" align="right">
                   <el-button type="primary" size="mini" @click="modifyConsumerMessage">修改</el-button>
-                </el-col>
+                </el-col>-->
               </el-col>
             </el-row>
             <template v-if="customerInformation.custUserDOList">
@@ -260,9 +260,9 @@
               <el-col :span="20">
                 <h3>认证信息</h3>
               </el-col>
-              <el-col :span="4" align="right">
+              <!--<el-col :span="4" align="right">
                 <el-button type="primary" size="mini" @click="modifyAttestationInfo">修改</el-button>
-              </el-col>
+              </el-col>-->
             </el-row>
             <el-row>
               <el-col :span="2"><label>联系人信息</label></el-col>
@@ -279,7 +279,7 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
+            <!--<el-row>
               <el-col :span="2"><label>授权验证</label></el-col>
               <el-col :span="22">
 
@@ -290,7 +290,7 @@
               <el-col :span="22">
                 <el-button type="primary">查看通话记录</el-button>
               </el-col>
-            </el-row>
+            </el-row>-->
             <el-row>
               <el-col :span="2"><label>认证资料</label></el-col>
               <el-col :span="22">
@@ -328,11 +328,11 @@
                 <el-col :span="12">
                   <h3>关联信息</h3>
                 </el-col>
-                <el-col :span="12" align="right">
+                <!--<el-col :span="12" align="right">
                   <el-button type="danger" size="mini">刷新额度</el-button>
                   <el-button type="info" size="mini">提额项认证</el-button>
                   <el-button type="primary" size="mini" @click="modifyRelevanceInfo">修改</el-button>
-                </el-col>
+                </el-col>-->
               </el-col>
             </el-row>
             <el-row>
@@ -347,15 +347,15 @@
                       <el-col :span="6">注册地:<span></span></el-col>
                     </el-row>
                     <el-row style="display: flex;align-items: center">
-                      <el-col :span="5">授信额度:<span>{{walletInfo.creditLine}}</span></el-col>
-                      <el-col :span="5">审核金额:<span>{{walletInfo.auditMoney}}</span></el-col>
-                      <el-col :span="5">签到额度:<span>10.00</span></el-col>
-                      <el-col :span="5">电子合同:
+                      <el-col :span="6">授信额度:<span>{{walletInfo.creditLine}}</span></el-col>
+                      <el-col :span="6">审核金额:<span>{{walletInfo.auditMoney}}</span></el-col>
+                      <el-col :span="6">签到额度:<span>10.00</span></el-col>
+                      <el-col :span="6">电子合同:
                         <el-button type="primary">点击查看</el-button>
                       </el-col>
-                      <el-col :span="4">钱包联系人:
+                      <!--<el-col :span="4">钱包联系人:
                         <el-button type="primary">93</el-button>
-                      </el-col>
+                      </el-col>-->
                     </el-row>
                   </div>
                 </template>
@@ -389,7 +389,7 @@
                     <el-row>
                       <el-col :span="8">
                         <label style="margin-right: 5px">通讯录联系人</label>
-                        <el-button type="primary">数量: {{customerInformation.credit.contactsCount}}</el-button>
+                        <el-button type="primary" @click="checkContacts">数量: {{amount}}</el-button>
                       </el-col>
                       <el-col :span="8" style="display: flex;align-items: center">
                         <label style="margin-right: 5px">声音路径:</label>
@@ -458,12 +458,12 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
+            <!--<el-row>
               <el-col :span="2"><label>审核金额</label></el-col>
               <el-col :span="22">
                 <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="walletInfo.auditMoney"></el-input>
               </el-col>
-            </el-row>
+            </el-row>-->
             <el-row>
               <el-col :span="2"><label>备注</label></el-col>
               <el-col :span="22">
@@ -471,7 +471,7 @@
                           v-model="customerInformation.remark"></el-input>
               </el-col>
             </el-row>
-            <el-row class="title-style">
+            <!--<el-row class="title-style">
               <el-col :span="2"><label></label></el-col>
               <el-col :span="22">
                 <el-radio-group v-model="radio">
@@ -480,148 +480,12 @@
                   <el-radio :label="3">拒绝</el-radio>
                 </el-radio-group>
               </el-col>
-            </el-row>
+            </el-row>-->
           </div>
         </template>
 
-        <!--内置弹出层-修改客户信息-->
-        <template>
-          <el-dialog
-            width="50%"
-            title="修改客户信息"
-            :visible.sync="modifyConsumerInfo"
-            append-to-body>
-            <template>
-              <div id="consumerMessage">
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>姓名</label><span>嵇跃耀</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>性别</label><span>男</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证号</label><span>320921199311042053</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>手机号</label><span>18752032008</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>开户行</label><span>---</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>银行卡号</label><span>6214832504146502</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>电子邮箱</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>微信号</label><span>JYY224600</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>单位/院校</label><span>地高性能和</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>部门/班级</label><span>大专</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>入职/入学时间</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>职务</label><span>未填写</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>籍贯</label><span>江苏</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>月收入/生活费</label><span>10000<span>元</span></span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证到期时间</label><span>无</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>钱包录音</label><span>无</span></el-col>
-                </el-row>
-              </div>
-            </template>
-          </el-dialog>
-        </template>
-        <!--内置弹出层-修改客户认证信息-->
-        <template>
-          <el-dialog
-            width="50%"
-            title="修改客户认证信息"
-            :visible.sync="modifyCredentials"
-            append-to-body>
-            <template>
-              <div id="credentials">
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>姓名</label><span>嵇跃耀</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>性别</label><span>男</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证号</label><span>320921199311042053</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>手机号</label><span>18752032008</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>开户行</label><span>---</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>银行卡号</label><span>6214832504146502</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>电子邮箱</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>微信号</label><span>JYY224600</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>单位/院校</label><span>地高性能和</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>部门/班级</label><span>大专</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>入职/入学时间</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>职务</label><span>未填写</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>籍贯</label><span>江苏</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>月收入/生活费</label><span>10000<span>元</span></span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证到期时间</label><span>无</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>钱包录音</label><span>无</span></el-col>
-                </el-row>
-              </div>
-            </template>
-          </el-dialog>
-        </template>
-        <!--内置弹出层-修改客户关联信息-->
-        <template>
-          <el-dialog
-            width="50%"
-            title="修改客户关联信息"
-            :visible.sync="modifyAlevanceInfo"
-            append-to-body>
-            <template>
-              <div id="relevance">
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>姓名</label><span>嵇跃耀</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>性别</label><span>男</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证号</label><span>320921199311042053</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>手机号</label><span>18752032008</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>开户行</label><span>---</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>银行卡号</label><span>6214832504146502</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>电子邮箱</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>微信号</label><span>JYY224600</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>单位/院校</label><span>地高性能和</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>部门/班级</label><span>大专</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>入职/入学时间</label><span>未填写</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>职务</label><span>未填写</span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>籍贯</label><span>江苏</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>月收入/生活费</label><span>10000<span>元</span></span></el-col>
-                </el-row>
-                <el-row>
-                  <el-col :xl="12" :lg="12"><label>身份证到期时间</label><span>无</span></el-col>
-                  <el-col :xl="12" :lg="12"><label>钱包录音</label><span>无</span></el-col>
-                </el-row>
-              </div>
-            </template>
-          </el-dialog>
-        </template>
-
         <!--提示对话框-->
-        <template>
+        <!--<template>
           <el-dialog
             width="30%"
             title="提示"
@@ -633,14 +497,30 @@
               <el-button type="primary" @click="yesSure">是</el-button>
             </div>
           </el-dialog>
+        </template>-->
+
+        <!--查看通讯录联系人-->
+        <template>
+          <el-dialog
+            width="30%"
+            title="通讯录"
+            :visible.sync="contactList"
+            append-to-body>
+
+            <el-table :data="contacs" border height="400">
+              <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+              <el-table-column prop="mobile" label="号码" align="center"></el-table-column>
+            </el-table>
+
+          </el-dialog>
         </template>
+
         <el-dialog
           id="report"
           width="70%"
           title="风控报告"
           :visible.sync="CreditReport"
-          append-to-body
-        >
+          append-to-body>
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="芝麻信用报告" name="first" v-if="false">芝麻信用报告</el-tab-pane>
             <el-tab-pane label="同盾信用报告" name="second">
@@ -1523,10 +1403,10 @@
             </el-tab-pane>
           </el-tabs>
         </el-dialog>
-        <div slot="footer" class="dialog-footer">
+        <!--<div slot="footer" class="dialog-footer">
           <el-button @click="outerVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitCustomerInfo">提 交</el-button>
-        </div>
+        </div>-->
       </el-dialog>
     </template>
   </div>
@@ -1542,33 +1422,33 @@
     name: "reviewCustomersAndWallets",
     data() {
       return {
-        dialogAssessor: false,
-        dialogSalesman: false,
-        outerVisible: false,
-        modifyConsumerInfo: false,
-        modifyCredentials: false,
-        modifyAlevanceInfo: false,
-        CreditReport: false,
-        AlertDialog: false,
+        outerVisible: false,          // 客户信息表
+        dialogAssessor: false,        // 审核员列表
+        contactList: false,           // 通讯录列表
+        CreditReport: false,          // 风控报告
+
+        dateTime: [],                 // 选中时间
+        startTime: '',                // 开始时间
+        endTime: '',                  // 结束时间
 
         loading: true,
-        username: '',  // 用户名搜索
+        username: '',                 // 用户名搜索
         radio: 1,
         listId: null,
+
         currentPage: 1,
         pageSize: 10,
         total: null,
+
         iscur: 0,
         showIndex: 1,
         showImg: false,
         imgSrc: "",
         labelWidth: "200px",
-        dateTime: [],  // 选中时间
-        startTime: '', // 开始时间
-        endTime: '',  // 结束时间
 
-        auditStatus: '',  //审核状态
+        auditStatus: '',              // 审核状态
         selectList: [],
+        contacs: [],                  // 通讯录列表
         assessorForm: {
           assessor: null
         },
@@ -1593,9 +1473,6 @@
         canvasShow: true,
         note: {
           backgroundImage: ""
-          // backgroundRepeat: "no-repeat",
-          // backgroundSize: "25px auto",
-          // marginTop: "5px"
         },
         baseInfo: {},
         row: {},
@@ -1673,7 +1550,7 @@
 
     watch: {
       // 监听输入变化
-      'walletInfo.auditMoney'(val, oldVal) {
+      /*'walletInfo.auditMoney'(val, oldVal) {
         if (val === '') {
           Message({
             message: '审核金额不能为空',
@@ -1701,18 +1578,33 @@
         } else if (this.walletInfo.creditLine > val > 0) {
           this.walletInfo.auditMoney = val;
         }
-        console.log(this.walletInfo.auditMoney);
+      }*/
+    },
+
+    computed:{
+      amount(){
+        return this.contacs.length;
       }
     },
 
     methods: {
 
       // 截取整数部分
-      inpBlur() {
+      /*inpBlur() {
         let val = this.walletInfo.auditMoney;
         let num = parseInt(val);
-        this.walletInfo.auditMoney = num;
-      },
+        if(!isNaN(num)){
+          this.walletInfo.auditMoney = num;
+          console.log('失去焦点时审核金额为：'+this.walletInfo.auditMoney);
+        }else{
+          Message({
+            message: '审核金额不能为空',
+            center: true
+          });
+          this.walletInfo.auditMoney = '';
+        }
+
+      },*/
 
       // 查询全部订单
       queryAllCustomersList(a, b) {
@@ -1860,23 +1752,23 @@
       },
 
       // 批量搁置
-      setCurrent() {
-        let postDate = {
-          ids: this.selectList,
-          type: true
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/updataLoanApply",
-          data: postDate,
-          success: function (data) {
-            alert(data);
-          },
-          error: function () {
-            alert("错误");
-          }
-        });
-      },
+      // setCurrent() {
+      //   let postDate = {
+      //     ids: this.selectList,
+      //     type: true
+      //   };
+      //   $.ajax({
+      //     type: "POST",
+      //     url: config.baseURL + "/sys/updataLoanApply",
+      //     data: postDate,
+      //     success: function (data) {
+      //       alert(data);
+      //     },
+      //     error: function () {
+      //       alert("错误");
+      //     }
+      //   });
+      // },
 
       // 审核人分配
       allotOperator(data) {
@@ -1912,9 +1804,9 @@
       },
 
       // 点击业务员
-      handleSalesman() {
-        this.dialogSalesman = true;
-      },
+      // handleSalesman() {
+      //   this.dialogSalesman = true;
+      // },
 
       // 查看客户信息
       examine(val) {
@@ -1932,10 +1824,14 @@
           success: data => {
             this.customerInformation = data;
 
-            this.walletInfo.joinDate = data.applyTime; //注册时间
-            this.walletInfo.loginDate = data.createTime; //登陆时间
-            this.walletInfo.creditLine = data.applyAmt; //授信额度
-            this.walletInfo.auditMoney = data.approveAmt; //审核金额
+            this.walletInfo.joinDate = data.applyTime; // 注册时间
+            this.walletInfo.loginDate = data.createTime; // 登陆时间
+            this.walletInfo.creditLine = data.applyAmt; //  授信额度
+            this.walletInfo.auditMoney = data.approveAmt; //  审核金额
+
+            //this.contacs = data.custMobileList; // 通讯录信息
+
+            console.log(data,this.contacs);
           },
           error: err => {
             Message({
@@ -1946,82 +1842,94 @@
         });
       },
 
-      // 提交客户信息
-      submitCustomerInfo() {
-        console.log(this.auditStatus);
-        if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
-          this.AlertDialog = true;
-        } else {
-          let mark = this.customerInformation.remark;
-          let monery = this.walletInfo.auditMoney;
-          if (mark != '' && monery != '' && monery > 0) {
-            let params = {
-              type: this.radio,
-              id: this.listId,
-              approveAmt: this.walletInfo.auditMoney,
-              remark: this.customerInformation.remark
-            };
-            $.ajax({
-              type: "POST",
-              url: config.baseURL + "/sys/updataLoanApply",
-              data: params,
-              success: data => {
-                this.AlertDialog = false;
-                this.outerVisible = false;
-                Message({
-                  message: data,
-                  center: true
-                });
-                this.queryAllCustomersList();
-              },
-              error: err => {
-                this.AlertDialog = false;
-                this.outerVisible = false;
-                Message({
-                  message: err.responseText,
-                  center: true
-                });
-              }
-            });
-          }
-        }
+      // 查看通讯录列表
+      checkContacts() {
+        this.contactList = true;
+
       },
 
+      // 提交客户信息
+      // submitCustomerInfo() {
+      //
+      //   let value = this.walletInfo.auditMoney;
+      //   let mark = this.customerInformation.remark;
+      //   console.log(this.auditStatus,value);
+      //
+      //   // 判断审核金额是否不为空或不为0 marks(必选)
+      //   if(value!='' || value != 0 && mark != ''){
+      //
+      //     // 判断审核状态是否为2，3，4
+      //     if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
+      //
+      //       // 弹出提示框
+      //       this.AlertDialog = true;
+      //
+      //     } else {
+      //
+      //       // 审核状态不为2，3，4时执行
+      //       let params = {
+      //         type: this.radio,
+      //         id: this.listId,
+      //         approveAmt: value,
+      //         remark: mark
+      //       };
+      //       $.ajax({
+      //         type: "POST",
+      //         url: config.baseURL + "/sys/updataLoanApply",
+      //         data: params,
+      //         success: data => {
+      //           this.outerVisible = false;
+      //           Message({
+      //             message: data,
+      //             center: true
+      //           });
+      //           this.queryAllCustomersList();
+      //         },
+      //         error: err => {
+      //           this.outerVisible = false;
+      //           Message({
+      //             message: '提交失败',
+      //             center: true
+      //           });
+      //         }
+      //       });
+      //     }
+      //   }
+      //
+      //
+      // },
+
       // 确认提交客户信息
-      yesSure() {
-        let mark = this.customerInformation.remark;
-        let monery = this.walletInfo.auditMoney;
-        if (mark != '' && monery != '') {
-          let params = {
-            type: this.radio,
-            id: this.listId,
-            approveAmt: monery,
-            remark: mark
-          };
-          $.ajax({
-            type: "POST",
-            url: config.baseURL + "/sys/updataLoanApply",
-            data: params,
-            success: data => {
-              this.AlertDialog = false;
-              this.outerVisible = false;
-              Message({
-                message: data,
-                center: true
-              });
-              this.queryAllCustomersList();
-            },
-            error: err => {
-              this.AlertDialog = false;
-              this.outerVisible = false;
-              Message({
-                message: err.responseText,
-                center: true
-              });
-            }
-          });
-        }
-      },
+      // yesSure() {
+      //   let params = {
+      //     type: this.radio,
+      //     id: this.listId,
+      //     approveAmt: this.walletInfo.auditMoney,
+      //     remark: this.customerInformation.remark
+      //   };
+      //   $.ajax({
+      //     type: "POST",
+      //     url: config.baseURL + "/sys/updataLoanApply",
+      //     data: params,
+      //     success: data => {
+      //       this.AlertDialog = false;
+      //       this.outerVisible = false;
+      //       Message({
+      //         message: data,
+      //         center: true
+      //       });
+      //       this.queryAllCustomersList();
+      //     },
+      //     error: err => {
+      //       this.AlertDialog = false;
+      //       this.outerVisible = false;
+      //       Message({
+      //         message: '提交失败',
+      //         center: true
+      //       });
+      //     }
+      //   });
+      // },
 
       // 查看风控报告
       viewRiskManagementreport() {
@@ -2066,19 +1974,19 @@
       },
 
       //修改客户信息
-      modifyConsumerMessage() {
-        this.modifyConsumerInfo = true;
-      },
+      // modifyConsumerMessage() {
+      //   this.modifyConsumerInfo = true;
+      // },
 
       //修改认证信息
-      modifyAttestationInfo() {
-        this.modifyCredentials = true;
-      },
+      // modifyAttestationInfo() {
+      //   this.modifyCredentials = true;
+      // },
 
       //修改客户关联信息
-      modifyRelevanceInfo() {
-        this.modifyAlevanceInfo = true;
-      },
+      // modifyRelevanceInfo() {
+      //   this.modifyAlevanceInfo = true;
+      // },
 
       clickImg(e, src) {
         this.showImg = true;

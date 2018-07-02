@@ -101,7 +101,7 @@
                   <el-input v-model="editForm.actualPayBackAmt"   placeholder="请输入实际还款的金额"></el-input>
                 </el-form-item>                                                                
 
-                <el-form-item label="商品图片：" prop="logo">
+                <el-form-item label="图片凭证：" prop="logo">
                  <el-col >
                     <el-upload
                         action="123"

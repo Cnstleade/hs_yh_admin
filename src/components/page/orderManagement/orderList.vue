@@ -41,7 +41,7 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column prop="id" label="ID" align="center" width="100" sortable></el-table-column>
-            <el-table-column prop="username" label="手机号" align="center" sortable ></el-table-column>            
+            <el-table-column prop="username" label="手机号" align="center" sortable  width="140"></el-table-column>            
             <el-table-column prop="creatime" label="创建时间" align="center" width="180" sortable>
                 <template slot-scope="scope">
                     {{scope.row.creatime|dateServer}}
@@ -51,7 +51,7 @@
             <el-table-column prop="screenDetail" label="屏幕情况" align="center" ></el-table-column>
 
             <el-table-column prop="displayDetail" label="异常情况" align="center"  ></el-table-column>
-            <el-table-column prop="deviceAlloy" label="新旧情况" align="center"   ></el-table-column>
+            <el-table-column prop="deviceAlloy" label="新旧情况" align="center"   width="100"></el-table-column>
             <el-table-column prop="serialNumber" label="设备号" align="center" sortable ></el-table-column>
 
         </el-table>  

@@ -45,8 +45,11 @@ export default {
         .then(res => {
           let data = res.data;
           _this.items = data;
+                      bus.$emit("error", false);
+  
         })
         .catch(err => {
+          // this.$message.error("请联系管理员或者重新登录");
           _this.items = [
             {
               icon: "icon-gongzuotai",

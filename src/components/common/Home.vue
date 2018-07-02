@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div >
         <v-head></v-head>
         <v-sidebar></v-sidebar>
-        <div class="content-box" :class="{'content-collapse':collapse}">
+        <div class="content-box" :class="{'content-collapse':collapse}" >
             <v-tags></v-tags>
             <div class="content">
                 <transition name="move" mode="out-in">
@@ -21,7 +21,8 @@ import bus from "../../config/bus";
 export default {
   data() {
     return {
-      collapse: false
+      collapse: false,
+      error:true,
     };
   },
   components: {
@@ -32,6 +33,10 @@ export default {
   created() {
     bus.$on("collapse", msg => {
       this.collapse = msg;
+    });
+    bus.$on("error", msg => {
+      this.error = msg;
+      console.log(this.error);
     });
   }
 };

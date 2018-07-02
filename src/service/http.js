@@ -408,7 +408,7 @@ export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString,
 }
 
 //后台管理模块 / admin 贷后管理 操作管理
-export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber,execeedtimeType,collectionStatus ) {
+export function getExec(npage, pagesize, begainTimeString, endTimeString, phonenumber, execeedtimeType, collectionStatus) {
   let data = {
     npage,
     pagesize,
@@ -530,9 +530,13 @@ export function getAddcollectdetail(id, detail, result) {
 }
 
 //后台管理模块 /admin 电销中心 电销列表
-export function getEleUserList(pageNumber, pageSize) {
+export function getEleUserList(pageNumber, pageSize, startDate, endDate, keywords) {
   let data = {
-    pageNumber, pageSize
+    pageNumber,
+    pageSize,
+    startDate,
+    endDate,
+    keywords
   };
   return axios({
     url: '/electrical/userInfo',
@@ -540,3 +544,57 @@ export function getEleUserList(pageNumber, pageSize) {
     data: qs.stringify(data)
   })
 }
+
+//后台管理模块 /adMin 电销回访
+export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money) {
+  let data = {
+    userName,
+    userMobile,
+    salesmanId,
+    loanApplyId,
+    loanOrderId,
+    recallType,
+    remark,
+    recallResult,
+    type,
+    money
+  };
+  return axios({
+    url: '/electrical/salesmanRecall',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / admin 分配电销人员 查询电销员
+export function getEleCompanyId(companyId) {
+  let data = {
+    companyId
+  };
+  return axios({
+    url: '/sys/userByCompanyId',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+
+//后台管理模块 / admin 数据中心 app消息
+export function getAppOption(pagesize, npage, custUserName, startDate, endDate) {
+  let data = {
+    pagesize,
+    npage,
+    custUserName,
+    startDate,
+    endDate
+  };
+  return axios({
+    url: '/app/findCustUserOpinion',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+
