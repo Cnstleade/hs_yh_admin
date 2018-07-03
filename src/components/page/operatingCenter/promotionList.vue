@@ -114,19 +114,19 @@
 
               </el-row>
               <el-tabs type="border-card">
-                  <el-tab-pane label="样式一">
+                  <el-tab-pane label="样式一" style="text-align:center">
                       <vue-qr   :logoSrc="imgSrc.imagePath" :text="imgSrc.value" :size="200" :margin="0"></vue-qr>
                       <div >
                         <span>您的二维码</span>
                       </div>                    
                   </el-tab-pane>
-                  <el-tab-pane label="样式二">
+                  <el-tab-pane label="样式二" style="text-align:center">
                      <vue-q-art :config="imgSrc"></vue-q-art>
                       <div >
                         <span>您的二维码</span>
                       </div>                    
                   </el-tab-pane>
-                  <el-tab-pane label="样式三">
+                  <el-tab-pane label="样式三" style="text-align:center">
                   		<vue-qr :bgSrc='config.imagePath' :logoSrc="config.imagePath" :text="config.value" :size="200" :margin="0"></vue-qr>
                       <div >
                         <span>您的二维码</span>

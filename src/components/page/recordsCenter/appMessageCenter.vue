@@ -53,6 +53,30 @@
             <!-- <el-table-column prop="id" label="是否已读" align="center" sortable ></el-table-column> -->
             <!-- <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
             <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column> -->
+            <el-table-column type="expand" label="回复内容" width="80" >
+              <template slot-scope="props" >
+                <el-alert
+                  title="回复内容"
+                  type="success"
+                  :closable="false"
+                  center
+                  >
+                </el-alert>
+                <el-table
+                  :data="props.row.replyContent"
+                  border 
+                  style="width: 100%"
+                  >
+                      <el-table-column
+                      type="index"
+                      align="center"
+                      sortable
+                      width="50">
+                      </el-table-column>
+                      <el-table-column prop="key" label="回复内容" align="center" ></el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>              
                 <el-table-column prop="cz"  align="center" label="操作" width="200"  >
                     <template slot-scope="scope">
                     <el-button
@@ -206,7 +230,20 @@ export default {
         .then(res => {
           let data = res.data;
           let tableData = data.rows;
-
+          console.log(tableData);
+          for (let a = 0; a < tableData.length; a++) {
+            if (
+              tableData[a].replyContent &&
+              tableData[a].replyContent.length &&
+              Array.isArray(tableData[a].replyContent)
+            ) {
+              for (let b = 0; b < tableData[a].replyContent.length; b++) {
+                tableData[a].replyContent[b] = {
+                  key: `${tableData[a].replyContent[b]}`
+                };
+              }
+            }
+          }
           _this.tableData = tableData;
           _this.total = data.total;
           _this.loading = false;

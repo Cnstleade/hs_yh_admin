@@ -344,7 +344,15 @@ export default new Router({
           component: resolve => require(['../components/page/riskControlCenter/stageCalculator'], resolve),
           meta: {
             title: '分期计算器',
-          }
+          },
+        },
+        {
+          //催收统计
+          path: '/collectionRecords',
+          component: resolve => require(['../components/page/recordsCenter/collectionRecords'], resolve),
+          meta: {
+            title: '催收记录统计',
+          },
         },
         // {
         //   // 申请重审客户
@@ -399,6 +407,10 @@ export default new Router({
     {
       path: '/403',
       component: resolve => require(['../components/page/403.vue'], resolve)
+    },
+    {
+      path: '/appRegister',
+      component: resolve => require(['../components/app/register.vue'], resolve)
     },
     {
       path: '*',

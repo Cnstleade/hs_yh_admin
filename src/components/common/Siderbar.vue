@@ -45,8 +45,7 @@ export default {
         .then(res => {
           let data = res.data;
           _this.items = data;
-                      bus.$emit("error", false);
-  
+          bus.$emit("error", false);
         })
         .catch(err => {
           // this.$message.error("请联系管理员或者重新登录");
@@ -128,7 +127,11 @@ export default {
                 },
                 {
                   nurl: "repayment",
-                  mname: "催收操作管理"
+                  mname: "催收操作"
+                },
+                {
+                  nurl:'/operation',
+                  mname:'催收操作管理'
                 }
               ]
             },
@@ -255,7 +258,7 @@ export default {
                 {
                   nurl: "electricityUserList",
                   mname: "电销中心"
-                }                
+                }
               ]
             },
             {
@@ -286,6 +289,10 @@ export default {
                 {
                   nurl: "financialSituation",
                   mname: "财务状况"
+                },
+                {
+                  nurl: "collectionRecords",
+                  mname: "催收记录统计"
                 }
               ]
             },

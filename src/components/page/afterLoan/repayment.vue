@@ -39,6 +39,7 @@
             class="m20"
             v-loading="loading"
             @selection-change="handleSelectionChange"
+            :rules="rules"
           >
             <el-table-column prop="id" label="提现ID" align="center"  sortable></el-table-column>
             <el-table-column prop="applyId" label="订单ID" align="center"  sortable></el-table-column>
@@ -59,7 +60,7 @@
                         size="mini"
                         type="success"
                         @click="handleAllocation(scope.$index, scope.row)"
-                       >还款</el-button>
+                       >申请还款</el-button>
                     </template> 
                 </el-table-column>            
         </el-table>  
@@ -78,30 +79,38 @@
              </div>
         </el-row>
         <el-dialog
-          title="线下还款"
+          title="提交还款申请"
           :visible.sync="dialogVisible"
           center
           width="40%"
           >
             <el-row>  
-            <el-form  :model="editForm"  ref="editForm"   label-width="150px">
-                <el-form-item label="订单id：" prop="title">
+            <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
+                <el-form-item label="提现id：" prop="title">
                   <el-input v-model="editForm.loanApplyId"    disabled></el-input>
                 </el-form-item>
                 <el-form-item label="逾期的利息：" prop="title">
                   <el-input v-model="editForm.interestOverdue"    disabled></el-input>
                 </el-form-item>
-                <el-form-item label="打折的金额：" prop="title">
+                <!-- <el-form-item label="打折的金额：" prop="title">
                   <el-input v-model="editForm.discountAmt"   placeholder="请输入打折的金额"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="需要还款的金额 ：" prop="title">
                   <el-input v-model="editForm.mustPayBackAmt"    disabled></el-input>
                 </el-form-item>
                 <el-form-item label="实际还款的金额：" prop="title">
                   <el-input v-model="editForm.actualPayBackAmt"   placeholder="请输入实际还款的金额"></el-input>
-                </el-form-item>                                                                
+                </el-form-item>   
+                <el-form-item label="备注：" prop="remarks">
+                  <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    placeholder="请输入还款申请备注"
+                    v-model="editForm.remarks">
+                  </el-input>
+                </el-form-item>                                                                                
 
-                <el-form-item label="图片凭证：" prop="logo">
+                <el-form-item label="图片凭证：" >
                  <el-col >
                     <el-upload
                         action="123"
@@ -110,8 +119,8 @@
                       :on-change="handleChange"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"
+                        :file-list="fileList2"
                       :before-upload="beforeAvatarUpload"
-                      :file-list="fileList2"
                       list-type="picture"
                       :auto-upload="false" >
                       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -123,7 +132,7 @@
                 <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
                 <el-form-item>
                   <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
-                  <el-button @click="editVisible=false">取消</el-button>
+                  <el-button @click="changeDialog()">取消</el-button>
                 </el-form-item>                                                                  
             </el-form>              
             </el-row>
@@ -149,6 +158,17 @@ export default {
   name: "credit",
   data() {
     return {
+      file: false,
+      rules: {
+        remarks: [{ required: true, message: "请填写备注", trigger: "blur" }],
+        logo: [{ required: true, message: "请填写回访结果", trigger: "blur" }]
+        // salesmanId: [
+        //   { required: true, message: "请选择电销人员", trigger: "change" }
+        // ],
+        // recallType: [
+        //   { required: true, message: "请选择类型", trigger: "change" }
+        // ]
+      },
       search: {
         time: [],
         order: null,
@@ -189,6 +209,11 @@ export default {
       multipleSelection: [],
       index: 0
     };
+  },
+  watch: {
+    fileList2(newY) {
+      console.log(newY);
+    }
   },
   methods: {
     getData(npage, pagesize, begainTimeString, endTimeString, phonenumber) {
@@ -279,9 +304,7 @@ export default {
           let data = res.data;
           this.trevewerlist = data;
         })
-        .catch(err => {
-      
-        });
+        .catch(err => {});
     },
     handleConfig() {
       let _this = this;
@@ -328,15 +351,15 @@ export default {
       return row.status === value;
     },
     beforeAvatarUpload(file) {
-      console.log(file);
       //将文件 的所有的内容都添加在这一起上传
       let fd = new FormData();
       fd.append("upload", file);
       fd.append("loanApplyId", Number(this.editForm.loanApplyId)); //其他参数
       fd.append("interestOverdue", Number(this.editForm.interestOverdue)); //其他参数
-      fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
+      // fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
       fd.append("mustPayBackAmt", Number(this.editForm.mustPayBackAmt)); //其他参数
       fd.append("actualPayBackAmt", Number(this.editForm.actualPayBackAmt)); //其他参数
+      fd.append("remarks", Number(this.editForm.remarks)); //其他参数
       // console.log(fd);
       // const isJPG = /image\/\w+/.test(file.type);
       // const isLt2M = file.size / 1024 / 1024 < 4;
@@ -357,23 +380,35 @@ export default {
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
-      console.log(axios);
+      if (!file) {
+        this.$message.error("请上传图片");
+      }
+      this.$message({
+        message: "申请提交成功等待审核",
+        type: "success"
+      });
+      this.dialogVisible = false;
+      this.resetForm("editForm");
       axios.post("/sys/offlinepayment", fd, {});
       return isJPG && isLt2M;
     },
-    onAddSubmit() {
-      console.log(this.$refs.upload);
-      this.$refs.upload.submit();
+    onAddSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$refs.upload.submit();
+        } else {
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
-    handlePreview(file) {
-      console.log(file);
-    },
-    handleChange(file, fileList) {
-      this.fileList2 = fileList.slice(-1);
-    },
+    handlePreview(file) {},
+    handleChange(file, fileList) {},
     updated() {
       let file = e.target.files[0];
       let param = new FormData(); //创建form对象
@@ -388,6 +423,10 @@ export default {
         .then(response => {
           console.log(response.data);
         });
+    },
+    changeDialog() {
+      this.dialogVisible = false;
+      this.resetForm("editForm");
     }
   },
   mounted() {

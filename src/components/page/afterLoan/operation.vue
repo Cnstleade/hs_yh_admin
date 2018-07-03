@@ -7,7 +7,7 @@
               type="info">
             </el-alert>           
         </el-row>     
-  <el-tabs v-model="activeName" type="border-card" class="20" @tab-click="handleClick" v-loading="lodings">
+  <el-tabs v-model="activeName" type="border-card" class="m20" @tab-click="handleClick" v-loading="lodings">
     <el-tab-pane label="进行中催收订单" name="first">
         <el-row class="m20" >
             <el-col   class="col-flex-end">
@@ -102,6 +102,16 @@
                       </el-table-column>
                       <el-table-column  prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
                       <el-table-column  prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                      <el-table-column prop="cz"  align="center" label="操作"   >
+                          <template slot-scope="scope">
+                          <el-button
+                              size="mini"
+                              type="success"
+                              :disabled="scope.row.status===0?true:scope.row.status===1?false:scope.row.status===2?false:scope.row.status===3?true:scope.row.status===4?true:scope.row.status===5?false:true"
+                              @click="handlehk(scope.$index, scope.row)"
+                             >还款申请</el-button>
+                          </template> 
+                      </el-table-column> 
                 </el-table>
                 <el-alert
                   title="催收情况"
@@ -255,7 +265,7 @@
                       </el-table-column>
                       <el-table-column  prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
                       <el-table-column  prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
-                 
+                  
                 </el-table>
                 <el-alert
                   title="催收情况"
@@ -446,6 +456,55 @@
              </div>
         </el-row> -->
         <el-dialog
+          title="提交还款申请"
+          :visible.sync="dialogVisible1"
+          center
+          width="40%"
+          >
+            <el-row>  
+            <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
+                <el-form-item label="提现id：" prop="title">
+                  <el-input v-model="editForm.withdrawId"    disabled></el-input>
+                </el-form-item>
+                <el-form-item label="申请实际还款金额：" prop="title">
+                  <el-input v-model="editForm.realMoney"   placeholder="请输入申请实际还款金额"></el-input>
+                </el-form-item>   
+                <el-form-item label="备注：" prop="remark">
+                  <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    placeholder="请输入还款申请备注"
+                    v-model="editForm.remark">
+                  </el-input>
+                </el-form-item>                                                                                
+                <el-form-item label="图片凭证：" >
+                 <el-col >
+                    <el-upload
+                        action="123"
+                      class="upload-demo"
+                      ref="upload"
+                      :on-change="handleChange"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :file-list="fileList2"
+                      :before-upload="beforeAvatarUpload"
+                      list-type="picture"
+                      :auto-upload="false" >
+                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                      <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+                      <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
+                    </el-upload>                    
+                 </el-col>
+                </el-form-item>
+                <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
+                <el-form-item>
+                  <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
+                  <el-button @click="changeDialog()">取消</el-button>
+                </el-form-item>                                                                  
+            </el-form>              
+            </el-row>
+        </el-dialog>         
+        <el-dialog
           title="添加催收记录"
           :visible.sync="dialogVisible"
           center
@@ -511,6 +570,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import {
   getExec,
   httpExeceedtimeapplydetail,
@@ -524,9 +584,27 @@ export default {
   name: "credit",
   data() {
     return {
+      fileList2: [],
+      rules: {
+        remark: [{ required: true, message: "请填写备注", trigger: "blur" }],
+        title: [
+          { required: true, message: "请选择电销人员", trigger: "change" }
+        ]
+        // recallType: [
+        //   { required: true, message: "请选择类型", trigger: "change" }
+        // ]
+      },
+      editForm: {
+        upload: null,
+        realMoney: "",
+        withdrawId: "",
+        remark: ""
+      },
+      dialogVisible1: false,
       lodings: false,
       distributionStatus: 2,
       activeName: "first",
+      textarea: "",
       search: {
         textarea: "",
         time: [],
@@ -702,7 +780,7 @@ export default {
     handleConfig() {
       let _this = this;
       if (this.textarea !== "" && this.trevewer) {
-        getAddcollectdetail(this.dynamicTags[0],this.textarea,this.trevewer)
+        getAddcollectdetail(this.dynamicTags[0], this.textarea, this.trevewer)
           .then(res => {
             if (res.data.code == 200) {
               this.$message({
@@ -782,6 +860,73 @@ export default {
       setTimeout(() => {
         this.lodings = false;
       }, 500);
+    },
+    handlehk(index, row) {
+      this.editForm.withdrawId = row.id;
+      this.dialogVisible2 = true;
+    },
+    beforeAvatarUpload(file) {
+      //将文件 的所有的内容都添加在这一起上传
+      let fd = new FormData();
+      fd.append("upload", file);
+      fd.append("realMoney", Number(this.editForm.realMoney)); //其他参数
+      fd.append("withdrawId", Number(this.editForm.withdrawId)); //其他参数
+      // fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
+      // fd.append("mustPayBackAmt", Number(this.editForm.mustPayBackAmt)); //其他参数
+      // fd.append("actualPayBackAmt", Number(this.editForm.actualPayBackAmt)); //其他参数
+      fd.append("remark", Number(this.editForm.remark)); //其他参数
+      // console.log(fd);
+      // const isJPG = /image\/\w+/.test(file.type);
+      // const isLt2M = file.size / 1024 / 1024 < 4;
+
+      // if (!isJPG) {
+      //   this.$message.error("必须上传图片!");
+      // }
+      // if (!isLt2M) {
+      //   this.$message.error("上传头像图片大小不能超过 4MB!");
+      // }
+      // return isJPG && isLt2M;
+      const isJPG = /image\/\w+/.test(file.type);
+      const isLt2M = file.size / 1024 / 1024 < 4;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      if (!file) {
+        this.$message.error("请上传图片");
+      }
+      this.$message({
+        message: "申请提交成功等待审核",
+        type: "success"
+      });
+      this.dialogVisible2 = false;
+      this.resetForm("editForm");
+      axios.post("/sys/offlinePaymentapply", fd, {});
+      return isJPG && isLt2M;
+    },
+    onAddSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$refs.upload.submit();
+        } else {
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {},
+    handleChange(file, fileList) {},
+    changeDialog() {
+      this.dialogVisible = false;
+      this.resetForm("editForm");
     }
   },
   mounted() {

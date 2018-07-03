@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
 // axios.defaults.baseURL = 'http:192.168.43.247:8082';
 
 
@@ -689,3 +689,34 @@ export function getSaleman(custUserId) {
     data: qs.stringify(data)
   })
 }
+
+//admin 电销中心 查询已分配的电销员
+export function getCollectionCount(begainTimeString, endTimeString) {
+  let data = {
+    begainTimeString,
+    endTimeString
+  };
+  return axios({
+    url: '/sys/collectioncount',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//admin 电销中心 查询已分配的电销员
+export function getSmsrecordlist(begainTimeString, endTimeString, npage, pagesize, phonenumber) {
+  let data = {
+    begainTimeString,
+    endTimeString,
+    npage,
+    pagesize,
+    phonenumber
+  };
+  return axios({
+    url: '/sys/smsrecordlist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
