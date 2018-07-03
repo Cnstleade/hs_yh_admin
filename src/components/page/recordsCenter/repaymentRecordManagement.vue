@@ -7,14 +7,14 @@
               type="info">
             </el-alert>           
         </el-row> 
-        <el-row class="m20">
-            <el-col :span="6">
+        <el-row  class="m20 col-flex-end">
+            <!-- <el-col :span="6">
                 <el-button-group>
                   <el-button type="primary" @click="handleAdd">新增还款记录</el-button>
                   <el-button type="primary">导出</el-button>
                 </el-button-group>                
-            </el-col>
-            <el-col :span="14" :offset="4" class="col-flex-end">
+            </el-col> -->
+      
                     <el-select  v-model="custUserId" placeholder="催收员ID" class="l20">
                       <el-option
                         v-for="item in custUserIds"
@@ -34,7 +34,7 @@
                       end-placeholder="结束日期">
                     </el-date-picker>   
                     <el-button @click="handleSearch" class="l20" style="margin-left:10px" icon="el-icon-search"  type="success" circle></el-button>                     
-            </el-col>            
+                  
         </el-row>
         <el-alert
         v-if="tableData.length==0"

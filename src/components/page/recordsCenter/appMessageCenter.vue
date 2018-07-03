@@ -40,24 +40,25 @@
             v-loading="loading"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column prop="id" label="ID" align="center"  sortable></el-table-column>
-            <el-table-column prop="custUserId" label="用户ID" align="center"  sortable></el-table-column>
-            <el-table-column prop="custUserName" label="客户名" align="center" sortable></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" align="center" width="180" sortable>
+            <el-table-column prop="id" label="ID" align="center"  width="100" sortable></el-table-column>
+            <!-- <el-table-column prop="custUserId" label="用户ID" width="100" align="center"  sortable></el-table-column> -->
+            <el-table-column prop="custUserName" label="客户名"  width="140" align="center" sortable></el-table-column>
+            <el-table-column prop="createTime" label="创建时间"  align="center" width="180" sortable>
                 <template slot-scope="scope">
                     {{scope.row.createTime|dateServer}}
                 </template>
             </el-table-column>
             <el-table-column prop="opinion" label="反馈" align="center" sortable ></el-table-column>
             <el-table-column prop="phoneNumber" label="手机号码" align="center" width="180" sortable ></el-table-column>
-            <el-table-column prop="id" label="是否已读" align="center" sortable ></el-table-column>
+            <!-- <el-table-column prop="id" label="是否已读" align="center" sortable ></el-table-column> -->
             <!-- <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
             <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column> -->
-                <el-table-column prop="cz"  align="center" label="操作"   >
+                <el-table-column prop="cz"  align="center" label="操作" width="200"  >
                     <template slot-scope="scope">
                     <el-button
                         size="mini"
                         type="success"
+                      @click="handleEmit(scope.$index, scope.row)"
                        >回复</el-button>
                     <el-button
                         size="mini"
@@ -86,54 +87,27 @@
              </div>
         </el-row>
         <el-dialog
-          title="线下还款"
+          title="消息回复"
           :visible.sync="dialogVisible"
           center
           width="40%"
           >
-            <el-row>  
-            <el-form  :model="editForm"  ref="editForm"   label-width="150px">
-                <el-form-item label="订单id：" prop="title">
-                  <el-input v-model="editForm.loanApplyId"    disabled></el-input>
-                </el-form-item>
-                <el-form-item label="逾期的利息：" prop="title">
-                  <el-input v-model="editForm.interestOverdue"    disabled></el-input>
-                </el-form-item>
-                <el-form-item label="打折的金额：" prop="title">
-                  <el-input v-model="editForm.discountAmt"   placeholder="请输入打折的金额"></el-input>
-                </el-form-item>
-                <el-form-item label="需要还款的金额 ：" prop="title">
-                  <el-input v-model="editForm.mustPayBackAmt"    disabled></el-input>
-                </el-form-item>
-                <el-form-item label="实际还款的金额：" prop="title">
-                  <el-input v-model="editForm.actualPayBackAmt"   placeholder="请输入实际还款的金额"></el-input>
-                </el-form-item>                                                                
-
-                <el-form-item label="图片凭证：" prop="logo">
-                 <el-col >
-                    <el-upload
-                        action="123"
-                      class="upload-demo"
-                      ref="upload"
-                      :on-change="handleChange"
-                        :on-preview="handlePreview"
-                        :on-remove="handleRemove"
-                      :before-upload="beforeAvatarUpload"
-                      :file-list="fileList2"
-                      list-type="picture"
-                      :auto-upload="false" >
-                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                      <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
-                      <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
-                    </el-upload>                    
-                 </el-col>
-                </el-form-item>
-                <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
-                <el-form-item>
-                  <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
-                  <el-button @click="editVisible=false">取消</el-button>
-                </el-form-item>                                                                  
-            </el-form>              
+            <el-row>
+              <el-col :span="20" >
+            <el-form :model="ruleForm1" status-icon  ref="ruleForm1" label-width="100px" :rules="rules" >
+              <el-form-item label="客户姓名:" prop="custUserName" >
+                <el-input type="input" v-model="ruleForm1.custUserName" auto-complete="off" disabled></el-input>
+              </el-form-item>
+              <el-form-item label="回复信息:" prop="recallResult">
+                <el-input type="textarea" v-model="ruleForm1.recallResult"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm1')">提交</el-button>
+                <!-- <el-button @click="resetForm('ruleForm2')">重置</el-button> -->
+                <el-button type="primary" style="margin-left:30px" @click="quxiao1">取消</el-button>
+              </el-form-item>
+            </el-form>
+              </el-col>
             </el-row>
         </el-dialog>                  
     </div>
@@ -143,8 +117,9 @@
 import axios from "axios";
 import {
   execeedtimeDistribute,
-  getPaymentlist,
-  getAppOption
+  getAppOption,
+  getSavrUserReply,
+  getReplies
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -152,6 +127,20 @@ export default {
   name: "credit",
   data() {
     return {
+      rules: {
+        remark: [{ required: true, message: "请填写备注", trigger: "blur" }],
+        recallResult: [
+          { required: true, message: "请填写回访结果", trigger: "blur" }
+        ],
+        salesmanId: [
+          { required: true, message: "请选择电销人员", trigger: "change" }
+        ],
+        recallType: [
+          { required: true, message: "请选择类型", trigger: "change" }
+        ]
+      },
+      ruleForm1: {},
+      user: {},
       search: {
         time: [],
         order: null,
@@ -194,6 +183,22 @@ export default {
     };
   },
   methods: {
+    _getSavrUserReply(custUserId, custUserOpinionId, replyContent) {
+      let _this = this;
+      getSavrUserReply(custUserId, custUserOpinionId, replyContent)
+        .then(res => {
+          let data = res.data;
+          if (data.message === "回复成功") {
+            this.$message({
+              message: "添加回复成功",
+              type: "success"
+            });
+            _this.handleSearch();
+            _this.dialogVisible = false;
+          }
+        })
+        .catch();
+    },
     getData(pagesize, npage, custUserName, startDate, endDate) {
       let _this = this;
       this.loading = true;
@@ -201,6 +206,7 @@ export default {
         .then(res => {
           let data = res.data;
           let tableData = data.rows;
+
           _this.tableData = tableData;
           _this.total = data.total;
           _this.loading = false;
@@ -385,6 +391,33 @@ export default {
         .then(response => {
           console.log(response.data);
         });
+    },
+    handleEmit(index, row) {
+      this.ruleForm1 = row;
+      this.dialogVisible = true;
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          console.log(this.ruleForm1.custUserOpinionId);
+          this._getSavrUserReply(
+            this.ruleForm1.custUserId,
+            this.ruleForm1.id,
+            this.ruleForm1.recallResult
+          );
+          this.dialogVisible = false;
+          this.resetForm(formName);
+        } else {
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    quxiao1() {
+      this.dialogVisible = false;
+      _this.resetForm("ruleForm1");
     }
   },
   mounted() {

@@ -2,7 +2,7 @@
     <div class="container">
         <el-row>
             <el-alert
-              title="推广情况列表"
+              title="推广情况统计"
               :closable="false"
               type="info">
             </el-alert>           
@@ -44,19 +44,27 @@
                     :data="tableData"
                     border
                     style="width: 100%">
-                <el-table-column prop="id"  align="center" label="名次"   ></el-table-column>
-                <el-table-column prop="xm"  align="center" label="推广员"></el-table-column>
-                <el-table-column prop="fqsp" align="center" label="类型" ></el-table-column>
-                <el-table-column prop="spje" align="center"  label="推广二维码" >
+                <el-table-column prop="id"  align="center" label="渠道id"  width="100" ></el-table-column>
+                <el-table-column prop="createTime" label="创建时间" align="center" width="180" sortable>
                     <template slot-scope="scope">
-                       <img  @click="handleImg" src="static/img/img.jpg" style="width:50px;cursor:pointer" alt="">
+                        {{scope.row.createTime|dateServer}}
+                    </template>
+                </el-table-column>       
+  
+                <el-table-column prop="promotionCode" align="center" label="推广码" width="200" ></el-table-column>                                    
+                <el-table-column prop="spje" align="center"  label="推广二维码"  width="100">
+                    <template slot-scope="scope">
+                      <div @click="handleImg(scope.$index, scope.row)" style="cursor:pointer">
+                      		<vue-qr   :logoSrc="scope.row.chbqrcode.imagePath" :text="scope.row.chbqrcode.value" :size="20" :margin="0"></vue-qr>
+
+                      </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="sf" align="center" label="注册量" ></el-table-column>
-                <el-table-column prop="yg" align="center" label="已提交机审" ></el-table-column>
-                <el-table-column prop="fqs" align="center" label="机审通过" ></el-table-column>
-                <el-table-column prop="zt" align="center" label="已开通" ></el-table-column>
-                <el-table-column prop="zt" align="center" label="查看提现" >
+                <el-table-column prop="applyPassSum" align="center" label="机申通过数量" ></el-table-column>
+                <el-table-column prop="registeredSum"  align="center" label="注册数量"   ></el-table-column>
+                <el-table-column prop="applySum"  align="center" label="申请数量"   ></el-table-column>                   
+
+                <!-- <el-table-column prop="zt" align="center" label="查看提现" >
                     <template slot-scope="scope">
                         <el-button
                         size="mini"
@@ -64,7 +72,7 @@
                         @click="handleShow"
                         >提现情况</el-button>  
                     </template>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>            
         </el-row>
         <el-row class="m20" v-if="total>0">
@@ -91,9 +99,9 @@
                     :data="lateFeesData"
                     border
                     style="width: 100%">  
-                    <el-table-column prop="sqr" align="center" label="推广员" ></el-table-column>                    
-                    <el-table-column prop="sj"  align="center" label="首单提现金额" ></el-table-column>                    
-                    <el-table-column prop="wyje" align="center" label="总提现金额" ></el-table-column>                    
+                    <el-table-column prop="sqr" align="center" label="样式一" ></el-table-column>                    
+                    <el-table-column prop="sj"  align="center" label="样式二" ></el-table-column>                    
+                    <el-table-column prop="wyje" align="center" label="样式三" ></el-table-column>                    
                 </el-table>                  
         </el-dialog> 
         <el-dialog 
@@ -105,20 +113,56 @@
               <el-row>
 
               </el-row>
-                    <el-card :body-style="{ padding: '0px' }">
-                      <img src="static/img/img.jpg" class="image">
-                      <div style="padding: 14px;text-align:center">
+              <el-tabs type="border-card">
+                  <el-tab-pane label="样式一">
+                      <vue-qr   :logoSrc="imgSrc.imagePath" :text="imgSrc.value" :size="200" :margin="0"></vue-qr>
+                      <div >
+                        <span>您的二维码</span>
+                      </div>                    
+                  </el-tab-pane>
+                  <el-tab-pane label="样式二">
+                     <vue-q-art :config="imgSrc"></vue-q-art>
+                      <div >
+                        <span>您的二维码</span>
+                      </div>                    
+                  </el-tab-pane>
+                  <el-tab-pane label="样式三">
+                  		<vue-qr :bgSrc='config.imagePath' :logoSrc="config.imagePath" :text="config.value" :size="200" :margin="0"></vue-qr>
+                      <div >
+                        <span>您的二维码</span>
+                      </div>                    
+                  </el-tab-pane>
+              </el-tabs>
+                    <!-- <el-card :body-style="{ padding: '20px 0px',textAlign:'center' }">
+                    
+                      <vue-qr   :logoSrc="imgSrc.imagePath" :text="imgSrc.value" :size="200" :margin="0"></vue-qr>
+                      <div >
                         <span>您的二维码</span>
                       </div>
-                    </el-card>
-               
-        </el-dialog>           
+                    </el-card> -->
+        </el-dialog>  
     </div>
 </template>
 <script>
+import VueQArt from "vue-qart";
+import VueQr from "vue-qr";
+
+import { getPromoterList } from "../../../service/http";
 export default {
+  components: {
+    VueQArt,
+    VueQr
+  },
   data() {
     return {
+      config: {
+        value: "www.baidu.com", //显示的值、跳转的地址
+
+        logo: "../../../assets/logo.png" //中间logo的地址
+      },
+
+      src2: "../../../assets/logo.png",
+      imgSrc: {},
       timeout: null,
       search: {
         time: [],
@@ -144,188 +188,7 @@ export default {
         ],
         role: ""
       },
-      tableData: [
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        },
-        {
-          id: "58078",
-          xm: "蒋成富",
-          fqsp: "钱包取现1000元",
-          spje: "1000.00",
-          sf: "0.00",
-          yg: "1000.00",
-          fqs: "14",
-          zt: "结束",
-          wyts: "89",
-          wyje: "1780.00",
-          jmbl: "0.00",
-          sqr: "	考拉征信",
-          tjsj: "2018-03-08"
-        }
-      ],
+      tableData: [],
       total: 0,
       npage: 1,
       pagesize: 10,
@@ -352,7 +215,38 @@ export default {
       ]
     };
   },
+  watch: {
+    // imgVisible(newV) {
+    //   console.log(newV);
+    //   if (newV) {
+    //     this.imgSrc = null;
+    //   }
+    // }
+  },
   methods: {
+    _config(url) {
+      return {
+        value: url,
+        imagePath: require("../../../../static/img/img.jpg"),
+        filter: "color"
+      };
+    },
+    _getPromoterList() {
+      let _this = this;
+      getPromoterList()
+        .then(res => {
+          let data = res.data;
+          let self = _this;
+          for (let a = 0; a < data.length; a++) {
+            console.log(_this);
+            data[a].chbqrcode = self._config(data[a].qrcode);
+          }
+          _this.tableData = data;
+          console.log(_this.tableData);
+        })
+        .catch();
+    },
+
     handleCurrentChange(val) {
       this.npage = val;
     },
@@ -520,12 +414,30 @@ export default {
     handleShow() {
       this.showVisible = true;
     },
-    handleImg() {
-      this.imgVisible = true;
+    handleImg(index, row) {
+      this.imgSrc = null;
+      if (row) {
+        this.imgSrc = this._config(row.qrcode);
+        console.log(this.imgSrc.imagePath);
+        this.imgVisible = true;
+      }
     }
+
+    // qrcode() {
+    //   let qrcode = new QRCode("qrcode", {
+    //     width: 100,
+    //     height: 100, // 高度
+    //     text: "56663159" // 二维码内容
+    //     // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
+    //     // background: '#f0f'
+    //     // foreground: '#ff0'
+    //   });
+    //   console.log(qrcode);
+    // }
   },
   mounted() {
     this.restaurants = this.loadAll();
+    this._getPromoterList();
   }
 };
 </script>
@@ -537,6 +449,14 @@ export default {
 .image {
   width: 100%;
   display: block;
+}
+#query {
+  width: 100px;
+  height: 100px;
+}
+#canvas {
+  width: 80% !important;
+  height: auto !important;
 }
 </style>
 

@@ -12,6 +12,7 @@ import Element from 'element-ui';
 import * as custom from './config/dateFilter';
 import "../src/assets/iconfont/iconfont.css";
 import { get, post, put, patch } from "./service/http";
+import QRCode from 'qrcode' 
 var qs = require('qs');
 Vue.use(Element, {
   size: 'small',

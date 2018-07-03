@@ -546,7 +546,7 @@ export function getEleUserList(pageNumber, pageSize, startDate, endDate, keyword
 }
 
 //后台管理模块 /adMin 电销回访
-export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money) {
+export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId) {
   let data = {
     userName,
     userMobile,
@@ -557,7 +557,8 @@ export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApply
     remark,
     recallResult,
     type,
-    money
+    money,
+    userId
   };
   return axios({
     url: '/electrical/salesmanRecall',
@@ -581,10 +582,11 @@ export function getEleCompanyId(companyId) {
 
 
 //后台管理模块 / admin 数据中心 app消息
-export function getAppOption(pagesize, npage, custUserName, startDate, endDate) {
+export function getAppOption(npage, pagesize, custUserName, startDate, endDate) {
   let data = {
-    pagesize,
+
     npage,
+    pagesize,
     custUserName,
     startDate,
     endDate
@@ -596,5 +598,94 @@ export function getAppOption(pagesize, npage, custUserName, startDate, endDate) 
   })
 }
 
+//后台管理模块 / admin 我的工作台 系统数据大盘
+export function getPlatform(begainTimeString, endTimeString) {
+  let data = {
+    begainTimeString,
+    endTimeString
+  };
+  return axios({
+    url: '/sys/platform',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
 
 
+//后台管理模块 / admin 数据统计 滞纳金管理
+export function getOverduemanager(npage, pagesize, begainTimeString, endTimeString, collectorId) {
+  let data = {
+    npage,
+    pagesize,
+    begainTimeString,
+    endTimeString,
+    collectorId
+  };
+  return axios({
+    url: '/sys/Overduemanager',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /admin 电销中心 新增电销员
+export function getSalesmanId(salesmanId, custUserId, loanOrderId, loanApplyId) {
+  let data = {
+    salesmanId,
+    custUserId,
+    loanOrderId,
+    loanApplyId
+  };
+  return axios({
+    url: '/electrical/salesmanCustUser',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块  admin 数据中心 app消息回复
+export function getSavrUserReply(custUserId, custUserOpinionId, replyContent) {
+  let data = {
+    custUserId,
+    custUserOpinionId,
+    replyContent
+  };
+  return axios({
+    url: '/app/saveUserReply',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//后台管理模块 admin 运营中心 推广情况统计
+export function getPromoterList() {
+  return axios({
+    url: '/promoter/list',
+    method: 'get',
+  })
+}
+
+// admin 用户中心 查询用户反馈意见回复
+export function getReplies(custUserId) {
+  let data = {
+    custUserId,
+  };
+  return axios({
+    url: '/cust/replies',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//admin 电销中心 查询已分配的电销员
+export function getSaleman(custUserId) {
+  let data = {
+    custUserId,
+  };
+  return axios({
+    url: '/electrical/salesman',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}

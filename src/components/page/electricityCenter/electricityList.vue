@@ -105,11 +105,13 @@
               <el-form-item label="客户电话:" prop="userMobile" >
                 <el-input type="input" v-model="ruleForm1.userMobile" auto-complete="off" disabled></el-input>
               </el-form-item>
-
-              <el-form-item label="贷款ID:" prop="loanApplyId" >
-                <el-input v-model.number="ruleForm1.loanApplyId" disabled></el-input>
+              <el-form-item label="客户ID:" prop="custUserId" >
+                <el-input v-model.number="ruleForm1.custUserId" disabled></el-input>
+              </el-form-item>  
+              <el-form-item label="贷款ID:" prop="loanOrderId" >
+                <el-input v-model.number="ruleForm1.loanOrderId" disabled></el-input>
               </el-form-item>              
-              <el-form-item label="订单ID:" prop="loanOrderId" >
+              <el-form-item label="订单ID:" prop="loanOrderId">
                 <el-input v-model.number="ruleForm1.loanOrderId" disabled></el-input>
               </el-form-item>
               <el-form-item label="类型:" prop="type" >
@@ -181,7 +183,10 @@
 import {
   getEleUserList,
   getEleCompanyId,
-  getEleSalesmanRecall
+  getEleSalesmanRecall,
+  getSalesmanId,
+  getReplies,
+  getSaleman
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -200,6 +205,7 @@ export default {
       dialogVisible: false,
       dialogVisible2: false,
       salesmanId: null,
+      editSales: {},
       ruleForm1: {
         userName: "",
         userMobile: "",
@@ -210,7 +216,8 @@ export default {
         remark: "",
         recallResult: "",
         type: "",
-        money: ""
+        money: "",
+        custUserId: ""
       },
       recallType: [
         { value: 1, label: "打电话" },
@@ -244,7 +251,8 @@ export default {
       remark,
       recallResult,
       type,
-      money
+      money,
+      userid
     ) {
       let _this = this;
       getEleSalesmanRecall(
@@ -257,7 +265,8 @@ export default {
         remark,
         recallResult,
         type,
-        money
+        money,
+        userid
       )
         .then(res => {
           let data = res.data;
@@ -291,6 +300,18 @@ export default {
           let data = res.data;
           if (data.code === 200) {
             let tableData = data.data.list;
+            for (let a = 0; a < data.list.length; a++) {
+              getReplies(data.list[a].id)
+                .then(re => {
+                  tableData[a].chbdetail = re.data;
+                })
+                .catch();
+              getSaleman(data.list[a].id)
+                .then(re => {
+                  tableData[a].chbSale = re.data;
+                })
+                .catch();                
+            }
             _this.tableData = tableData;
             _this.total = data.data.total;
             this.loading = false;
@@ -322,6 +343,25 @@ export default {
     },
     handleConfig() {
       let _this = this;
+      getSalesmanId(
+        this.salesmanId,
+        this.editSales.custUserId,
+        this.editSales.loanOrderId,
+        this.editSales.loanApplyId
+      )
+        .then(res => {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$message({
+              message: "分配成功",
+              type: "success"
+            });
+            _this.editSales = null;
+            _this.dialogVisible2 = false;
+            _this.handleSearch();
+          }
+        })
+        .catch();
     },
     handleAdd(index, row) {
       this.dialogVisible = true;
@@ -336,7 +376,8 @@ export default {
         remark: "",
         recallResult: "",
         type: row.type,
-        money: row.money
+        money: row.money,
+        custUserId: row.custUserId
       };
       this._getEleCompanyId(row.companyId);
     },
@@ -345,6 +386,7 @@ export default {
       this.dialogVisible2 = true;
       let companyId = row.companyId;
       this._getEleCompanyId(row.companyId);
+      this.editSales = row;
     },
     filterType(value, row) {
       return row.type == value;
@@ -355,6 +397,7 @@ export default {
 
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
+        console.log(this.ruleForm1);
         if (valid) {
           this._getEleSalesmanRecall(
             this.ruleForm1.userName,
@@ -366,7 +409,8 @@ export default {
             this.ruleForm1.remark,
             this.ruleForm1.recallResult,
             this.ruleForm1.type,
-            this.ruleForm1.money
+            this.ruleForm1.money,
+            this.ruleForm1.custUserId
           );
           this.dialogVisible = false;
           this.resetForm(formName);
@@ -382,9 +426,7 @@ export default {
     quxiao2() {
       this.dialogVisible2 = false;
       this.salesmanId = null;
-    },
-    handleConfig(){
-      //提交
+      this.editSales = null;
     }
   },
   mounted() {

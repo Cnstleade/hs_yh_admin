@@ -214,27 +214,27 @@ export default {
             },
             {
               icon: "icon-xitong",
-              nurl: "PaymentManagement",
+              nurl: "paymentManagement",
               mname: "支付管理",
               list: [
                 {
-                  nurl: "withholdingOrderMaintenance",
+                  nurl: "withholdOrder",
                   mname: "代扣订单维护"
                 },
                 {
-                  nurl: "withholdingMessageManagement",
+                  nurl: "withholdMessage",
                   mname: "代扣消息管理"
                 },
                 {
-                  nurl: "paymentLogManagement",
+                  nurl: "payforLog",
                   mname: "代付日志管理"
                 },
                 {
-                  nurl: "escrowMessageManagement",
+                  nurl: "payforMessage",
                   mname: "代付消息管理"
                 },
                 {
-                  nurl: "lineRepaymentRecord",
+                  nurl: "onlinePayment",
                   mname: "线上还款记录"
                 }
               ]
@@ -251,7 +251,11 @@ export default {
                 {
                   nurl: "promotionList",
                   mname: "推广情况列表"
-                }
+                },
+                {
+                  nurl: "electricityUserList",
+                  mname: "电销中心"
+                }                
               ]
             },
             {
