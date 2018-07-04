@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-//axios.defaults.baseURL = 'http://47.88.171.117:8084';
+//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+axios.defaults.baseURL = 'http://47.88.171.117:8084';
 // axios.defaults.baseURL = 'http:192.168.43.247:8082';
 
 
@@ -720,3 +720,65 @@ export function getSmsrecordlist(begainTimeString, endTimeString, npage, pagesiz
 }
 
 
+
+//admin 数据中心 全部客户管理 客户信息列表
+export function getCustomerPage(CustUserId) {
+  let data = {
+    CustUserId
+  };
+  return axios({
+    url: '/custUser/getCustomerPage',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//admin 数据中心 全部客户管理 客户信息列表
+export function deleteMessage(id) {
+  let data = {
+    id
+  };
+  return axios({
+    url: '/app/deleteMessage',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//h5  注册
+export function getH5Register(url, moblie, PromotionCode, PromotionMoblie) {
+  let data = {
+    url, moblie, PromotionCode, PromotionMoblie
+  };
+  return axios({
+    url: '/promoter/registered',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//返回值是验证码  比较一下
+export function getH5Sms(moblie) {
+  let data = {
+    moblie
+  };
+  return axios({
+    url: '/promoter/getVerificationCode',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//返回值是验证码  比较一下
+export function getOfflinePaymentapplydetail(withdrawId) {
+  let data = {
+    withdrawId
+  };
+  return axios({
+    url: '/sys/offlinePaymentapplydetail',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}

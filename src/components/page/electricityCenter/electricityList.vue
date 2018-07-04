@@ -300,13 +300,15 @@ export default {
           let data = res.data;
           if (data.code === 200) {
             let tableData = data.data.list;
-            for (let a = 0; a < data.list.length; a++) {
-              getReplies(data.list[a].id)
+            for (let a = 0; a < tableData.length; a++) {
+              console.log(tableData[a].custUserId);
+              getReplies(tableData[a].custUserId)
                 .then(re => {
-                  tableData[a].chbdetail = re.data;
+                  // tableData[a].chbdetail = re.data;
+                  console.log(re)
                 })
                 .catch();
-              getSaleman(data.list[a].id)
+              getSaleman(tableData[a].custUserId)
                 .then(re => {
                   tableData[a].chbSale = re.data;
                 })

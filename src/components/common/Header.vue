@@ -38,8 +38,8 @@
                     {{username}}<i class="el-icon-caret-bottom"></i>
                 </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="basicInformation">基本资料</el-dropdown-item>
-          <el-dropdown-item command="passwordManagement">密码管理</el-dropdown-item>
+          <el-dropdown-item command="admin/basicInformation">基本资料</el-dropdown-item>
+          <el-dropdown-item command="editPassword">密码管理</el-dropdown-item>
           <el-dropdown-item command="loginout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

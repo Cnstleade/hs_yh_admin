@@ -397,6 +397,13 @@ export default new Router({
       ]
     },
     {
+      path: '/operation1',
+      component: resolve => require(['../components/page/afterLoan/operation.vue'], resolve),
+      meta: {
+        title: '催收操作管理'
+      }
+    },
+    {
       path: '/login',
       component: resolve => require(['../components/page/Login.vue'], resolve)
     },

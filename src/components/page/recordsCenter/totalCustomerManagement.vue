@@ -139,6 +139,7 @@
               width="95%"
               title="客户信息表"
               center
+            
          >
 
             <el-row style="overflow: hidden;">
@@ -155,42 +156,70 @@
                                     border
                                     style="width: 100%"
                             >
-                                <el-table-column prop="xm" label="姓名" align="center" ></el-table-column>
-                                <el-table-column prop="xb" label="性别" align="center" ></el-table-column>
-                                <el-table-column prop="khzt" label="客户状态" align="center" ></el-table-column>
-                                <el-table-column prop="sfzh" label="身份证号" align="center"></el-table-column>
-                                <el-table-column prop="sjh" label="手机号" align="center" ></el-table-column>
-                                <el-table-column prop="khh" label="开户行" align="center" ></el-table-column>
-                                <el-table-column prop="yhkh" label="银行卡号" align="center" ></el-table-column>
-                                <el-table-column prop="wx" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="qq" label="QQ" align="center" ></el-table-column>
-                                <el-table-column prop="gzdw" label="工作单位" align="center" width="500"></el-table-column>
-                                <el-table-column prop="xszh" label="学生证号" align="center" ></el-table-column>
-                                <el-table-column prop="ly" label="来源" align="center" ></el-table-column>
+                                <el-table-column prop="realName" label="姓名" align="center" ></el-table-column>
+                                <el-table-column prop="status"  align="center" label="状态"   width="150"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.status===1?'':scope.row.status===2?'success':scope.row.status===3?'info':scope.row.status===4?'warning':'danger'"
+                                      >{{scope.row.status===1?'业务员维护中':scope.row.status===2?'审核分配中':scope.row.status===3?'审核中':scope.row.status===4?'弃用':'停用'}}</el-tag>
+                                  </template>   
+                                </el-table-column> 
+                                <el-table-column prop="idcard" label="身份证号" align="center" width="180"></el-table-column>
+                                <el-table-column prop="phoneNumber" label="手机号" align="center" ></el-table-column>
+                                <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column>
+                                <el-table-column prop="wxNumber" label="微信号" align="center" ></el-table-column>
+                                <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column>
+                                <el-table-column prop="detailAddress" label="地址" align="center" width="500"></el-table-column>
+                                <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
+                                 >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.mariage===1?'':scope.row.mariage===2?'success':'danger'"
+                                      >{{scope.row.mariage===1?'未婚':scope.row.mariage===2?'已婚':'离婚'}}</el-tag>
+                                  </template>                     
+                                </el-table-column>    
+                                <el-table-column prop="eduBack"  align="center" label="教育背景"   width="100"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.eduBack===1?'':scope.row.eduBack===2?'success':scope.row.eduBack===3?'info':scope.row.eduBack===4?'warning':scope.row.eduBack===5?'danger':''"
+                                      >{{scope.row.eduBack===1?'高中':scope.row.eduBack===2?'大专':scope.row.eduBack===3?'本科':scope.row.eduBack===4?'硕士':scope.row.eduBack===5?'博士':'其它'}}</el-tag>
+                                  </template>   
+                                </el-table-column>   
+                                <el-table-column prop="source"  align="center" label="来源"  width="80"
+                                   >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.source===1?'':scope.row.source===2?'success':'danger'"
+                                      >{{scope.row.source===1?'苹果':scope.row.source===2?'安卓':'网页'}}</el-tag>
+                                  </template> 
+                                </el-table-column>                                                                                         
                             </el-table>
                         </td>
                     </tr>
                     <tr>
-                        <th  class="bgcolor "  >认证信息</th>
-                        <td colspan="5" id="tb1">
+                        <th  class="bgcolor "  >联系人信息</th>
+                        <td colspan="5" >
                             <el-table
                                     :data="rzData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="xm"   width="100"></el-table-column>
-                                <el-table-column prop="zz" ></el-table-column>
-                                <el-table-column prop="dh"   ></el-table-column>
+                                <el-table-column prop="relationship" align="center" label="关系"  width="100"></el-table-column>
+                                <el-table-column prop="real_name" align="center" label="姓名"  width="100"></el-table-column>
+                                <el-table-column prop="mob_number" align="center"  label="电话号码" width="120"></el-table-column>
+                                <el-table-column prop="address"  align="center" label="地址" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor">联系人信息</th>
                         <td colspan="5" >
                             <table class="table table_2">
                                 &nbsp;
                             </table>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <th  class="bgcolor">授权验证</th>
                         <td colspan="5" >
@@ -236,13 +265,19 @@
                                     :data="qbData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="qbzt"   label="钱包状态"   ></el-table-column>
-                                <el-table-column prop="zcsj"  label="注册时间"></el-table-column>
-                                <el-table-column prop="scdl"  label="上次登录时间" ></el-table-column>
-                                <el-table-column prop="zcd"  label="注册地" ></el-table-column>
-                                <el-table-column prop="sqed"  label="当前授信额度" ></el-table-column>
-                                <el-table-column prop="sxfqed"  label="当前授信分期额度" ></el-table-column>
-                                <el-table-column prop="dzht"  label="电子合同" ></el-table-column>
+                                <el-table-column prop="status"   label="钱包状态"   align="center" ></el-table-column>
+                                <el-table-column prop="createTime"  label="注册时间" align="center">
+                                  <template slot-scope="scope" align="center">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>
+                                <el-table-column prop="applyAmt"  label="审核金额" align="center" ></el-table-column>
+                                <el-table-column prop="approveAmt"  label="签约金额" align="center" ></el-table-column>    
+                                <el-table-column prop="applyTime"  label="申请时间" align="center">
+                                  <template slot-scope="scope" align="center">
+                                      {{scope.row.applyTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>                                
                             </el-table>
                         </td>
                     </tr>
@@ -253,17 +288,19 @@
                                     :data="fqzdData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="id"   label="ID"  width="50" ></el-table-column>
-                                <el-table-column prop="ht"  label="合同号" width="200"></el-table-column>
-                                <el-table-column prop="sp"  label="商品" ></el-table-column>
-                                <el-table-column prop="jg"  label="价格" ></el-table-column>
-                                <el-table-column prop="sf"  label="首付" ></el-table-column>
-                                <el-table-column prop="yg"  label="月供" ></el-table-column>
-                                <el-table-column prop="fqs"  label="分期数" ></el-table-column>
-                                <el-table-column prop="yhqs"  label="已还期数" ></el-table-column>
-                                <el-table-column prop="yhkr"  label="应还款日" ></el-table-column>
-                                <el-table-column prop="sjhk"  label="实际还款时间" ></el-table-column>
-                                <el-table-column prop="zt"  label="状态" ></el-table-column>
+                                <el-table-column prop="userId"  align="center" label="ID"  width="50" ></el-table-column>
+                                <el-table-column prop="borrowDay" align="center" label="借款期限" width="200"></el-table-column>
+                                <el-table-column prop="borrowTime" align="center" label="借款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.borrowTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="returnTime" align="center" label="还款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.returnTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="withdrawMoney" align="center" label="还款金额" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
@@ -274,14 +311,43 @@
                                     :data="hkjlData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="xh"   label="序号"  width="50" ></el-table-column>
-                                <el-table-column prop="id"  label="订单ID" width="200"></el-table-column>
-                                <el-table-column prop="hkje"  label="还款金额" ></el-table-column>
-                                <el-table-column prop="qs"  label="期数" ></el-table-column>
-                                <el-table-column prop="hklx"  label="还款类型" ></el-table-column>
-                                <el-table-column prop="zlj"  label="滞纳金" ></el-table-column>
-                                <el-table-column prop="hksj"  label="还款时间" ></el-table-column>
-                                <el-table-column prop="cz"  label="操作" ></el-table-column>
+                                <el-table-column prop="withdrawInfoId"   label="id"  width="50" ></el-table-column>
+                                <el-table-column prop="type"  align="center" label="还款类型"   width="150"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.status===1?'':'success'"
+                                      >{{scope.row.status===1?'app还款':'线下还款'}}</el-tag>
+                                  </template>   
+                                </el-table-column>                                 
+                                <el-table-column prop="mustPayBackAmt"  label="应还款" width="200"></el-table-column>
+                                <el-table-column prop="actualPayBackAmt"  label="实际还款" ></el-table-column>
+                                <el-table-column prop="backDate"  label="还款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.backDate|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="createTime"  label="更新时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>                                                                  
+                                <el-table-column prop="bankCardNumber"  label="还款银行卡卡号" ></el-table-column>
+                                <el-table-column prop="custname"  label="用户名" ></el-table-column>
+                                <el-table-column prop="success"  label="是否还款成功" >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.success?'success':'danger'"
+                                      >{{scope.row.success?'成功':'失败'}}</el-tag>
+                                  </template>                                     
+                                </el-table-column>
+                                <el-table-column prop="nomal"  label="是否是正常还款" >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.nomal?'success':'danger'"
+                                      >{{scope.row.nomal?'线上还款':'线下还款'}}</el-tag>
+                                  </template>                                     
+                                </el-table-column>
                             </el-table>
                         </td>
                     </tr>
@@ -411,7 +477,7 @@
 </template>
 
 <script>
-import { getCustUserList } from "../../../service/http";
+import { getCustUserList, getCustomerPage } from "../../../service/http";
 export default {
   data() {
     return {
@@ -423,40 +489,8 @@ export default {
       total: 0,
       npage: 1,
       pagesize: 10,
-      userData: [
-        {
-          xm: "田焕楠",
-          xb: "女",
-          khzt: "启用",
-          sfzh: "320882199209091219",
-          sjh: "13770771244",
-          khh: "--",
-          yhkh: "6212261103004606571",
-          wx: "xuebingqq14",
-          qq: "1516213615",
-          gzdw:
-            "无锡尤尼斯科技有限公司(江苏省无锡市锡山区坊前街道纺城大道289号15-115)",
-          xszh: "未填写",
-          ly: "网络"
-        }
-      ],
-      rzData: [
-        {
-          xm: "薄祥周",
-          zz: "住址：江苏省无锡市锡山区东亭街道华夏中路金锡南苑15栋301",
-          dh: "电话：138-6175-9537"
-        },
-        {
-          xm: "薄祥周",
-          zz: "住址：江苏省无锡市锡山区东亭街道华夏中路金锡南苑15栋301",
-          dh: "电话：138-6175-9537"
-        },
-        {
-          xm: "薄祥周",
-          zz: "住址：江苏省无锡市锡山区东亭街道华夏中路金锡南苑15栋301",
-          dh: "电话：138-6175-9537"
-        }
-      ],
+      userData: [],
+      rzData: [],
       sqData: [
         {
           xxw: "-",
@@ -467,76 +501,9 @@ export default {
           jdmm: "-"
         }
       ],
-      idCardImgs: [
-        {
-          src: "static/img/img.jpg",
-          label: "身份证正面"
-        },
-        {
-          src: "static/img/demo1.jpg",
-          label: "身份证反面"
-        },
-        {
-          src: "static/img/img1.jpg",
-          label: "人脸识别照"
-        },
-        {
-          src: "static/img/img2.jpg",
-          label: "银行卡照片"
-        }
-      ],
-      qbData: [
-        {
-          qbzt: "已通过",
-          zcsj: "	2017-03-10 09:32:16",
-          scdl: "	2017-03-10 09:32:16",
-          zcd: "上海市松江区",
-          sqed: "0.00",
-          sxfqed: "1600",
-          dzht: "点击查看"
-        }
-      ],
-      fqzdData: [
-        {
-          id: "1",
-          ht: "	QB1083-20170328160408",
-          sp: "钱包取现500元",
-          jg: "	500.00",
-          sf: "0.00",
-          yg: "500.00",
-          fqs: "14(天)",
-          yhqs: "0",
-          yhkr: "2017-04-11",
-          sjhk: "2017-04-11",
-          zt: "启用"
-        },
-        {
-          id: "1",
-          ht: "	QB1083-20170328160408",
-          sp: "钱包取现500元",
-          jg: "	500.00",
-          sf: "0.00",
-          yg: "500.00",
-          fqs: "14(天)",
-          yhqs: "0",
-          yhkr: "2017-04-11",
-          sjhk: "2017-04-11",
-          zt: "启用"
-        },
-        {
-          id: "1",
-          ht: "	QB1083-20170328160408",
-          sp: "钱包取现500元",
-          jg: "	500.00",
-          sf: "0.00",
-          yg: "500.00",
-          fqs: "14(天)",
-          yhqs: "0",
-          yhkr: "2017-04-11",
-          sjhk: "2017-04-11",
-          zt: "启用"
-        }
-      ],
+      idCardImgs: [],
+      qbData: [],
+      fqzdData: [],
       hkjlData: [
         {
           xh: "253",
@@ -633,7 +600,12 @@ export default {
       },
       search: {
         source: null,
-        sources: [{label: "全部", value: null },{ label: "android", value: 2 }, { label: "ios", value: 1 }, { label: "网页", value: 3 }],
+        sources: [
+          { label: "全部", value: null },
+          { label: "android", value: 2 },
+          { label: "ios", value: 1 },
+          { label: "网页", value: 3 }
+        ],
         realName: null,
         phoneNumber: null,
         idcard: null
@@ -650,7 +622,9 @@ export default {
           this.total = data.total;
           this.loading = false;
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("请检查网络连接或联系管理员");
+        });
     },
     handleSearch() {
       this.getData(
@@ -662,8 +636,43 @@ export default {
         this.search.idcard
       );
     },
-    handleDetail() {
-      this.checkVisible = true;
+    handleDetail(index, row) {
+      console.log(row);
+      let _this = this;
+      let CustUserId = row.id;
+      _this.userData ? (_this.userData.length = 0) : (_this.userData = []);
+      _this.rzData ? (_this.rzData.length = 0) : (_this.rzData = []);
+      _this.qbData ? (_this.qbData.length = 0) : (_this.qbData = []);
+      _this.fqzdData ? (_this.fqzdData.length = 0) : (_this.fqzdData = []);
+      _this.hkjlData ? (_this.hkjlData.length = 0) : (_this.hkjlData = []);
+      _this.idCardImgs
+        ? (_this.idCardImgs.length = 0)
+        : (_this.idCardImgs = []);
+      getCustomerPage(CustUserId)
+        .then(res => {
+          let data = res.data;
+          _this.userData.push(row);
+          _this.rzData = data.contactUserDOList;
+          _this.idCardImgs = [
+            {
+              src: data.custIdcardImageList[0].fullfaceUrl,
+              label: "身份证正面"
+            },
+            {
+              src: data.custIdcardImageList[0].reverseStorageUrl,
+              label: "身份证反面"
+            },
+            {
+              src: data.custIdcardImageList[0].handStorageUrl,
+              label: "手持照"
+            }
+          ];
+          _this.qbData.push(data.walletMessage);
+          _this.fqzdData = data.withDrawDOList;
+          _this.hkjlData = data.loanRepaymentList;
+          _this.checkVisible = true;
+        })
+        .catch();
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -688,19 +697,18 @@ export default {
       this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
     },
     onSubmit() {},
-    filterSource(value, row){
-       return row.source === value;   
+    filterSource(value, row) {
+      return row.source === value;
     },
-    filterMariage(value, row){
-       return row.mariage === value;   
+    filterMariage(value, row) {
+      return row.mariage === value;
     },
-    filterEduBack(value, row){
-       return row.eduBack === value;   
-    }  ,
-    filterStatus(value, row){
-       return row.status === value;  
-    }      
-  
+    filterEduBack(value, row) {
+      return row.eduBack === value;
+    },
+    filterStatus(value, row) {
+      return row.status === value;
+    }
   },
   mounted() {
     this.getData(this.npage, this.pagesize);
@@ -708,7 +716,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 #dialog .el-dialog__header {
   display: none;
 }

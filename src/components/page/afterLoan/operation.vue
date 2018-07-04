@@ -48,8 +48,6 @@
             class="m20"
             @selection-change="handleSelectionChange"
           >
-     
-       
             <el-table-column prop="id" label="订单号" align="center"  sortable></el-table-column>
             <el-table-column prop="userName" label="姓名" align="center" ></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
@@ -102,14 +100,31 @@
                       </el-table-column>
                       <el-table-column  prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
                       <el-table-column  prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                      <el-table-column  prop="overdue.lateFee" label="线下还款申请情况" align="center" >
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="scope.row.loanRepaymentApplyId?'success':'danger'"
+                            >{{scope.row.loanRepaymentApplyId?'有':'无'}}</el-tag>
+                        </template>   
+                      </el-table-column>
                       <el-table-column prop="cz"  align="center" label="操作"   >
                           <template slot-scope="scope">
                           <el-button
                               size="mini"
+                              v-if="!scope.row.loanRepaymentApplyId"
                               type="success"
                               :disabled="scope.row.status===0?true:scope.row.status===1?false:scope.row.status===2?false:scope.row.status===3?true:scope.row.status===4?true:scope.row.status===5?false:true"
                               @click="handlehk(scope.$index, scope.row)"
-                             >还款申请</el-button>
+                             >还款申请
+                             </el-button>
+                          <el-button
+                              v-if="scope.row.loanRepaymentApplyId"
+                              size="mini"
+                              type="success"
+                              :disabled="scope.row.status===0?true:scope.row.status===1?false:scope.row.status===2?false:scope.row.status===3?true:scope.row.status===4?true:scope.row.status===5?false:true"
+                              @click="handleXK(scope.$index, scope.row)"
+                             >申请修改
+                             </el-button>                             
                           </template> 
                       </el-table-column> 
                 </el-table>
@@ -463,10 +478,13 @@
           >
             <el-row>  
             <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
-                <el-form-item label="提现id：" prop="title">
+                <el-form-item label="提现id：" >
                   <el-input v-model="editForm.withdrawId"    disabled></el-input>
                 </el-form-item>
-                <el-form-item label="申请实际还款金额：" prop="title">
+                <el-form-item label="需要还款金额：" >
+                  <el-input v-model="editForm.yMoney"   disabled></el-input>
+                </el-form-item>                   
+                <el-form-item label="申请实际还款金额：" prop="realMoney">
                   <el-input v-model="editForm.realMoney"   placeholder="请输入申请实际还款金额"></el-input>
                 </el-form-item>   
                 <el-form-item label="备注：" prop="remark">
@@ -541,6 +559,7 @@
               </el-alert>   
             </el-row>
             <el-input
+              class="m20"
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入催收描述"
@@ -565,7 +584,101 @@
               <el-button type="primary" style="margin-left:30px" @click="handleConfig">确认</el-button>
               <el-button type="primary" style="margin-left:30px" @click="dialogVisible=false">取消</el-button>
             </el-row>
-        </el-dialog>                  
+        </el-dialog>  
+            <!-- <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
+                <el-form-item label="提现id：" >
+                  <el-input v-model="editForm.withdrawId"    disabled></el-input>
+                </el-form-item>
+                <el-form-item label="需要还款金额：" >
+                  <el-input v-model="editForm.yMoney"   disabled></el-input>
+                </el-form-item>                   
+                <el-form-item label="申请实际还款金额：" prop="realMoney">
+                  <el-input v-model="editForm.realMoney"   placeholder="请输入申请实际还款金额"></el-input>
+                </el-form-item>   
+                <el-form-item label="备注：" prop="remark">
+                  <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    placeholder="请输入还款申请备注"
+                    v-model="editForm.remark">
+                  </el-input>
+                </el-form-item>                                                                                
+                <el-form-item label="图片凭证：" >
+                 <el-col >
+                    <el-upload
+                        action="123"
+                      class="upload-demo"
+                      ref="upload"
+                      :on-change="handleChange"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :file-list="fileList2"
+                      :before-upload="beforeAvatarUpload"
+                      list-type="picture"
+                      :auto-upload="false" >
+                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                      <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
+                    </el-upload>                    
+                 </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
+                  <el-button @click="changeDialog()">取消</el-button>
+                </el-form-item>                                                                  
+            </el-form>                           -->
+
+        <el-dialog
+          title="提交还款申请"
+          :visible.sync="dialogVisible2"
+          center
+          width="40%"
+          >
+            <el-row>  
+            <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
+                <el-form-item label="提现id：" >
+                  <el-input v-model="editForm.withdrawId"    disabled></el-input>
+                </el-form-item>
+                <el-form-item label="需要还款金额：" >
+                  <el-input v-model="editForm.yMoney"   disabled></el-input>
+                </el-form-item>                   
+                <el-form-item label="申请实际还款金额：" prop="realMoney">
+                  <el-input v-model="editForm.realMoney"   placeholder="请输入申请实际还款金额"></el-input>
+                </el-form-item>   
+                <el-form-item label="备注：" prop="remark">
+                  <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    placeholder="请输入还款申请备注"
+                    v-model="editForm.remark">
+                  </el-input>
+                </el-form-item>                                                                                
+                <el-form-item label="图片凭证：" >
+                 <el-col >
+                    <el-upload
+                        action="123"
+                      class="upload-demo"
+                      ref="upload"
+                      :on-change="handleChange"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :file-list="fileList2"
+                      :before-upload="beforeAvatarUpload"
+                      list-type="picture"
+                      :auto-upload="false" >
+                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                      <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+                      <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
+                    </el-upload>                    
+                 </el-col>
+                </el-form-item>
+                <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
+                <el-form-item>
+                  <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
+                  <el-button @click="changeDialog()">取消</el-button>
+                </el-form-item>                                                                  
+            </el-form>              
+            </el-row>
+        </el-dialog>          
     </div>
 </template>
 
@@ -576,19 +689,32 @@ import {
   httpExeceedtimeapplydetail,
   httpGetrevewerlist,
   execeedtimeDistribute,
-  getAddcollectdetail
+  getAddcollectdetail,
+  getOfflinePaymentapplydetail
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
 export default {
   name: "credit",
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value <= 0 || isNaN(value)) {
+        callback(new Error("请输入大于0的数且不为汉字或字符"));
+      } else {
+        // this.$refs.editForm.validateField("realMoney");
+      }
+      callback();
+    };
     return {
+      dialogVisible2: false,
       fileList2: [],
       rules: {
         remark: [{ required: true, message: "请填写备注", trigger: "blur" }],
         title: [
           { required: true, message: "请选择电销人员", trigger: "change" }
+        ],
+        realMoney: [
+          { required: true, validator: validatePass, trigger: "change" }
         ]
         // recallType: [
         //   { required: true, message: "请选择类型", trigger: "change" }
@@ -598,7 +724,8 @@ export default {
         upload: null,
         realMoney: "",
         withdrawId: "",
-        remark: ""
+        remark: "",
+        num: ""
       },
       dialogVisible1: false,
       lodings: false,
@@ -677,7 +804,7 @@ export default {
           _this.tableData = tableData;
           _this.total = data.allsize;
         })
-        .catch();
+        .catch(err => {});
     },
     handleSearch() {
       if (this.search.time && this.search.time.length) {
@@ -863,7 +990,21 @@ export default {
     },
     handlehk(index, row) {
       this.editForm.withdrawId = row.id;
-      this.dialogVisible2 = true;
+      this.editForm.eMoney = row.overdue
+        ? row.withdrawMoney + row.overdue.lateFee
+        : row.withdrawMoney;
+      this.dialogVisible1 = true;
+    },
+    handleXK(index, row) {
+      let id = row.id;
+      let _this = this;
+      getOfflinePaymentapplydetail(id)
+        .then(res => {
+          let data = res.data;
+         
+          _this.dialogVisible2 = true;
+        })
+        .catch();
     },
     beforeAvatarUpload(file) {
       //将文件 的所有的内容都添加在这一起上传
@@ -902,7 +1043,7 @@ export default {
         message: "申请提交成功等待审核",
         type: "success"
       });
-      this.dialogVisible2 = false;
+      this.dialogVisible1 = false;
       this.resetForm("editForm");
       axios.post("/sys/offlinePaymentapply", fd, {});
       return isJPG && isLt2M;
@@ -916,6 +1057,7 @@ export default {
         }
       });
     },
+
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
@@ -930,15 +1072,15 @@ export default {
     }
   },
   mounted() {
-    this.getData(
-      this.npage,
-      this.pagesize,
-      "",
-      "",
-      "",
-      "",
-      this.distributionStatus
-    );
+    // this.getData(
+    //   this.npage,
+    //   this.pagesize,
+    //   "",
+    //   "",
+    //   "",
+    //   "",
+    //   this.distributionStatus
+    // );
   }
 };
 </script>
