@@ -26,7 +26,6 @@
                                       placeholder="开始月份"
                                        value-format="yyyy-MM"
                                       >
-
                                     </el-date-picker> 
                                     <span style="font-size:14px">至</span>
                                     <el-date-picker

@@ -83,13 +83,21 @@
                   border 
                   style="width: 100%"
                   >
-                      <el-table-column prop="custUserId" label="id" align="center" sortable width="100"></el-table-column>
+                      <el-table-column prop="customName" label="客户姓名" align="center" sortable width="100"></el-table-column>
+                      <el-table-column prop="salesmanName" label="电销员姓名" align="center" sortable width="100"></el-table-column>
+                      <el-table-column prop="recallType" label="回访类型" align="center" sortable width="100"></el-table-column>
+                      <el-table-column prop="recallResult" label="回访内容" align="center" sortable ></el-table-column>
+                      <el-table-column prop="updateTime" label="最近回访时间" align="center" sortable width="180">
+                        <template slot-scope="scope">
+                            {{scope.row.updateTime|dateServer}}
+                        </template>                          
+                      </el-table-column>
                       <el-table-column prop="createTime" label="创建时间" align="center" sortable width="180">
                         <template slot-scope="scope">
                             {{scope.row.createTime|dateServer}}
                         </template>                          
-                      </el-table-column>
-                      <el-table-column prop="replyContent" label="内容" align="center" ></el-table-column>                      
+                      </el-table-column>                      
+                      <el-table-column prop="type" label="进入电销中心类型" align="center" width="180" ></el-table-column>                      
                 </el-table>
               </template>
             </el-table-column>  

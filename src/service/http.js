@@ -667,13 +667,13 @@ export function getPromoterList() {
   })
 }
 
-// admin 用户中心 查询用户反馈意见回复
+// / admin 电销中心 查询电销回访详情
 export function getReplies(custUserId) {
   let data = {
     custUserId,
   };
   return axios({
-    url: '/cust/replies',
+    url: '/electrical/recalls',
     method: 'post',
     data: qs.stringify(data)
   })

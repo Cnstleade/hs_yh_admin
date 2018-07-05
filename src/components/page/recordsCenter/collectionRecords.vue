@@ -9,24 +9,21 @@
         </el-row>        
         <el-row class="m20" >
             <el-col   class="col-flex-end">
-                    <!-- <div class="l20">
-                        <el-input
-                        style="padding:0px 10px 0px 0px"
-                          placeholder="请输入手机号码"
-                          v-model="search.phoneNumber"
-                          clearable>
-                        </el-input> 
-                    </div>                                   -->
-                    <el-date-picker
-                    style="width:340px"
-                    class="l20"
-                      v-model="search.time"
-                      type="daterange"
-                      value-format="yyyy-MM-dd"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期">
-                    </el-date-picker>                
+                  <el-date-picker
+                    v-model="month"
+                    type="month"
+                    placeholder="开始月份"
+                     value-format="yyyy-MM"
+                    >
+
+                  </el-date-picker> 
+                  <span style="font-size:14px;line-height:32px;margin:0 10px">至</span>
+                  <el-date-picker
+                    v-model="preMonth"
+                    type="month"
+                    value-format="yyyy-MM"
+                    placeholder="结束月份">
+                </el-date-picker>                                                                       
                     <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
             </el-col>             
         </el-row> 
@@ -102,11 +99,13 @@
 import axios from "axios";
 import { getCollectionCount } from "../../../service/http";
 import Timer from "../../../config/timer";
-import { timeFormat } from "../../../config/time";
+import { timeFormat, getMonth } from "../../../config/time";
 export default {
   name: "credit",
   data() {
     return {
+      month: "",
+      preMonth: "",
       search: {
         time: [],
         order: null,
@@ -162,14 +161,18 @@ export default {
         })
         .catch();
     },
+    _getMonth(a, b) {
+      return getMonth(a, b);
+    },
+    _timeFormat(a, b) {
+      return timeFormat(a, b);
+    },
     handleSearch() {
-      if (this.search.time && this.search.time.length) {
+      if (this.preMonth && this.preMonth) {
         this.getData(
-          this.search.time[0] + " 00:00:00",
-          timeFormat(this.search.time[1], 1) + " 00:00:00"
+          this.month + "-01 00:00:00",
+          this.preMonth + "-01 00:00:00"
         );
-      } else {
-        this.getData("", "");
       }
     },
 
@@ -195,7 +198,9 @@ export default {
     }
   },
   mounted() {
-    this.getData();
+    var a = this._getMonth("s", 0) + " 00:00:00";
+    var b = this._timeFormat(new Date(), 1) + "00:00:00";
+    this.getData(a, b);
   }
 };
 </script>

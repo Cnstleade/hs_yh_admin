@@ -1631,38 +1631,14 @@
           auditMoney: '',     //审核金额
         },
         tabs: [
-          /*{
-            name: "全部",
-            url: "/sys/loanapply"
-          },
-          {
-            name: "待分配",
-            url: "/sys/allocatedList"
-          },*/
           {
             name: "审核中",
             url: "/sys/UnderReviewList"
           },
-          /*{
-            name: "待通过",
-            url: "/sys/ManagerReview"
-          },
           {
-            name: "待驳回",
-            url: "/sys/RejectedList"
+            name: "已审核",
+            url: "/sys/getApplyed"
           },
-          {
-            name: "已通过",
-            url: "/sys/getOverList"
-          },
-          {
-            name: "高风险",
-            url: "/sys/RefuseList"
-          },
-          {
-            name: "其他",
-            url: ""
-          }*/
         ]
       };
     },

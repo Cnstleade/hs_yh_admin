@@ -1536,8 +1536,8 @@
             url: "/sys/RefuseList"
           },*/
           {
-            name: "其他",
-            url: ""
+            name: "未通过",
+            url: "/sys/getNotApplyOrder"
           }
         ]
       };

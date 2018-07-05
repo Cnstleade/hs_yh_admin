@@ -99,17 +99,7 @@
         title="修改角色菜单"
         :visible.sync="EditRoleMenuModal"
         width="30%">
-        <el-tree
-          :data="menuList"
-          ref="tree"
-          show-checkbox
-          check-on-click-node
-          highlight-current
-          node-key="mid"
-          @check-change="handleCheckChange"
-          :default-checked-keys="defaultChecked"
-          :props="defaultProps">
-        </el-tree>
+        <tree-view :menuData="menuList"></tree-view>
         <span slot="footer" class="dialog-footer">
           <el-button @click="EditRoleMenuModal = false">取 消</el-button>
           <el-button type="primary" @click="EditRoleMenuInfo">确 定</el-button>
@@ -123,6 +113,7 @@
   import {timeFormat} from "../../../config/time";
   import {Message} from "element-ui";
   import {config} from "../../../util/config";
+  import treeView from "./treeView"
 
   export default {
     data() {
@@ -157,8 +148,12 @@
         defaultProps: {
           children: 'list',
           label: 'mname'
-        }
+        },
       };
+    },
+
+    components: {
+      'tree-view': treeView
     },
 
     // 监听
@@ -341,7 +336,7 @@
         })
       },
 
-      handleCheckChange(data, checked, indeterminate){
+      handleCheckChange(data, checked, indeterminate) {
         console.log(data, checked, indeterminate);
       },
 
