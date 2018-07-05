@@ -393,7 +393,15 @@ export default new Router({
           meta: {
             title: '申请重审客户',
           }
-        }
+        },
+        {
+          // 申请重审客户
+          path: '/table',
+          component: resolve => require(['../components/page/table/table'], resolve),
+          meta: {
+            title: 'table',
+          }
+        }        
       ]
     },
     {

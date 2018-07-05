@@ -133,7 +133,7 @@ export default {
     },
     submit() {
       var isMobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
-
+      var url = window.location.href
       if (this.mobile && isMobile.test(this.mobile)) {
         console.log(this.code);
         if (this.sms == this.code) {

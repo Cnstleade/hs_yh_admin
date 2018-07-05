@@ -343,23 +343,20 @@ export default {
           if (data.code === 200) {
             let tableData = data.data.list;
             for (let a = 0; a < tableData.length; a++) {
-              console.log(tableData[a].custUserId);
               getReplies(tableData[a].custUserId)
                 .then(re => {
                   tableData[a].chbdetail = re.data.data;
-                  console.log(re);
-                })
-                .catch();
-              getSaleman(tableData[a].custUserId)
-                .then(re => {
-                  tableData[a].chbSale = re.data.data;
+                  getSaleman(tableData[a].custUserId)
+                    .then(re => {
+                      tableData[a].chbSale = re.data.data;
+                      _this.tableData = tableData;
+                      _this.total = data.data.allpage;
+                      _this.loading = false;
+                    })
+                    .catch();
                 })
                 .catch();
             }
-            _this.tableData = tableData;
-            _this.total = data.data.allpage;
-            console.log(_this.tableData);
-            this.loading = false;
           } else {
           }
         })
@@ -416,7 +413,7 @@ export default {
         userName: row.custUserName,
         userMobile: row.custUserMobile,
         salesmanId: row.chbSale.id,
-        salesman:row.chbSale.username,
+        salesman: row.chbSale.username,
         loanApplyId: row.loanApplyId,
         loanOrderId: row.loanOrderId,
         recallType: "",
@@ -474,7 +471,7 @@ export default {
     },
     quxiao2() {
       this.dialogVisible2 = false;
-      
+
       this.editSales = null;
     }
   },

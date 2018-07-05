@@ -72,7 +72,6 @@
             <el-table-column prop="daysOverdue" label="逾期天数" align="center" ></el-table-column>
             <el-table-column prop="interestOverdue" label="逾期利息" align="center" ></el-table-column>
             <el-table-column prop="discountAmt" label="打折金额" align="center" ></el-table-column>
-            <el-table-column prop="discountAmt" label="打折金额" align="center" ></el-table-column>
             <el-table-column prop="mustPayBackAmt" label="应还款" align="center" ></el-table-column>
             <el-table-column prop="actualPayBackAmt" label="实际还款" align="center" ></el-table-column>
             <el-table-column prop="backDate" label="还款日期" align="center" width="150">
