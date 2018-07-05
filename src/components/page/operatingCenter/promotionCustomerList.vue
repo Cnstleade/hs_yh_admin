@@ -79,16 +79,16 @@
                                     border
                                     style="width: 100%"
                             >
-                                <el-table-column prop="id" label="ID" align="center" width="70"></el-table-column>                            
-                                <el-table-column prop="username" label="姓名" align="center" width="130"></el-table-column>
-                                <el-table-column prop="status" label="客户状态" align="center" width="130"></el-table-column>
-                                <el-table-column prop="idCard" label="身份证号" align="center" width="180"></el-table-column>
-                                <el-table-column prop="mobile" label="手机号" align="center" width="130"></el-table-column>
+                                <el-table-column prop="id" label="ID" align="center" width="100"></el-table-column>                            
+                                <el-table-column prop="username" label="姓名" align="center" width="160"></el-table-column>
+                                <el-table-column prop="status" label="客户状态" align="center" width="160"></el-table-column>
+                                <el-table-column prop="idCard" label="身份证号" align="center" width="200"></el-table-column>
+                                <el-table-column prop="mobile" label="手机号" align="center" width="160"></el-table-column>
                                 <el-table-column prop="qq" label="qq" align="center" ></el-table-column>
                                 <el-table-column prop="wx" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="createTime" label="注册时间" align="center" width="150"></el-table-column>
-                                <el-table-column prop="gzdw" label="工作单位" align="center" width="300"></el-table-column>
-                                <el-table-column prop="xszh" label="学生证号" align="center" ></el-table-column>
+                                <el-table-column prop="createTime" label="注册时间" align="center" width="190"></el-table-column>
+                                <!-- <el-table-column prop="gzdw" label="工作单位" align="center" width="300"></el-table-column>
+                                <el-table-column prop="xszh" label="学生证号" align="center" ></el-table-column> -->
                                 <el-table-column prop="source" label="来源" align="center" width="130"></el-table-column>
                             </el-table>
                         </td>
@@ -502,7 +502,7 @@ export default {
         .then(res => {
           let data = res.data.data;
           _this.tableData = data.list;
-          _this.total = data.total;
+          _this.total = data.allsize;
           _this.loading = false;
         })
         .catch();

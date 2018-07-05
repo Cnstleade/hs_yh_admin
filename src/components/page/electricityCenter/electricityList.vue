@@ -61,6 +61,38 @@
                       <el-table-column prop="companyName" label="机构名" align="center" ></el-table-column>
                       <el-table-column prop="custUserName" label="客户姓名" align="center"  min-width="80"></el-table-column>
                       <el-table-column prop="money" label="所剩金额" align="center" sortable ></el-table-column>
+                      <el-table-column prop="chbSale" label="电销人员" align="center"  width="140" >
+                        <template slot-scope="scope" >
+                            <el-tag
+                                :type="scope.row.chbSale?'success':'danger'"
+                                style="width:100px"
+                            >{{scope.row.chbSale?scope.row.chbSale:'暂无电销人员'}}</el-tag>
+                        </template> 
+                      </el-table-column>  
+            <el-table-column type="expand" label="回访详情" width="80" >
+              <template slot-scope="props" >
+                <el-alert
+                  title="回访记录"
+                  type="success"
+                  :closable="false"
+                  center
+                  >
+                </el-alert>
+                <el-table
+                  :data="props.row.chbdetail"
+                  border 
+                  style="width: 100%"
+                  >
+                      <el-table-column prop="custUserId" label="id" align="center" sortable width="100"></el-table-column>
+                      <el-table-column prop="createTime" label="创建时间" align="center" sortable width="180">
+                        <template slot-scope="scope">
+                            {{scope.row.createTime|dateServer}}
+                        </template>                          
+                      </el-table-column>
+                      <el-table-column prop="replyContent" label="内容" align="center" ></el-table-column>                      
+                </el-table>
+              </template>
+            </el-table-column>  
                     <el-table-column prop="cz"  align="center" label="操作" width="200"  >
                         <template slot-scope="scope">
                         <el-button
@@ -71,6 +103,7 @@
                         <el-button
                             size="mini"
                             type="success"
+                            :disabled="scope.row.chbSale?false:true"
                             @click="handleAdd(scope.$index, scope.row)"
                            >添加回访</el-button>                           
                         </template> 
@@ -304,18 +337,19 @@ export default {
               console.log(tableData[a].custUserId);
               getReplies(tableData[a].custUserId)
                 .then(re => {
-                  // tableData[a].chbdetail = re.data;
+                  tableData[a].chbdetail = re.data.data;
                   console.log(re)
                 })
                 .catch();
               getSaleman(tableData[a].custUserId)
                 .then(re => {
-                  tableData[a].chbSale = re.data;
+                  tableData[a].chbSale = re.data.data;
                 })
                 .catch();                
             }
             _this.tableData = tableData;
-            _this.total = data.data.total;
+            _this.total = data.data.allpage;
+            console.log(_this.tableData)
             this.loading = false;
           } else {
           }

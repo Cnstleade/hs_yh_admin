@@ -196,7 +196,10 @@ export default {
               color: "#7a8c99"
             }
           ];
-          _this.show = false;
+          setTimeout(() => {
+            _this.show = false;
+          }, 2000);
+
           this.drawLine(
             data.lendApplyNumber,
             data.overdueApplyNumber,

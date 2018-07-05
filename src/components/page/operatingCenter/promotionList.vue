@@ -56,7 +56,6 @@
                     <template slot-scope="scope">
                       <div @click="handleImg(scope.$index, scope.row)" style="cursor:pointer">
                       		<vue-qr   :logoSrc="scope.row.chbqrcode.imagePath" :text="scope.row.chbqrcode.value" :size="20" :margin="0"></vue-qr>
-
                       </div>
                     </template>
                 </el-table-column>

@@ -62,7 +62,13 @@
                     >{{scope.row.cash_outType===0?'线下还款':'app还款'}}</el-tag>
                 </template>                
             </el-table-column>            
-            <el-table-column prop="recordUrl" label="还款记录图片地址" align="center" ></el-table-column>
+            <el-table-column prop="recordUrl" align="center"  label="还款记录图片"  width="100">
+                <template slot-scope="scope">
+                  <div @click="handleImg(scope.$index, scope.row)" style="cursor:pointer">
+                    <img width="20" :src="scope.row.recordUrl" alt="">
+                  </div>
+                </template>
+            </el-table-column>            
             <el-table-column prop="daysOverdue" label="逾期天数" align="center" ></el-table-column>
             <el-table-column prop="interestOverdue" label="逾期利息" align="center" ></el-table-column>
             <el-table-column prop="discountAmt" label="打折金额" align="center" ></el-table-column>
@@ -159,7 +165,22 @@
                 </el-col>
             </el-row>
 
-        </el-dialog>          
+        </el-dialog>     
+            <el-dialog
+              id="dialog"
+              width="60%"
+              top="100px"
+              title="还款记录图片"
+              :visible.sync="innerImgVisible"
+              >
+                    
+                          <img  :src="imgRul" class="imgCenter">
+                          <!-- <div style="padding: 14px;text-align:center">
+                            <span>{{o.label}}</span>
+                          </div>                                     -->
+                    
+                  
+            </el-dialog>        
     </div>
 </template>
 
@@ -173,6 +194,8 @@ import { timeFormat } from "../../../config/time";
 export default {
   data() {
     return {
+      imgRul:'',
+      innerImgVisible:false,
       addVisible: false,
       addForm: {
         id: "",
@@ -403,7 +426,13 @@ export default {
           address: "普陀区金沙江路1699号鑫乐惠美食广场A13"
         }
       ];
+    },
+    handleImg(index,row){
+      this.imgRul = null;
+      this.imgRul = row.recordUrl;
+      this.innerImgVisible=true;
     }
+    
   },
   created() {
     this.getCustUserIds();
@@ -414,4 +443,9 @@ export default {
 </script>
 
 <style scoped>
+.imgCenter {
+  clear: both;
+  display: block;
+  margin: auto;
+}
 </style>

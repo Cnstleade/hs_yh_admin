@@ -370,12 +370,12 @@
                     <el-row>
                       <el-col :span="8">用户名:<span>{{bankInfo.name}}</span></el-col>
                       <el-col :span="8">银行名称:<span>{{bankInfo.bankName}}</span></el-col>
-                      <el-col :span="8">类型:<span>{{bankInfo.cardType}}</span></el-col>
+                      <el-col :span="8">类型:<span>{{bankInfo.cardType===101?'借记卡':'信用卡'}}</span></el-col>
                     </el-row>
                     <el-row>
-                      <el-col :span="8">银行卡号:<span>{{bankInfo.cardNum}}</span></el-col>
-                      <el-col :span="8">身份证号:<span>{{bankInfo.idNum}}</span></el-col>
-                      <el-col :span="8">宝付签约号:<span>{{bankInfo.protocolNo}}</span></el-col>
+                      <el-col :span="12">银行卡号:<span>{{bankInfo.cardNum}}</span></el-col>
+                      <el-col :span="12">身份证号:<span>{{bankInfo.idNum}}</span></el-col>
+                      <!--<el-col :span="8">宝付签约号:<span>{{bankInfo.protocolNo}}</span></el-col>-->
                     </el-row>
                   </div>
                 </template>

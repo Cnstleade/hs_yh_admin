@@ -370,12 +370,12 @@
                     <el-row>
                       <el-col :span="8">用户名:<span>{{bankInfo.name}}</span></el-col>
                       <el-col :span="8">银行名称:<span>{{bankInfo.bankName}}</span></el-col>
-                      <el-col :span="8">类型:<span>{{bankInfo.cardType}}</span></el-col>
+                      <el-col :span="8">类型:<span>{{bankInfo.cardType===101?'借记卡':'信用卡'}}</span></el-col>
                     </el-row>
                     <el-row>
-                      <el-col :span="8">银行卡号:<span>{{bankInfo.cardNum}}</span></el-col>
-                      <el-col :span="8">身份证号:<span>{{bankInfo.idNum}}</span></el-col>
-                      <el-col :span="8">宝付签约号:<span>{{bankInfo.protocolNo}}</span></el-col>
+                      <el-col :span="12">银行卡号:<span>{{bankInfo.cardNum}}</span></el-col>
+                      <el-col :span="12">身份证号:<span>{{bankInfo.idNum}}</span></el-col>
+                      <!--<el-col :span="8">宝付签约号:<span>{{bankInfo.protocolNo}}</span></el-col>-->
                     </el-row>
                   </div>
                 </template>
@@ -627,20 +627,20 @@
             title="提示"
             :visible.sync="AlertDialog"
             append-to-body>
-            <div style="text-align: center;width: 100%">审核已结束，是否修改审核结果？</div>
+            <div style="text-align: center;width: 100%">自动审核已结束，是否进入人工审核？</div>
             <div style="text-align: right;margin-top: 20px">
               <el-button @click="AlertDialog = false">否</el-button>
               <el-button type="primary" @click="yesSure">是</el-button>
             </div>
           </el-dialog>
         </template>
+
         <el-dialog
           id="report"
           width="70%"
           title="风控报告"
           :visible.sync="CreditReport"
-          append-to-body
-        >
+          append-to-body>
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="芝麻信用报告" name="first" v-if="false">芝麻信用报告</el-tab-pane>
             <el-tab-pane label="同盾信用报告" name="second">

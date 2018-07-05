@@ -103,8 +103,8 @@
                       <el-table-column  prop="overdue.lateFee" label="线下还款申请情况" align="center" >
                         <template slot-scope="scope">
                             <el-tag
-                                :type="scope.row.loanRepaymentApplyId?'success':'danger'"
-                            >{{scope.row.loanRepaymentApplyId?'有':'无'}}</el-tag>
+                                :type="scope.row.loanRepaymentApplyId==1?'success':scope.row.loanRepaymentApplyId==2?'':'danger'"
+                            >{{scope.row.loanRepaymentApplyId==1?'已申请':scope.row.loanRepaymentApplyId==2?'申请成功':'没申请'}}</el-tag>
                         </template>   
                       </el-table-column>
                       <el-table-column prop="cz"  align="center" label="操作"   >
@@ -118,13 +118,21 @@
                              >还款申请
                              </el-button>
                           <el-button
-                              v-if="scope.row.loanRepaymentApplyId"
+                              v-if="scope.row.loanRepaymentApplyId==1"
                               size="mini"
                               type="success"
                               :disabled="scope.row.status===0?true:scope.row.status===1?false:scope.row.status===2?false:scope.row.status===3?true:scope.row.status===4?true:scope.row.status===5?false:true"
                               @click="handleXK(scope.$index, scope.row)"
                              >申请修改
-                             </el-button>                             
+                             </el-button>   
+                          <el-button
+                              size="mini"
+                              v-if="scope.row.loanRepaymentApplyId==2"
+                              type="success"
+                              :disabled="scope.row.status===0?true:scope.row.status===1?false:scope.row.status===2?false:scope.row.status===3?true:scope.row.status===4?true:scope.row.status===5?false:true"
+                              @click="handlehk(scope.$index, scope.row)"
+                             >再次申请
+                             </el-button>                                                       
                           </template> 
                       </el-table-column> 
                 </el-table>
@@ -501,10 +509,11 @@
                         action="123"
                       class="upload-demo"
                       ref="upload"
+                      :limit="1"
+                      :on-exceed="handleExceed"
                       :on-change="handleChange"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"
-                        :file-list="fileList2"
                       :before-upload="beforeAvatarUpload"
                       list-type="picture"
                       :auto-upload="false" >
@@ -518,6 +527,7 @@
                 <el-form-item>
                   <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
                   <el-button @click="changeDialog()">取消</el-button>
+      
                 </el-form-item>                                                                  
             </el-form>              
             </el-row>
@@ -583,6 +593,7 @@
               </el-select>  
               <el-button type="primary" style="margin-left:30px" @click="handleConfig">确认</el-button>
               <el-button type="primary" style="margin-left:30px" @click="dialogVisible=false">取消</el-button>
+              <span style="margin-left:20px;font-size:12px;line-height:30px;color:#999">Tips: 必须上传支付凭证</span>
             </el-row>
         </el-dialog>  
             <!-- <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
@@ -633,11 +644,17 @@
           center
           width="40%"
           >
+
             <el-row>  
-            <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
+            <el-form   :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
                 <el-form-item label="提现id：" >
                   <el-input v-model="editForm.withdrawId"    disabled></el-input>
                 </el-form-item>
+                <el-form-item label="上传申请时间：" >
+                  <el-input v-model="editForm.time"    disabled>
+                    {{editForm.time | dateServer}}
+                  </el-input>
+                </el-form-item>                
                 <el-form-item label="需要还款金额：" >
                   <el-input v-model="editForm.yMoney"   disabled></el-input>
                 </el-form-item>                   
@@ -657,15 +674,19 @@
                     <el-upload
                         action="123"
                       class="upload-demo"
-                      ref="upload"
+                        :limit="1"
+                      ref="upload1"
+                      :on-exceed="handleExceed"
                       :on-change="handleChange"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"
+                  
+                        :before-remove="beforeRemove"
                         :file-list="fileList2"
-                      :before-upload="beforeAvatarUpload"
+                      :before-upload="beforeAvatarUpload1"
                       list-type="picture"
                       :auto-upload="false" >
-                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                      <el-button slot="trigger" size="small" type="primary">重新上传</el-button>
                       <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
                       <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
                     </el-upload>                    
@@ -673,8 +694,9 @@
                 </el-form-item>
                 <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
                 <el-form-item>
-                  <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
+                  <el-button type="primary" @click="onAddSubmit1('editForm')">提交</el-button>
                   <el-button @click="changeDialog()">取消</el-button>
+                              <span style="margin-left:20px;font-size:12px;line-height:30px;color:#999">Tips: 必须上传支付凭证</span>
                 </el-form-item>                                                                  
             </el-form>              
             </el-row>
@@ -690,7 +712,8 @@ import {
   httpGetrevewerlist,
   execeedtimeDistribute,
   getAddcollectdetail,
-  getOfflinePaymentapplydetail
+  getOfflinePaymentapplydetail,
+  getOfflinePaymentapplyUpdata
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -706,6 +729,7 @@ export default {
       callback();
     };
     return {
+      imgAdd: true,
       dialogVisible2: false,
       fileList2: [],
       rules: {
@@ -990,18 +1014,33 @@ export default {
     },
     handlehk(index, row) {
       this.editForm.withdrawId = row.id;
-      this.editForm.eMoney = row.overdue
-        ? row.withdrawMoney + row.overdue.lateFee
-        : row.withdrawMoney;
+      this.editForm.yMoney = row.overdue
+        ? Number(row.withdrawMoney) + Number(row.overdue.lateFee)
+        : Number(row.withdrawMoney);
+
       this.dialogVisible1 = true;
     },
     handleXK(index, row) {
       let id = row.id;
       let _this = this;
+      this.editForm.withdrawId = row.id;
+      this.editForm.yMoney = row.overdue
+        ? Number(row.withdrawMoney) + Number(row.overdue.lateFee)
+        : Number(row.withdrawMoney);
       getOfflinePaymentapplydetail(id)
         .then(res => {
-          let data = res.data;
-         
+          let data = res.data.data;
+          _this.editForm.realMoney = data.realMoney;
+          _this.editForm.remark = data.remark;
+          _this.editForm.time = data.createtime;
+          _this.editForm.urlRemark = data.urlRemark;
+          _this.fileList2 = [
+            {
+              name: "凭证照片",
+              url: data.urlRemark
+            }
+          ];
+
           _this.dialogVisible2 = true;
         })
         .catch();
@@ -1015,7 +1054,7 @@ export default {
       // fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
       // fd.append("mustPayBackAmt", Number(this.editForm.mustPayBackAmt)); //其他参数
       // fd.append("actualPayBackAmt", Number(this.editForm.actualPayBackAmt)); //其他参数
-      fd.append("remark", Number(this.editForm.remark)); //其他参数
+      fd.append("remark", this.editForm.remark); //其他参数
       // console.log(fd);
       // const isJPG = /image\/\w+/.test(file.type);
       // const isLt2M = file.size / 1024 / 1024 < 4;
@@ -1058,10 +1097,92 @@ export default {
       });
     },
 
+    onAddSubmit1(formName) {
+      let _this = this;
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (_this.imgAdd) {
+            getOfflinePaymentapplyUpdata(
+              _this.editForm.realMoney,
+              _this.editForm.urlRemark,
+              _this.editForm.withdrawId,
+              _this.editForm.remark
+            )
+              .then(res => {
+                console.log(res);
+                _this.dialogVisible2 = false;
+                _this.resetForm("editForm");
+                _this.imgAdd = true;
+              })
+              .catch();
+          } else {
+            this.$refs.upload1.submit();
+          }
+        } else {
+         
+          return false;
+        }
+      });
+    },
+    beforeAvatarUpload1(file) {
+      //将文件 的所有的内容都添加在这一起上传
+      let fd = new FormData();
+      fd.append("upload", file);
+      fd.append("realMoney", Number(this.editForm.realMoney)); //其他参数
+      fd.append("withdrawId", Number(this.editForm.withdrawId)); //其他参数
+      // fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
+      // fd.append("mustPayBackAmt", Number(this.editForm.mustPayBackAmt)); //其他参数
+      // fd.append("actualPayBackAmt", Number(this.editForm.actualPayBackAmt)); //其他参数
+      fd.append("remark", this.editForm.remark); //其他参数
+      // console.log(fd);
+      // const isJPG = /image\/\w+/.test(file.type);
+      // const isLt2M = file.size / 1024 / 1024 < 4;
+
+      // if (!isJPG) {
+      //   this.$message.error("必须上传图片!");
+      // }
+      // if (!isLt2M) {
+      //   this.$message.error("上传头像图片大小不能超过 4MB!");
+      // }
+      // return isJPG && isLt2M;
+      const isJPG = /image\/\w+/.test(file.type);
+      const isLt2M = file.size / 1024 / 1024 < 4;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      if (!file) {
+        this.$message.error("请上传图片");
+      }
+      this.$message({
+        message: "申请提交成功等待审核",
+        type: "success"
+      });
+      this.dialogVisible2 = false;
+      this.resetForm("editForm");
+      this.imgAdd = true;
+      axios.post("/sys/offlinePaymentapplyupdate", fd, {});
+      return isJPG && isLt2M;
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${
+          files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
     handleRemove(file, fileList) {
+      this.imgAdd = false;
+       this.$message.error("必须上传图片凭证");
       console.log(file, fileList);
     },
     handlePreview(file) {},
@@ -1072,15 +1193,15 @@ export default {
     }
   },
   mounted() {
-    // this.getData(
-    //   this.npage,
-    //   this.pagesize,
-    //   "",
-    //   "",
-    //   "",
-    //   "",
-    //   this.distributionStatus
-    // );
+    this.getData(
+      this.npage,
+      this.pagesize,
+      "",
+      "",
+      "",
+      "",
+      this.distributionStatus
+    );
   }
 };
 </script>

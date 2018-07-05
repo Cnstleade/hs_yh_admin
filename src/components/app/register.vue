@@ -1,6 +1,6 @@
 <template>
     <div id="register">
-      <scroll ref="scroll" class="recommend-content" :data="discList"> 
+      <scroll ref="scroll" class="recommend-content" :data="discList" :click="false"> 
         <div>
           <div v-if="recommends.length" class="slider-wrapper" ref="sliderWrapper">
               <slider>
@@ -23,10 +23,9 @@
                   class="form-sms"
                   v-model="sms"
                    id="" placeholder="短信验证码">  
-                  <button class="btn-1" @click.prevent="getSms">获取</button> 
+                  <button class="btn-1" @click="getSms()">获取</button> 
                   <div class="text">
                       <label >
-
                           <input type="checkbox" checked="" id="agree" value="0">
                           我已阅读并同意
                           <a href="/api/newslist/view_new/19">《提钱付服务协议》</a>
@@ -36,8 +35,8 @@
                   </div>  
                   <button 
                   class="form-go"
-                  @click.prevent="submit"
-                  >    立即拿钱  </button>                                                         
+                  @click="submit()"
+                  >    立即拿钱  </button>  
               </div>
             </div>
           </div>
@@ -53,6 +52,7 @@ import Scroll from "@/components/app/scroll";
 export default {
   data() {
     return {
+      code: "",
       mobile: "",
       sms: "",
       recommends: [
@@ -116,19 +116,44 @@ export default {
       doc.addEventListener("DOMContentLoaded", recalc, false);
     },
     getSms() {
-      if (this.mobile) {
+      let _this = this;
+      var isMobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+      if (this.mobile && isMobile.test(this.mobile)) {
         console.log(1);
-        // getH5Sms(this.mobile)
-        //   .then(res => {
-        //     console.log(res);
-        //   })
-        //   .catch();
+        getH5Sms(this.mobile)
+          .then(res => {
+            _this.code = null;
+            console.log(res);
+            _this.code = res.data;
+          })
+          .catch();
+      } else {
+        this.$message.error("请输入正确手机号");
       }
     },
     submit() {
-      getH5Register()
-        .then()
-        .catch();
+      var isMobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+
+      if (this.mobile && isMobile.test(this.mobile)) {
+        console.log(this.code);
+        if (this.sms == this.code) {
+          getH5Register(this.mobile)
+            .then(res=>{
+              let data = res.data;
+              if(data.message="注册成功"){
+                this.$message({
+                  message: "注册成功",
+                  type: "success"
+                });
+              }
+            })
+            .catch();
+        }else{
+          this.$message.error("请输入验证码")
+        }
+      } else {
+        this.$message.error("请输入正确手机号");
+      }
     }
   },
   mounted() {

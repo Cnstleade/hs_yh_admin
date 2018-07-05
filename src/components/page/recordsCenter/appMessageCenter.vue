@@ -134,7 +134,7 @@
             </el-form>
               </el-col>
             </el-row>
-        </el-dialog>                  
+        </el-dialog> 
     </div>
 </template>
 
@@ -208,6 +208,9 @@ export default {
     };
   },
   methods: {
+    ss(){
+      console.log(1)
+    },
     _getSavrUserReply(custUserId, custUserOpinionId, replyContent) {
       let _this = this;
       getSavrUserReply(custUserId, custUserOpinionId, replyContent)

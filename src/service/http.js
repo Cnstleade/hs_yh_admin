@@ -391,14 +391,14 @@ export function execeedtimeDistribute(ids, id) {
 }
 
 //后台管理模块 / admin 贷后管理 线下还款列表展示
-export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString, phonenumber, upload) {
+export function getPaymentlist(npage, pagesize, begainTimeString, endTimeString, phonenumber, repaymentStatus) {
   let data = {
     npage,
     pagesize,
     begainTimeString,
     endTimeString,
     phonenumber,
-    upload
+    repaymentStatus
   };
   return axios({
     url: '/sys/paymentlist',
@@ -778,6 +778,18 @@ export function getOfflinePaymentapplydetail(withdrawId) {
   };
   return axios({
     url: '/sys/offlinePaymentapplydetail',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//返回值是验证码  比较一下
+export function getOfflinePaymentapplyUpdata(realMoney,urlRemark,withdrawId,remark) {
+  let data = {
+    realMoney,urlRemark,withdrawId,remark
+  };
+  return axios({
+    url: '/sys/offlinePaymentapplyupdate',
     method: 'post',
     data: qs.stringify(data)
   })

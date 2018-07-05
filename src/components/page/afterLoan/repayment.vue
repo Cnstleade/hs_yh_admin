@@ -7,7 +7,9 @@
               type="info">
             </el-alert>           
         </el-row>        
-        <el-row class="m20" >
+        <el-tabs v-model="activeName" type="border-card" class="m20" @tab-click="handleClick" v-loading="lodings">
+          <el-tab-pane label="待处理申请订单" name="first">
+          <el-row class="m20" >
             <el-col   class="col-flex-end">
                     <div class="l20">
                         <el-input
@@ -29,8 +31,8 @@
                     </el-date-picker>                
                     <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
             </el-col>             
-        </el-row> 
-        <el-table
+          </el-row> 
+          <el-table
             :data="tableData"  
             border  
             ref="multipleTable" 
@@ -60,11 +62,11 @@
                         size="mini"
                         type="success"
                         @click="handleAllocation(scope.$index, scope.row)"
-                       >申请还款</el-button>
+                       >还款操作</el-button>
                     </template> 
                 </el-table-column>            
-        </el-table>  
-        <el-row class="m20" v-if="total>0">
+          </el-table>  
+          <el-row class="m20" v-if="total>0">
              <div style="float:right">
                  <el-pagination
                    @current-change="handleCurrentChange"
@@ -77,24 +79,111 @@
                    :total="total">
                  </el-pagination>   
              </div>
-        </el-row>
-        <el-dialog
-          title="提交还款申请"
+          </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="完成申请订单" name="two">
+          <el-row class="m20" >
+            <el-col   class="col-flex-end">
+                    <div class="l20">
+                        <el-input
+                        style="padding:0px 10px 0px 0px"
+                          placeholder="请输入手机号码"
+                          v-model="search.phoneNumber"
+                          clearable>
+                        </el-input> 
+                    </div>                                  
+                    <el-date-picker
+                    style="width:340px"
+                    class="l20"
+                      v-model="search.time"
+                      type="daterange"
+                      value-format="yyyy-MM-dd"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期">
+                    </el-date-picker>                
+                    <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+            </el-col>             
+          </el-row> 
+          <el-table
+            :data="tableData"  
+            border  
+            ref="multipleTable" 
+            tooltip-effect="dark"
+            style="width: 100%"
+            class="m20"
+            v-loading="loading"
+            @selection-change="handleSelectionChange"
+            :rules="rules"
+          >
+            <el-table-column prop="id" label="提现ID" align="center"  sortable></el-table-column>
+            <el-table-column prop="applyId" label="订单ID" align="center"  sortable></el-table-column>
+            <el-table-column prop="borrowDay" label="借款期限" align="center" sortable></el-table-column>
+            <el-table-column prop="borrowTime" label="借款时间" align="center" width="180" sortable>
+                <template slot-scope="scope">
+                    {{scope.row.borrowTime|dateServer}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable ></el-table-column>
+            <el-table-column prop="phoneNumber" label="电话号码" align="center" width="180" sortable ></el-table-column>
+            <el-table-column prop="overdue_day" label="逾期天数" align="center" sortable ></el-table-column>
+            <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
+            <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column>
+                <el-table-column prop="cz"  align="center" label="操作"   >
+                    <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="success"
+                        @click="handleAllocation(scope.$index, scope.row)"
+                       >还款操作</el-button>
+                    </template> 
+                </el-table-column>            
+          </el-table>  
+          <el-row class="m20" v-if="total>0">
+             <div style="float:right">
+                 <el-pagination
+                   @current-change="handleCurrentChange"
+                    @size-change="handleSizeChange"
+                   :current-page="npage"
+                    :page-sizes="[10, 20, 30, 40]"
+                     :page-size="pagesize"
+                   background
+                   layout="total,sizes,prev, pager, next,jumper"
+                   :total="total">
+                 </el-pagination>   
+             </div>
+          </el-row>            
+          </el-tab-pane>
+        </el-tabs>
+
+          <el-dialog
+          title="线下还款管理"
           :visible.sync="dialogVisible"
           center
           width="40%"
+          v-if="Paymentapplydetail"
           >
-            <el-row>  
-            <el-form  :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
-                <el-form-item label="提现id：" prop="title">
-                  <el-input v-model="editForm.loanApplyId"    disabled></el-input>
-                </el-form-item>
+           <el-card class="box-card">
+              <div  class="text item">
+                  <span>提交时间</span><span style="margin-left:50px">{{Paymentapplydetail.createtime|dateServer}}</span>
+              </div>
+              <div  class="text item">
+                  <span>申请还款金额</span><span style="margin-left:50px">{{Paymentapplydetail.realMoney}}</span>
+              </div>   
+              <div  class="text item" >
+                  <span >图片凭证</span>   <img @click="innerImgVisible=true" style="margin-left:50px;vertical-align:middle;cursor:pointer" :src="Paymentapplydetail.urlRemark" width="100">
+              </div>                            
+           
+              <div  class="text item">
+                  <span>申请的描述</span><span style="margin-left:50px">{{Paymentapplydetail.remark}}</span>
+              </div>                            
+          </el-card>
+
+            <el-form  class="m20" :model="editForm"  ref="editForm"   label-width="150px" :rules="rules">
                 <el-form-item label="逾期的利息：" prop="title">
                   <el-input v-model="editForm.interestOverdue"    disabled></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="打折的金额：" prop="title">
-                  <el-input v-model="editForm.discountAmt"   placeholder="请输入打折的金额"></el-input>
-                </el-form-item> -->
+
                 <el-form-item label="需要还款的金额 ：" prop="title">
                   <el-input v-model="editForm.mustPayBackAmt"    disabled></el-input>
                 </el-form-item>
@@ -124,19 +213,38 @@
                       list-type="picture"
                       :auto-upload="false" >
                       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                      <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
                       <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div>
                     </el-upload>                    
                  </el-col>
                 </el-form-item>
-                <!-- <input class="file" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>   -->
+                <el-form-item label="结果" prop="status">
+                  <el-select v-model="editForm.status" placeholder="这笔提现完结状况">
+                    <el-option label="完结" value="1"></el-option>
+                    <el-option label="不完结" value="0"></el-option>
+                  </el-select>
+                </el-form-item>                
                 <el-form-item>
                   <el-button type="primary" @click="onAddSubmit('editForm')">提交</el-button>
                   <el-button @click="changeDialog()">取消</el-button>
+                  <span style="margin-left:20px;font-size:12px;line-height:30px;color:#999">Tips: 必须上传支付凭证</span>
                 </el-form-item>                                                                  
             </el-form>              
-            </el-row>
-        </el-dialog>                  
+            <el-dialog
+              id="dialog"
+              width="60%"
+              top="100px"
+              title="照片信息"
+              :visible.sync="innerImgVisible"
+              append-to-body>
+                    
+                          <img  :src="Paymentapplydetail.urlRemark" class="imgCenter">
+                          <!-- <div style="padding: 14px;text-align:center">
+                            <span>{{o.label}}</span>
+                          </div>                                     -->
+                    
+                  
+            </el-dialog>             
+          </el-dialog>                  
     </div>
 </template>
 
@@ -150,7 +258,7 @@ import {
   execeedtimeDistribute,
   getPaymentlist,
   postOfflinePayment,
-  htt
+  getOfflinePaymentapplydetail
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -158,10 +266,21 @@ export default {
   name: "credit",
   data() {
     return {
+      activeName: "first",
+      lodings: false,
+      innerImgVisible: false,
+      Paymentapplydetail: {},
       file: false,
       rules: {
         remarks: [{ required: true, message: "请填写备注", trigger: "blur" }],
-        logo: [{ required: true, message: "请填写回访结果", trigger: "blur" }]
+        logo: [{ required: true, message: "请填写回访结果", trigger: "blur" }],
+        status: [
+          {
+            required: true,
+            message: "请选择这笔订单完结状态",
+            trigger: "change"
+          }
+        ]
         // salesmanId: [
         //   { required: true, message: "请选择电销人员", trigger: "change" }
         // ],
@@ -216,7 +335,14 @@ export default {
     }
   },
   methods: {
-    getData(npage, pagesize, begainTimeString, endTimeString, phonenumber) {
+    getData(
+      npage,
+      pagesize,
+      begainTimeString,
+      endTimeString,
+      phonenumber,
+      repaymentStatus
+    ) {
       let _this = this;
       this.loading = true;
       getPaymentlist(
@@ -224,7 +350,8 @@ export default {
         pagesize,
         begainTimeString,
         endTimeString,
-        phonenumber
+        phonenumber,
+        repaymentStatus
       )
         .then(res => {
           let data = res.data;
@@ -242,7 +369,8 @@ export default {
           this.pagesize,
           this.search.time[0] + " 00:00:00",
           timeFormat(this.search.time[1], 1) + " 00:00:00",
-          this.search.phoneNumber
+          this.search.phoneNumber,
+          this.activeName == "first" ? 1 : 2
         );
       } else {
         this.getData(
@@ -250,7 +378,8 @@ export default {
           this.pagesize,
           "",
           "",
-          this.search.phoneNumber
+          this.search.phoneNumber,
+          this.activeName == "first" ? 1 : 2
         );
       }
     },
@@ -271,9 +400,21 @@ export default {
       this.multipleSelection = val;
     },
     handleAllocation(index, row) {
+      let id = row.id;
+      console.log(row);
+      let _this = this;
+      this.Paymentapplydetail = null;
+      getOfflinePaymentapplydetail(id)
+        .then(res => {
+          let data = res.data;
+          _this.Paymentapplydetail = data.data;
+        })
+        .catch();
+      this.editForm.loanpaymentId = row.loanpaymentId || "";
       this.editForm.loanApplyId = row.applyId;
       this.editForm.interestOverdue = row.late_fee;
-      this.editForm.mustPayBackAmt = row.withdrawMoney + row.late_fee;
+      this.editForm.mustPayBackAmt =
+        Number(row.withdrawMoney) + Number(row.late_fee);
       this.dialogVisible = true;
       this.trevewer = null;
       this.dynamicTags.length = 0;
@@ -359,7 +500,9 @@ export default {
       // fd.append("discountAmt", Number(this.editForm.discountAmt)); //其他参数
       fd.append("mustPayBackAmt", Number(this.editForm.mustPayBackAmt)); //其他参数
       fd.append("actualPayBackAmt", Number(this.editForm.actualPayBackAmt)); //其他参数
-      fd.append("remarks", Number(this.editForm.remarks)); //其他参数
+      fd.append("remarks", this.editForm.remarks); //其他参数
+      fd.append("status", this.editForm.status); //其他参数
+      fd.append("loanpaymentId", this.editForm.loanpaymentId); //其他参数
       // console.log(fd);
       // const isJPG = /image\/\w+/.test(file.type);
       // const isLt2M = file.size / 1024 / 1024 < 4;
@@ -427,10 +570,24 @@ export default {
     changeDialog() {
       this.dialogVisible = false;
       this.resetForm("editForm");
+    },
+    handleClick(tab, event) {
+      this.lodings = true;
+      this.handleSearch();
+      setTimeout(() => {
+        this.lodings = false;
+      }, 500);
     }
   },
   mounted() {
-    this.getData(this.npage, this.pagesize);
+    this.getData(
+      this.npage,
+      this.pagesize,
+      "",
+      "",
+      "",
+      this.activeName == "first" ? 1 : 2
+    );
     this.getrevewerlist();
   }
 };
@@ -457,4 +614,20 @@ export default {
 </style>
 
 <style scoped>
+.text {
+  font-size: 14px;
+}
+
+.item {
+  padding: 18px 0;
+}
+.image {
+  width: 100%;
+  display: block;
+}
+.imgCenter {
+  clear: both;
+  display: block;
+  margin: auto;
+}
 </style>
