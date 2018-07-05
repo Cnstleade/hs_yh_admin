@@ -50,10 +50,11 @@
           >
             <el-table-column
               type="selection"
+              align="center"
               width="55">
             </el-table-column>        
-       
-            <el-table-column prop="id" label="订单号" align="center"  sortable></el-table-column>
+        
+            <el-table-column prop="id" label="订单号" align="center" width="70"  sortable></el-table-column>
             <el-table-column prop="userName" label="姓名" align="center" ></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center" width="200"></el-table-column>

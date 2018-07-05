@@ -66,7 +66,7 @@
                             <el-tag
                                 :type="scope.row.chbSale?'success':'danger'"
                                 style="width:100px"
-                            >{{scope.row.chbSale?scope.row.chbSale:'暂无电销人员'}}</el-tag>
+                            >{{scope.row.chbSale?scope.row.chbSale.username:'暂无电销人员'}}</el-tag>
                         </template> 
                       </el-table-column>  
             <el-table-column type="expand" label="回访详情" width="80" >
@@ -153,13 +153,14 @@
               <el-form-item label="所剩额度:" prop="money" >
                 <el-input v-model.number="ruleForm1.money" disabled></el-input>
               </el-form-item>  
-              <el-form-item label="电销人员ID:" prop="salesmanId" >
-                <el-select v-model="ruleForm1.salesmanId" placeholder="电销人员">
+              <el-form-item label="电销人员:"  >
+                <el-input v-model.number="ruleForm1.salesmanId" disabled>{{ruleForm1.salesman}}</el-input>
+                <!-- <el-select v-model="ruleForm1.salesmanId" placeholder="电销人员">
                   <template v-for="(temp,index) in salesman">
                     <el-option  :key="index" :label="temp.username" :value="temp.uid">
                     </el-option>
                   </template>
-                </el-select>                
+                </el-select>                 -->
               </el-form-item>                            
               <el-form-item label="回访类型:" prop="recallType">
                  <el-select v-model="ruleForm1.recallType" placeholder="回访类型">
@@ -338,18 +339,18 @@ export default {
               getReplies(tableData[a].custUserId)
                 .then(re => {
                   tableData[a].chbdetail = re.data.data;
-                  console.log(re)
+                  console.log(re);
                 })
                 .catch();
               getSaleman(tableData[a].custUserId)
                 .then(re => {
                   tableData[a].chbSale = re.data.data;
                 })
-                .catch();                
+                .catch();
             }
             _this.tableData = tableData;
             _this.total = data.data.allpage;
-            console.log(_this.tableData)
+            console.log(_this.tableData);
             this.loading = false;
           } else {
           }
@@ -383,7 +384,8 @@ export default {
         this.salesmanId,
         this.editSales.custUserId,
         this.editSales.loanOrderId,
-        this.editSales.loanApplyId
+        this.editSales.loanApplyId,
+        this.editSales.custUserName
       )
         .then(res => {
           let data = res.data;
@@ -405,7 +407,8 @@ export default {
       this.ruleForm1 = {
         userName: row.custUserName,
         userMobile: row.custUserMobile,
-        salesmanId: "",
+        salesmanId: row.chbSale.id,
+        salesman:row.chbSale.username,
         loanApplyId: row.loanApplyId,
         loanOrderId: row.loanOrderId,
         recallType: "",
@@ -420,6 +423,8 @@ export default {
 
     handleEmit(index, row) {
       this.dialogVisible2 = true;
+      this.salesmanId = null;
+      this.username = null;
       let companyId = row.companyId;
       this._getEleCompanyId(row.companyId);
       this.editSales = row;
@@ -461,7 +466,7 @@ export default {
     },
     quxiao2() {
       this.dialogVisible2 = false;
-      this.salesmanId = null;
+      
       this.editSales = null;
     }
   },

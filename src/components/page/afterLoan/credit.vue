@@ -48,16 +48,16 @@
           >
             <el-table-column prop="id" label="订单号" align="center" sortable width="120"></el-table-column>
             <el-table-column prop="userName" label="姓名" align="center" ></el-table-column>
-            <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
+            <el-table-column prop="mobile" label="手机号" align="center" width="180"></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center"  width="200"></el-table-column>
             <el-table-column prop="applyTime" label="申请时间" align="center" width="180" sortable>
                 <template slot-scope="scope">
                     {{scope.row.applyTime|dateServer}}
                 </template>
             </el-table-column>
-            <el-table-column prop="applyAmt" label="申请金额" align="center" sortable></el-table-column>
-            <el-table-column prop="approveAmt" label="审核金额" align="center" sortable></el-table-column>
-            <el-table-column prop="status" label="订单状态" align="center"
+            <el-table-column prop="applyAmt" label="申请金额" align="center" width="110" sortable></el-table-column>
+            <el-table-column prop="approveAmt" label="审核金额" align="center" width="110"  sortable></el-table-column>
+            <el-table-column prop="status" label="订单状态" align="center" width="110" 
                     :filters="[{ value: 4, text: '借款中' },  { value: 8, text: '完结' }]"
                     :filter-method="filterStatus"
               >

@@ -100,7 +100,7 @@
                       </el-table-column>
                       <el-table-column  prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
                       <el-table-column  prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
-                      <el-table-column  prop="overdue.lateFee" label="线下还款申请情况" align="center" >
+                      <el-table-column  prop="overdue.lateFee" label="线下还款申请情况" align="center"  >
                         <template slot-scope="scope">
                             <el-tag
                                 :type="scope.row.loanRepaymentApplyId==1?'success':scope.row.loanRepaymentApplyId==2?'':'danger'"

@@ -301,7 +301,7 @@
                                       {{scope.row.createTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>
-                                <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" ></el-table-column>
+                                <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column>
                               
                             </el-table>
                         </td>
@@ -315,17 +315,17 @@
                                     style="width: 100%">
                                 <el-table-column prop="userId"  align="center" label="ID"  width="50" ></el-table-column>
                                 <el-table-column prop="borrowDay" align="center" label="借款期限" width="200"></el-table-column>
-                                <el-table-column prop="borrowTime" align="center" label="借款时间">
+                                <el-table-column prop="borrowTime" align="center" width="180" label="借款时间">
                                   <template slot-scope="scope">
                                       {{scope.row.borrowTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
-                                <el-table-column prop="returnTime" align="center" label="还款时间">
+                                <el-table-column prop="returnTime" align="center" width="180" label="还款时间">
                                   <template slot-scope="scope">
                                       {{scope.row.returnTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
-                                <el-table-column prop="withdrawMoney" align="center" label="还款金额" ></el-table-column>
+                                <el-table-column prop="withdrawMoney" align="center"  label="还款金额" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
@@ -347,26 +347,26 @@
                                 </el-table-column>                                 
                                 <el-table-column prop="mustPayBackAmt" align="center" label="应还款" width="200"></el-table-column>
                                 <el-table-column prop="actualPayBackAmt" align="center"  label="实际还款" ></el-table-column>
-                                <el-table-column prop="backDate"  align="center" label="还款时间">
+                                <el-table-column prop="backDate"  align="center" width="180" label="还款时间">
                                   <template slot-scope="scope">
                                       {{scope.row.backDate|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
-                                <el-table-column prop="createTime" align="center"  label="更新时间">
+                                <el-table-column prop="createTime" align="center"  width="180" label="更新时间">
                                   <template slot-scope="scope">
                                       {{scope.row.createTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>                                                                  
-                                <el-table-column prop="bankCardNumber"  align="center" label="还款银行卡卡号" ></el-table-column>
+                                <el-table-column prop="bankCardNumber"  align="center" width="180" label="还款银行卡卡号" ></el-table-column>
                                 <el-table-column prop="custname"  align="center" label="用户名" ></el-table-column>
-                                <el-table-column prop="success"  align="center" label="是否还款成功" >
+                                <el-table-column prop="success"  align="center" width="140" label="是否还款成功" >
                                   <template slot-scope="scope">
                                       <el-tag
                                           :type="scope.row.success?'success':'danger'"
                                       >{{scope.row.success?'成功':'失败'}}</el-tag>
                                   </template>                                     
                                 </el-table-column>
-                                <el-table-column prop="nomal"  align="center" label="是否是正常还款" >
+                                <el-table-column prop="nomal"  align="center"  width="140"  label="是否是正常还款" >
                                   <template slot-scope="scope">
                                       <el-tag
                                           :type="scope.row.nomal?'success':'danger'"

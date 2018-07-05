@@ -45,18 +45,18 @@
           >
             <el-table-column prop="id" label="提现ID" align="center"  sortable></el-table-column>
             <el-table-column prop="applyId" label="订单ID" align="center"  sortable></el-table-column>
-            <el-table-column prop="borrowDay" label="借款期限" align="center" sortable></el-table-column>
+            <el-table-column prop="borrowDay" label="借款期限" align="center" width="120" sortable></el-table-column>
             <el-table-column prop="borrowTime" label="借款时间" align="center" width="180" sortable>
                 <template slot-scope="scope">
                     {{scope.row.borrowTime|dateServer}}
                 </template>
             </el-table-column>
-            <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable ></el-table-column>
+            <el-table-column prop="withdrawMoney" label="提现金额" align="center" width="120" sortable ></el-table-column>
             <el-table-column prop="phoneNumber" label="电话号码" align="center" width="180" sortable ></el-table-column>
-            <el-table-column prop="overdue_day" label="逾期天数" align="center" sortable ></el-table-column>
-            <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
-            <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column>
-                <el-table-column prop="cz"  align="center" label="操作"   >
+            <el-table-column prop="overdue_day" label="逾期天数" width="120" align="center" sortable ></el-table-column>
+            <el-table-column prop="late_fee" label="逾期金" width="110" align="center" sortable ></el-table-column>
+            <el-table-column prop="ned_return_money" label="需要还钱数" width="180" align="center" sortable ></el-table-column>
+                <el-table-column prop="cz"  align="center" label="操作"  width="100" >
                     <template slot-scope="scope">
                     <el-button
                         size="mini"
@@ -118,17 +118,17 @@
           >
             <el-table-column prop="id" label="提现ID" align="center"  sortable></el-table-column>
             <el-table-column prop="applyId" label="订单ID" align="center"  sortable></el-table-column>
-            <el-table-column prop="borrowDay" label="借款期限" align="center" sortable></el-table-column>
+            <el-table-column prop="borrowDay" label="借款期限" align="center" width="120" sortable></el-table-column>
             <el-table-column prop="borrowTime" label="借款时间" align="center" width="180" sortable>
                 <template slot-scope="scope">
                     {{scope.row.borrowTime|dateServer}}
                 </template>
             </el-table-column>
-            <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable ></el-table-column>
+            <el-table-column prop="withdrawMoney" label="提现金额" align="center" width="120" sortable ></el-table-column>
             <el-table-column prop="phoneNumber" label="电话号码" align="center" width="180" sortable ></el-table-column>
-            <el-table-column prop="overdue_day" label="逾期天数" align="center" sortable ></el-table-column>
-            <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
-            <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column>
+            <el-table-column prop="overdue_day" label="逾期天数" width="120" align="center" sortable ></el-table-column>
+            <el-table-column prop="late_fee" label="逾期金" align="center" width="110" sortable ></el-table-column>
+            <el-table-column prop="ned_return_money" label="需要还钱数"  width="120" align="center" sortable ></el-table-column>
                 <el-table-column prop="cz"  align="center" label="操作"   >
                     <template slot-scope="scope">
                     <el-button

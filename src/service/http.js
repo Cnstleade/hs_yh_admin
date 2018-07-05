@@ -629,12 +629,13 @@ export function getOverduemanager(npage, pagesize, begainTimeString, endTimeStri
 }
 
 //后台管理模块 /admin 电销中心 新增电销员
-export function getSalesmanId(salesmanId, custUserId, loanOrderId, loanApplyId) {
+export function getSalesmanId(salesmanId, custUserId, loanOrderId, loanApplyId, custUserName) {
   let data = {
     salesmanId,
     custUserId,
     loanOrderId,
-    loanApplyId
+    loanApplyId,
+    custUserName
   };
   return axios({
     url: '/electrical/salesmanCustUser',
@@ -681,7 +682,7 @@ export function getReplies(custUserId) {
 //admin 电销中心 查询已分配的电销员
 export function getSaleman(custUserId) {
   let data = {
-    custUserId,
+    custUserId
   };
   return axios({
     url: '/electrical/salesman',
@@ -749,7 +750,10 @@ export function deleteMessage(id) {
 //h5  注册
 export function getH5Register(url, moblie, PromotionCode, PromotionMoblie) {
   let data = {
-    url, moblie, PromotionCode, PromotionMoblie
+    url,
+    moblie,
+    PromotionCode,
+    PromotionMoblie
   };
   return axios({
     url: '/promoter/registered',
@@ -784,9 +788,12 @@ export function getOfflinePaymentapplydetail(withdrawId) {
 }
 
 //返回值是验证码  比较一下
-export function getOfflinePaymentapplyUpdata(realMoney,urlRemark,withdrawId,remark) {
+export function getOfflinePaymentapplyUpdata(realMoney, urlRemark, withdrawId, remark) {
   let data = {
-    realMoney,urlRemark,withdrawId,remark
+    realMoney,
+    urlRemark,
+    withdrawId,
+    remark
   };
   return axios({
     url: '/sys/offlinePaymentapplyupdate',

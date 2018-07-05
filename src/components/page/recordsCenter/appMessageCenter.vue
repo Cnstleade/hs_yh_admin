@@ -491,7 +491,7 @@ export default {
     },
     quxiao1() {
       this.dialogVisible = false;
-      _this.resetForm("ruleForm1");
+      this.resetForm("ruleForm1");
     }
   },
   mounted() {

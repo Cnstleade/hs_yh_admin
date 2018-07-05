@@ -55,7 +55,7 @@
             v-loading="loading"
           >
             <el-table-column prop="id" label="用户id" align="center" width="60"></el-table-column>
-            <el-table-column prop="type" label="还款类型" align="center" >
+            <el-table-column prop="type" label="还款类型" align="center" width="120">
                 <template slot-scope="scope">
                     <el-tag
                         :type="scope.row.cash_outType===0?'warning':'danger'"

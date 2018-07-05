@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-title">
-      一嗨管理系统
+      中安租赁管理系统
     </div>
     <div class="ms-login">
       <el-form :model="ruleForm" :rule="rules" ref="ruleForm" label-width="0px" class="demp-ruleForm">
