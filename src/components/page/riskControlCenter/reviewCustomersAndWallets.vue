@@ -413,7 +413,7 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>金额统计</label></el-col>
               <el-col :span="22">
                 <template>
@@ -426,7 +426,7 @@
                   </div>
                 </template>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>订单信息</label></el-col>
               <el-col :span="22">
@@ -1610,7 +1610,7 @@
         let postDate = {
           npage: a,
           pagesize: b,
-          username: this.username,
+          userName: this.username,
           startDateString: this.startTime,
           finshDateString: this.endTime,
           channel: ""

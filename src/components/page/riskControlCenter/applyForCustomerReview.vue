@@ -285,12 +285,12 @@
 
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>通话记录</label></el-col>
               <el-col :span="22">
                 <el-button type="primary">查看通话记录</el-button>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>认证资料</label></el-col>
               <el-col :span="22">
@@ -414,7 +414,7 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>金额统计</label></el-col>
               <el-col :span="22">
                 <template>
@@ -427,7 +427,7 @@
                   </div>
                 </template>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>订单信息</label></el-col>
               <el-col :span="22">
@@ -1728,14 +1728,14 @@
         let postDate = {
           npage: a,
           pagesize: b,
-          username: this.username,
+          userName: this.username,
           startDateString: this.startTime,
           finshDateString: this.endTime,
           channel: ""
         };
         $.ajax({
           type: "POST",
-          url: config.baseURL + "/sys/UnderReviewList",
+          url: config.baseURL + "/sys/getReiterate",
           data: postDate,
           success: data => {
             this.allCustomersData = data.rows;

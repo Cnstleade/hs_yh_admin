@@ -63,6 +63,7 @@
               width="95%"
               title="客户信息表"
               center
+            
          >
 
             <el-row style="overflow: hidden;">
@@ -79,48 +80,71 @@
                                     border
                                     style="width: 100%"
                             >
-                                <el-table-column prop="id" label="ID" align="center" width="100"></el-table-column>                            
-                                <el-table-column prop="username" label="姓名" align="center" width="160"></el-table-column>
-                                <el-table-column prop="status" label="客户状态" align="center" width="160"></el-table-column>
-                                <el-table-column prop="idCard" label="身份证号" align="center" width="200"></el-table-column>
-                                <el-table-column prop="mobile" label="手机号" align="center" width="160"></el-table-column>
-                                <el-table-column prop="qq" label="qq" align="center" ></el-table-column>
-                                <el-table-column prop="wx" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="createTime" label="注册时间" align="center" width="190"></el-table-column>
-                                <!-- <el-table-column prop="gzdw" label="工作单位" align="center" width="300"></el-table-column>
-                                <el-table-column prop="xszh" label="学生证号" align="center" ></el-table-column> -->
-                                <el-table-column prop="source" label="来源" align="center" width="130"></el-table-column>
+                                <el-table-column prop="realName" label="姓名" align="center" ></el-table-column>
+                                <el-table-column prop="status"  align="center" label="状态"   width="150"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.status===1?'':scope.row.status===2?'success':scope.row.status===3?'info':scope.row.status===4?'warning':'danger'"
+                                      >{{scope.row.status===1?'业务员维护中':scope.row.status===2?'审核分配中':scope.row.status===3?'审核中':scope.row.status===4?'弃用':'停用'}}</el-tag>
+                                  </template>   
+                                </el-table-column> 
+                                <el-table-column prop="idcard" label="身份证号" align="center" width="180"></el-table-column>
+                                <el-table-column prop="phoneNumber" label="手机号" align="center" ></el-table-column>
+                                <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column>
+                                <el-table-column prop="wxNumber" label="微信号" align="center" ></el-table-column>
+                                <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column>
+                                <el-table-column prop="detailAddress" label="地址" align="center" width="500"></el-table-column>
+                                <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
+                                 >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.mariage===1?'':scope.row.mariage===2?'success':'danger'"
+                                      >{{scope.row.mariage===1?'未婚':scope.row.mariage===2?'已婚':'离婚'}}</el-tag>
+                                  </template>                     
+                                </el-table-column>    
+                                <el-table-column prop="eduBack"  align="center" label="教育背景"   width="100"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.eduBack===1?'':scope.row.eduBack===2?'success':scope.row.eduBack===3?'info':scope.row.eduBack===4?'warning':scope.row.eduBack===5?'danger':''"
+                                      >{{scope.row.eduBack===1?'高中':scope.row.eduBack===2?'大专':scope.row.eduBack===3?'本科':scope.row.eduBack===4?'硕士':scope.row.eduBack===5?'博士':'其它'}}</el-tag>
+                                  </template>   
+                                </el-table-column>   
+                                <el-table-column prop="source"  align="center" label="来源"  width="80"
+                                   >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.source===1?'':scope.row.source===2?'success':'danger'"
+                                      >{{scope.row.source===1?'苹果':scope.row.source===2?'安卓':'网页'}}</el-tag>
+                                  </template> 
+                                </el-table-column>                                                                                         
                             </el-table>
                         </td>
                     </tr>
-                    <!-- <tr>
-                        <th  class="bgcolor "  >认证信息</th>
-                        <td colspan="5" id="tb1">
+                    <tr>
+                        <th  class="bgcolor "  >联系人信息</th>
+                        <td colspan="5" >
                             <el-table
                                     :data="rzData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="xm"   width="100"></el-table-column>
-                                <el-table-column prop="zz" ></el-table-column>
-                                <el-table-column prop="dh"   ></el-table-column>
-                            </el-table>
-                        </td>
-                    </tr> -->
-                    <tr>
-                        <th  class="bgcolor">联系人信息</th>
-                        <td colspan="5" >
-                            <el-table
-                                    :data="relationShips"
-                                    border
-                                    style="width: 100%">
-                                <el-table-column prop="relationship"  label="与客户关系"  align="center" width="160" ></el-table-column>
-                                <el-table-column prop="userName"  label="联系人姓名"  align="center" width="160" ></el-table-column>
-                                <el-table-column prop="phoneNumber"  label="联系人手机号码"  align="center"  width="160"></el-table-column>
-                                <el-table-column prop="detailAddress"  label="详细地址"  align="center"  ></el-table-column>
+                                <el-table-column prop="relationship" align="center" label="关系"  width="100"></el-table-column>
+                                <el-table-column prop="real_name" align="center" label="姓名"  width="100"></el-table-column>
+                                <el-table-column prop="mob_number" align="center"  label="电话号码" width="120"></el-table-column>
+                                <el-table-column prop="address"  align="center" label="地址" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
                     <!-- <tr>
+                        <th  class="bgcolor">联系人信息</th>
+                        <td colspan="5" >
+                            <table class="table table_2">
+                                &nbsp;
+                            </table>
+                        </td>
+                    </tr> -->
+                    <tr>
                         <th  class="bgcolor">授权验证</th>
                         <td colspan="5" >
                             <el-table
@@ -135,7 +159,7 @@
                                 <el-table-column prop="jdmm"  label="京东密码" ></el-table-column>
                             </el-table>
                         </td>
-                    </tr> -->
+                    </tr>
                     <tr>
                         <th  class="bgcolor">认证资料</th>
                         <td colspan="5" >
@@ -143,7 +167,7 @@
                                 <el-col :span="3"   v-for="(o, index) in idCardImgs" :key="o.label" :offset="index > 0 ? 1 : 0">
                                     <template>
                                         <el-card :body-style="{ padding: '0px' }" shadow="hover">
-                                            <img @click="handleImgShow(index)" :src="o.src" class="image">
+                                            <img @click="handleImgShow" :src="o.src" class="image">
                                             <div style="padding: 14px;text-align:center">
                                                 <span>{{o.label}}</span>
                                             </div>
@@ -153,7 +177,7 @@
                             </el-row>
                         </td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                         <th valign="middle" colspan="6" style="color: #436EEE;background-color: #f3f3f3;">
                             关联信息
                         </th>
@@ -165,16 +189,43 @@
                                     :data="qbData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="qbzt"   label="钱包状态"   ></el-table-column>
-                                <el-table-column prop="zcsj"  label="注册时间"></el-table-column>
-                                <el-table-column prop="scdl"  label="上次登录时间" ></el-table-column>
-                                <el-table-column prop="zcd"  label="注册地" ></el-table-column>
-                                <el-table-column prop="sqed"  label="当前授信额度" ></el-table-column>
-                                <el-table-column prop="sxfqed"  label="当前授信分期额度" ></el-table-column>
-                                <el-table-column prop="dzht"  label="电子合同" ></el-table-column>
+                                <el-table-column prop="status"   label="钱包状态"   align="center" ></el-table-column>
+                                <el-table-column prop="createTime"  label="注册时间" align="center">
+                                  <template slot-scope="scope" align="center">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>
+                                <el-table-column prop="applyAmt"  label="审核金额" align="center" ></el-table-column>
+                                <el-table-column prop="approveAmt"  label="签约金额" align="center" ></el-table-column>    
+                                <el-table-column prop="applyTime"  label="申请时间" align="center">
+                                  <template slot-scope="scope" align="center">
+                                      {{scope.row.applyTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>                                
                             </el-table>
                         </td>
-                    </tr> -->
+                    </tr>
+                    <tr>
+                        <th  class="bgcolor">银行卡信息</th>
+                        <td colspan="5" >
+                            <el-table
+                                    :data="yhkData"
+                                    border
+                                    style="width: 100%">
+                                <el-table-column prop="cardNum"   label="卡号"   align="center" width="240" ></el-table-column>
+                                <el-table-column prop="name"   label="姓名"   align="center" width="100"></el-table-column>
+                                <el-table-column prop="bankName"   label="银行"   align="center" width="240"></el-table-column>
+                                <el-table-column prop="idNum"   label="身份证"   align="center" width="240"></el-table-column>
+                                <el-table-column prop="createTime"  label="时间" align="center" width="240">
+                                  <template slot-scope="scope" align="center">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>
+                                <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column>
+                              
+                            </el-table>
+                        </td>
+                    </tr>                    
                     <tr>
                         <th  class="bgcolor">分期账单信息</th>
                         <td colspan="5" >
@@ -182,25 +233,19 @@
                                     :data="fqzdData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="id"   label="贷款ID"  width="90" align="center" sortable></el-table-column>
-                                <el-table-column prop="contractNo"  label="贷款合同" width="200" align="center"></el-table-column>
-                                <el-table-column prop="applyDate"  label="贷款日期" align="center" width="140" sortable>
-                                    <template slot-scope="scope">
-                                        {{scope.row.applyDate|dateServer}}
-                                    </template>   
-                                </el-table-column>
-                                <el-table-column prop="applyAmt"  label="贷款金额" align="center" sortable width="93"></el-table-column>
-                                <el-table-column prop="approveTime"  label="审核通过时间" align="center" width="140" sortable></el-table-column>
-                                <el-table-column prop="purpose"  label="贷款用途" align="center"></el-table-column>
-                                <el-table-column prop="approveAmt"  label="审核通过金额" align="center" width="120" sortable></el-table-column>
-                                <el-table-column prop="approveTerm"  label="审核通过天数" align="center" width="120" sortable> </el-table-column>
-                                <el-table-column prop="loanOrderId"  label="订单ID" align="center" sortable width="100"></el-table-column>
-                                <el-table-column prop="updateTime"  label="最后一次更新时间" align="center" width="150" sortable></el-table-column>
-                                <el-table-column prop="repayMethod"  label="还款方式" align="center"></el-table-column>
-                                <el-table-column prop="operatorName"  label="初审人姓名" align="center" width="90"></el-table-column>
-                                <el-table-column prop="approverName"  label="终审人姓名" align="center" width="90"></el-table-column>
-                                <el-table-column prop="backDate"  label="还款日期" align="center" width="140" sortable></el-table-column>
-                                <el-table-column prop="mustBackDate"  label="应还款日期" align="center" width="140" sortable></el-table-column>
+                                <el-table-column prop="userId"  align="center" label="ID"  width="50" ></el-table-column>
+                                <el-table-column prop="borrowDay" align="center" label="借款期限" width="200"></el-table-column>
+                                <el-table-column prop="borrowTime" align="center" width="180" label="借款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.borrowTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="returnTime" align="center" width="180" label="还款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.returnTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="withdrawMoney" align="center"  label="还款金额" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
@@ -211,45 +256,81 @@
                                     :data="hkjlData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="id"   label="还款ID"  align="center" width="90" sortable></el-table-column>
-                                <el-table-column prop="loanApplyId" align="center" label="订单ID" width="90" sortable></el-table-column>
-                                <el-table-column prop="type" align="center" label="还款类型" width="90"></el-table-column>
-                                <el-table-column prop="recordUrl" align="center" label="还款明细证据(线下还款）"  width="120"></el-table-column>
-                                <el-table-column prop="daysOverdue" align="center" label="逾期天数" width="90"></el-table-column>
-                                <el-table-column prop="interestOverdue" align="center" label="逾期利息" width="90"></el-table-column>
-                                <el-table-column prop="discountAmt" align="center" label="打折金额" width="90"></el-table-column>
-                                <el-table-column prop="mustPayBackAmt" align="center" label="应还款" width="90"></el-table-column>
-                                <el-table-column prop="actualPayBackAmt" align="center" label="实际还款" width="90"></el-table-column>
-                                <el-table-column prop="backDate" align="center" label="还款日期" width="140"></el-table-column>
-                                <el-table-column prop="replayAmt" align="center" label="贷款金额" sortable></el-table-column>
-                                <el-table-column prop="remarks" align="center" label="备注" ></el-table-column>
-                                <el-table-column prop="createTime" align="center" label="创建日期" width="140" sortable></el-table-column>
-                                <el-table-column prop="createBy" align="center" label="创建人" width="90"></el-table-column>
+                                <el-table-column prop="withdrawInfoId" align="center"  label="id"  width="50" ></el-table-column>
+                                <el-table-column prop="type"  align="center" label="还款类型"   width="150"
+                                  >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.status===1?'':'success'"
+                                      >{{scope.row.status===1?'app还款':'线下还款'}}</el-tag>
+                                  </template>   
+                                </el-table-column>                                 
+                                <el-table-column prop="mustPayBackAmt" align="center" label="应还款" width="200"></el-table-column>
+                                <el-table-column prop="actualPayBackAmt" align="center"  label="实际还款" ></el-table-column>
+                                <el-table-column prop="backDate"  align="center" width="180" label="还款时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.backDate|dateServer}}
+                                  </template>                                    
+                                </el-table-column>  
+                                <el-table-column prop="createTime" align="center"  width="180" label="更新时间">
+                                  <template slot-scope="scope">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template>                                    
+                                </el-table-column>                                                                  
+                                <el-table-column prop="bankCardNumber"  align="center" width="180" label="还款银行卡卡号" ></el-table-column>
+                                <el-table-column prop="custname"  align="center" label="用户名" ></el-table-column>
+                                <el-table-column prop="success"  align="center" width="140" label="是否还款成功" >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.success?'success':'danger'"
+                                      >{{scope.row.success?'成功':'失败'}}</el-tag>
+                                  </template>                                     
+                                </el-table-column>
+                                <el-table-column prop="nomal"  align="center"  width="140"  label="是否是正常还款" >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.nomal?'success':'danger'"
+                                      >{{scope.row.nomal?'线上还款':'线下还款'}}</el-tag>
+                                  </template>                                     
+                                </el-table-column>
                             </el-table>
                         </td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                         <th  class="bgcolor">滞纳金记录</th>
                         <td colspan="5" >
                             <el-table
                                     :data="zljData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="xh"   label="序号"  width="50" ></el-table-column>
-                                <el-table-column prop="fqsp"  label="分期商品" ></el-table-column>
-                                <el-table-column prop="spje"  label="商品金额" ></el-table-column>
-                                <el-table-column prop="sf"  label="首付" ></el-table-column>
-                                <el-table-column prop="yg"  label="月供" ></el-table-column>
-                                <el-table-column prop="fqs"  label="分期数" ></el-table-column>
-                                <el-table-column prop="zt"  label="状态" ></el-table-column>
-                                <el-table-column prop="wyqs"  label="违约期数" ></el-table-column>
-                                <el-table-column prop="wyje"  label="违约金额" ></el-table-column>
-                                <el-table-column prop="jmbl"  label="减免比例" ></el-table-column>
-                                <el-table-column prop="sqr"  label="申请人" ></el-table-column>
-                                <el-table-column prop="tjsj"  label="添加时间" ></el-table-column>
+                                <el-table-column prop="applyTime"  align="center" label="申请时间"  width="180" >
+                                  <template slot-scope="scope">
+                                      {{scope.row.applyTime|dateServer}}
+                                  </template>    
+                                </el-table-column>
+                                <el-table-column prop="revertTime" align="center" label="理应还款时间" width="180" >
+                                  <template slot-scope="scope">
+                                      {{scope.row.revertTime|dateServer}}
+                                  </template> 
+                                </el-table-column>
+                                <el-table-column prop="repayStatus" align="center"  label="还款情况" >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.repayStatus==1?'success':'danger'"
+                                      >{{scope.row.repayStatus==1?'已还':'未还'}}</el-tag>
+                                  </template>   
+                                </el-table-column>
+                                <el-table-column prop="repayStatus"  align="center" label="逾期天数" ></el-table-column>
+                                <el-table-column prop="lateFee"  label="滞纳金" ></el-table-column>
+                                <el-table-column prop="updateTime" align="center"  label="最后更新时间" >
+                                  <template slot-scope="scope">
+                                      {{scope.row.updateTime|dateServer}}
+                                  </template> 
+                                </el-table-column>
+                                <el-table-column prop="withdraw" align="center"  label="提现金额" ></el-table-column>
                             </el-table>
                         </td>
-                    </tr> -->
+                    </tr>
                     <tr>
                         <th valign="middle" colspan="6" style="color: #436EEE;background-color: #f3f3f3;">
                             客户回访
@@ -262,15 +343,16 @@
                                     :data="hfjlData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="id"  align="center" label="序号" width="50"></el-table-column>
-                                <el-table-column prop="callBackDate" align="center" label="回访时间"  width="140"></el-table-column>
-                                <el-table-column prop="callBackUserName" align="center" label="回访人"  width="130"></el-table-column>
-                                <el-table-column prop="result "  align="center" label="结果" ></el-table-column>
-                                <el-table-column prop="remark"  align="center" label="备注" ></el-table-column>
+                                <el-table-column prop="xh"  align="center" label="序号" width="100"></el-table-column>
+                                <el-table-column prop="hfsj" align="center" label="回访时间" width="100" ></el-table-column>
+                                <el-table-column prop="hfr" align="center" label="回访人" width="100" ></el-table-column>
+                                <el-table-column prop="jg"  align="center" label="结果" width="100"></el-table-column>
+                                <el-table-column prop="bz"  align="center" label="备注" ></el-table-column>
+                                <el-table-column prop="fj" align="center" label="附件" width="100" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                         <th  class="bgcolor">通话记录</th>
                         <td colspan="5" >
                             <table class="table table_2">
@@ -326,7 +408,7 @@
                                 </el-col>
                             </el-row>
                         </td>
-                    </tr> -->
+                    </tr>
                 </table>
             </el-row> 
             <el-dialog
@@ -347,12 +429,16 @@
 
                     <button type="button" @click="changImgIndex(-1)" class="el-carousel__arrow el-carousel__arrow--left"><i class="el-icon-arrow-left"></i></button>   
                     <button type="button"   @click="changImgIndex(1)" class="el-carousel__arrow el-carousel__arrow--right"><i class="el-icon-arrow-right"></i></button>                       
-            </el-dialog>              
+            </el-dialog>   
         </el-dialog>                 
     </div>
 </template>
 <script>
-import { httpGetPromoters, httpGetUserDetail } from "../../../service/http";
+import {
+  httpGetPromoters,
+  httpGetUserDetail,
+  getCustomerPage
+} from "../../../service/http";
 export default {
   data() {
     return {
@@ -407,22 +493,8 @@ export default {
       ],
       fqzdData: [],
       hkjlData: [],
-      zljData: [
-        {
-          xh: "7022",
-          fqsp: "钱包取现500元",
-          spje: "40.00",
-          sf: "0.00",
-          yg: "500.00",
-          fqs: "14",
-          zt: "结束",
-          wyqs: "14",
-          wyje: "40.00",
-          jmbl: "0.00%",
-          sqr: "借花花",
-          tjsj: "2017-03-28"
-        }
-      ],
+      yhkData: [],
+      zljData: [],
       hfjlData: [
         {
           xh: "28663",
@@ -521,35 +593,51 @@ export default {
     onSubmit() {},
     handleShow(row) {
       let _this = this;
-      let id = row.id;
-      this.userData.length = 0;
-      this.relationShips.length = 0;
-      this.hkjlData.length = 0;
-      this.fqzdData.length = 0;
-      this.hfjlData.length = 0;
-      this.sloading = true;
-      this.idCardImgs.length = 0;
-      httpGetUserDetail(id)
+      let CustUserId = row.id;
+      _this.userData ? (_this.userData.length = 0) : (_this.userData = []);
+      _this.rzData ? (_this.rzData.length = 0) : (_this.rzData = []);
+      _this.qbData ? (_this.qbData.length = 0) : (_this.qbData = []);
+      _this.fqzdData ? (_this.fqzdData.length = 0) : (_this.fqzdData = []);
+      _this.yhkData ? (_this.yhkData.length = 0) : (_this.yhkData = []);
+      _this.hkjlData ? (_this.hkjlData.length = 0) : (_this.hkjlData = []);
+      _this.zljData ? (_this.zljData.length = 0) : (_this.zljData = []);
+      _this.idCardImgs
+        ? (_this.idCardImgs.length = 0)
+        : (_this.idCardImgs = []);
+      getCustomerPage(CustUserId)
         .then(res => {
-          let data = res.data.data;
-          _this.userData.push(data);
-          _this.relationShips = data.relationShips;
-          _this.hkjlData = data.loanRepayments;
-          _this.fqzdData = data.loanApplies;
-          _this.hfjlData = data.loanCollectionRecords;
-          _this.idCardImgs.push({
-            src: data.fullFaceUrl,
-            label: "身份证正面"
-          });
-          _this.idCardImgs.push({
-            src: data.reverseUrl,
-            label: "身份证反面照"
-          });
-          _this.idCardImgs.push({
-            src: data.handUrl,
-            label: "身份证手持照"
-          });
-          this.sloading = false;
+          let data = res.data;
+          _this.userData.push(row);
+          console.log();
+          _this.rzData = data.contactUserDOList;
+          _this.idCardImgs = [
+            {
+              src:
+                data.custIdcardImageList && data.custIdcardImageList[0]
+                  ? data.custIdcardImageList[0].fullfaceUrl
+                  : "",
+              label: "身份证正面"
+            },
+            {
+              src:
+                data.custIdcardImageList && data.custIdcardImageList[0]
+                  ? data.custIdcardImageList[0].reverseStorageUrl
+                  : "",
+              label: "身份证反面"
+            },
+            {
+              src:
+                data.custIdcardImageList && data.custIdcardImageList[0]
+                  ? data.custIdcardImageList[0].handStorageUrl
+                  : "",
+              label: "手持照"
+            }
+          ];
+          _this.qbData.push(data.walletMessage);
+          _this.fqzdData = data.withDrawDOList;
+          _this.hkjlData = data.loanRepaymentList;
+          _this.yhkData = data.bankCardDTOVoList;
+          _this.zljData = data.overdueList;
           _this.checkVisible = true;
         })
         .catch();

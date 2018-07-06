@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
 //axios.defaults.baseURL = 'http://192.168.1.124:8084';
 
 
@@ -548,17 +548,7 @@ export function getEleUserList(pageNumber, pageSize, startDate, endDate, keyword
 //后台管理模块 /adMin 电销回访
 export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId) {
   let data = {
-    userName,
-    userMobile,
-    salesmanId,
-    loanApplyId,
-    loanOrderId,
-    recallType,
-    remark,
-    recallResult,
-    type,
-    money,
-    userId
+    userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
   };
   return axios({
     url: '/electrical/salesmanRecall',

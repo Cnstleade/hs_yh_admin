@@ -377,7 +377,7 @@ export default {
     }
   },
   mounted() {
-    this.getData();
+    this.getData("", 1, "");
     this._httpGetRole();
   }
 };

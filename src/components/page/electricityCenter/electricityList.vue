@@ -64,9 +64,9 @@
                       <el-table-column prop="chbSale" label="电销人员" align="center"  width="140" >
                         <template slot-scope="scope" >
                             <el-tag
-                                :type="scope.row.chbSale?'success':'danger'"
+                                :type="scope.row.salesmanName?'success':'danger'"
                                 style="width:100px"
-                            >{{scope.row.chbSale?scope.row.chbSale.username:'暂无电销人员'}}</el-tag>
+                            >{{scope.row.salesmanName?scope.row.salesmanName:'暂无电销人员'}}</el-tag>
                         </template> 
                       </el-table-column>  
             <el-table-column type="expand" label="回访详情" width="80" >
@@ -111,7 +111,7 @@
                         <el-button
                             size="mini"
                             type="success"
-                            :disabled="scope.row.chbSale?false:true"
+                            :disabled="scope.row.salesmanName?false:true"
                             @click="handleAdd(scope.$index, scope.row)"
                            >添加回访</el-button>                           
                         </template> 
@@ -284,31 +284,11 @@ export default {
   },
   methods: {
     _getEleSalesmanRecall(
-      userName,
-      userMobile,
-      salesmanId,
-      loanApplyId,
-      loanOrderId,
-      recallType,
-      remark,
-      recallResult,
-      type,
-      money,
-      userid
+userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
     ) {
       let _this = this;
       getEleSalesmanRecall(
-        userName,
-        userMobile,
-        salesmanId,
-        loanApplyId,
-        loanOrderId,
-        recallType,
-        remark,
-        recallResult,
-        type,
-        money,
-        userid
+userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
       )
         .then(res => {
           let data = res.data;
@@ -424,8 +404,8 @@ export default {
       this.ruleForm1 = {
         userName: row.custUserName,
         userMobile: row.custUserMobile,
-        salesmanId: row.chbSale.id,
-        salesman: row.chbSale.username,
+        salesmanId: row.salesmanId,
+        salesman: row.salesmanName,
         loanApplyId: row.loanApplyId,
         loanOrderId: row.loanOrderId,
         recallType: "",

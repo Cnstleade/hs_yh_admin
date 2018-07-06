@@ -2,6 +2,7 @@
   <!--时间格式化|dateServer-->
   <div class="container">
     <template>
+      {{currentIndex}}
       <el-row>
         <el-col :span="12">
           <el-button-group>
@@ -285,12 +286,12 @@
 
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>通话记录</label></el-col>
               <el-col :span="22">
                 <el-button type="primary">查看通话记录</el-button>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>认证资料</label></el-col>
               <el-col :span="22">
@@ -414,7 +415,7 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>金额统计</label></el-col>
               <el-col :span="22">
                 <template>
@@ -427,7 +428,7 @@
                   </div>
                 </template>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>订单信息</label></el-col>
               <el-col :span="22">
@@ -461,17 +462,17 @@
             <el-row>
               <el-col :span="2"><label>审核金额</label></el-col>
               <el-col :span="22">
-                <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="walletInfo.auditMoney"></el-input>
+                <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="walletInfo.auditMoney" disabled></el-input>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="2"><label>备注</label></el-col>
               <el-col :span="22">
                 <el-input type="textarea" :rows="2" placeholder="请填写备注信息"
-                          v-model="customerInformation.remark"></el-input>
+                          v-model="customerInformation.remark" disabled></el-input>
               </el-col>
             </el-row>
-            <el-row class="title-style">
+            <el-row class="title-style" v-if="currentIndex==0||currentIndex==1">
               <el-col :span="2"><label></label></el-col>
               <el-col :span="22">
                 <el-radio-group v-model="radio">
@@ -1533,915 +1534,914 @@
 </template>
 
 <script>
-  import {timeFormat} from "../../../config/time";
-  import {Message} from "element-ui";
-  import {config} from "../../../util/config";
-  import BigImg from "./BigImg.vue";
+import { timeFormat } from "../../../config/time";
+import { Message } from "element-ui";
+import { config } from "../../../util/config";
+import BigImg from "./BigImg.vue";
 
-  export default {
-    name: "reviewCustomersAndWallets",
-    data() {
-      return {
-        dialogAssessor: false,
-        dialogSalesman: false,
-        outerVisible: false,
-        modifyConsumerInfo: false,
-        modifyCredentials: false,
-        modifyAlevanceInfo: false,
-        CreditReport: false,
-        AlertDialog: false,
+export default {
+  name: "reviewCustomersAndWallets",
+  data() {
+    return {
+      currentIndex: 0,
+      dialogAssessor: false,
+      dialogSalesman: false,
+      outerVisible: false,
+      modifyConsumerInfo: false,
+      modifyCredentials: false,
+      modifyAlevanceInfo: false,
+      CreditReport: false,
+      AlertDialog: false,
 
-        loading: true,
-        username: '',  // 用户名搜索
-        radio: 1,
-        listId: null,
-        currentPage: 1,
-        pageSize: 10,
-        total: null,
-        iscur: 0,
-        // showIndex: 1,
-        showImg: false,
-        imgSrc: "",
-        labelWidth: "200px",
-        dateTime: [],  // 选中时间
-        startTime: '', // 开始时间
-        endTime: '',  // 结束时间
+      loading: true,
+      username: "", // 用户名搜索
+      radio: 1,
+      listId: null,
+      currentPage: 1,
+      pageSize: 10,
+      total: null,
+      iscur: 0,
+      // showIndex: 1,
+      showImg: false,
+      imgSrc: "",
+      labelWidth: "200px",
+      dateTime: [], // 选中时间
+      startTime: "", // 开始时间
+      endTime: "", // 结束时间
 
-        auditStatus: '',  //审核状态
-        selectList: [],
-        assessorForm: {
-          assessor: null
-        },
-        assessorId: null,
-        customerInformation: {}, // 客户信息表数据
+      auditStatus: "", //审核状态
+      selectList: [],
+      assessorForm: {
+        assessor: null
+      },
+      assessorId: null,
+      customerInformation: {}, // 客户信息表数据
 
-        //报告
-        showText: false,
-        activeName: "third",
-        userBasicInformation: {}, //用户基本信息检测用户基本信息检测
-        userInfo: {},
-        kinsfolkTableData: [], //亲属联系人
-        testTableData: [],
-        operatorTableData: [], //运营商消费数据
-        linkmanTableData: [], //联系人区域汇总
-        operatorDataTableData: [], //运行商数据分析
-        contactTableData: [], //联系人信息
-        esAddTableData: [], //电商信息
-        esDataTableData: [], //电商数据统计
-        tripTableData: [],
-        canvasimg: "",
-        canvasShow: true,
-        note: {
-          backgroundImage: ""
-          // backgroundRepeat: "no-repeat",
-          // backgroundSize: "25px auto",
-          // marginTop: "5px"
-        },
-        baseInfo: {},
-        row: {},
-        type: 0,
-        //报告
-        assessorList: [],
-        allCustomersData: [], // 列表数据
-        salesmanTable: [
-          {
-            userName: "aaaa",
-            name: "bbb",
-            email: "ccc@136.com",
-            phone: "13695412651",
-            endLogTime: "2018-06-08 14:26:35"
-          }
-        ],
-        pneumaticTable: [
-          {
-            callRecords: "无",
-            addressList: "50",
-            location: "123",
-            networkInfo: "yes",
-            educationInfo: "no",
-            hasVoice: "yes"
-          }
-        ],
-
-        // 钱包信息
-        walletInfo: {
-          joinDate: '',       //注册时间
-          loginDate: '',      //登陆时间
-          creditLine: '',     //授信额度
-          auditMoney: '',     //审核金额
-        },
-        tabs: [
-          {
-            name: "审核中",
-            url: "/sys/UnderReviewList"
-          },
-          {
-            name: "已审核",
-            url: "/sys/getApplyed"
-          },
-        ]
-      };
-    },
-
-    components: {
-      "big-img": BigImg
-    },
-
-    watch: {
-      // 监听输入变化
-      'walletInfo.auditMoney'(val, oldVal) {
-        if (val === '') {
-          Message({
-            message: '审核金额不能为空',
-            center: true
-          });
-          this.walletInfo.auditMoney = val;
-        } else if (val === '0') {
-          Message({
-            message: '审核金额不能为0',
-            center: true
-          });
-          this.walletInfo.auditMoney = val;
-        } else if (val < 0) {
-          Message({
-            message: '审核金额不能为负数',
-            center: true
-          });
-          this.walletInfo.auditMoney = this.walletInfo.creditLine;
-        } else if (val > this.walletInfo.creditLine) {
-          Message({
-            message: '审核金额不能大于授信额度',
-            center: true
-          });
-          this.walletInfo.auditMoney = this.walletInfo.creditLine;
-        } else if (this.walletInfo.creditLine > val > 0) {
-          this.walletInfo.auditMoney = val;
+      //报告
+      showText: false,
+      activeName: "third",
+      userBasicInformation: {}, //用户基本信息检测用户基本信息检测
+      userInfo: {},
+      kinsfolkTableData: [], //亲属联系人
+      testTableData: [],
+      operatorTableData: [], //运营商消费数据
+      linkmanTableData: [], //联系人区域汇总
+      operatorDataTableData: [], //运行商数据分析
+      contactTableData: [], //联系人信息
+      esAddTableData: [], //电商信息
+      esDataTableData: [], //电商数据统计
+      tripTableData: [],
+      canvasimg: "",
+      canvasShow: true,
+      note: {
+        backgroundImage: ""
+        // backgroundRepeat: "no-repeat",
+        // backgroundSize: "25px auto",
+        // marginTop: "5px"
+      },
+      baseInfo: {},
+      row: {},
+      type: 0,
+      //报告
+      assessorList: [],
+      allCustomersData: [], // 列表数据
+      salesmanTable: [
+        {
+          userName: "aaaa",
+          name: "bbb",
+          email: "ccc@136.com",
+          phone: "13695412651",
+          endLogTime: "2018-06-08 14:26:35"
         }
-        console.log(this.walletInfo.auditMoney);
+      ],
+      pneumaticTable: [
+        {
+          callRecords: "无",
+          addressList: "50",
+          location: "123",
+          networkInfo: "yes",
+          educationInfo: "no",
+          hasVoice: "yes"
+        }
+      ],
+
+      // 钱包信息
+      walletInfo: {
+        joinDate: "", //注册时间
+        loginDate: "", //登陆时间
+        creditLine: "", //授信额度
+        auditMoney: "" //审核金额
+      },
+      tabs: [
+        {
+          name: "审核中",
+          url: "/sys/UnderReviewList"
+        },
+        {
+          name: "已审核",
+          url: "/sys/getApplyed"
+        }
+      ]
+    };
+  },
+
+  components: {
+    "big-img": BigImg
+  },
+
+  watch: {
+    // 监听输入变化
+    "walletInfo.auditMoney"(val, oldVal) {
+      if (val === "") {
+        Message({
+          message: "审核金额不能为空",
+          center: true
+        });
+        this.walletInfo.auditMoney = val;
+      } else if (val === "0") {
+        Message({
+          message: "审核金额不能为0",
+          center: true
+        });
+        this.walletInfo.auditMoney = val;
+      } else if (val < 0) {
+        Message({
+          message: "审核金额不能为负数",
+          center: true
+        });
+        this.walletInfo.auditMoney = this.walletInfo.creditLine;
+      } else if (val > this.walletInfo.creditLine) {
+        Message({
+          message: "审核金额不能大于授信额度",
+          center: true
+        });
+        this.walletInfo.auditMoney = this.walletInfo.creditLine;
+      } else if (this.walletInfo.creditLine > val > 0) {
+        this.walletInfo.auditMoney = val;
+      }
+      console.log(this.walletInfo.auditMoney);
+    }
+  },
+
+  methods: {
+    // 截取整数部分
+    inpBlur() {
+      let val = this.walletInfo.auditMoney;
+      let num = parseInt(val);
+      if (!isNaN(num)) {
+        this.walletInfo.auditMoney = num;
+      } else {
+        Message({
+          message: "审核金额不能为空",
+          center: true
+        });
+        this.walletInfo.auditMoney = "";
       }
     },
 
-    methods: {
+    // 查询全部订单
+    queryAllCustomersList(a, b) {
+      let postDate = {
+        npage: a,
+        pagesize: b,
+        userName: this.username,
+        startDateString: this.startTime,
+        finshDateString: this.endTime,
+        channel: ""
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/UnderReviewList",
+        data: postDate,
+        success: data => {
+          this.allCustomersData = data.rows;
+          this.total = data.total;
+          this.loading = false;
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
 
-      // 截取整数部分
-      inpBlur() {
-        let val = this.walletInfo.auditMoney;
-        let num = parseInt(val);
-        if(!isNaN(num)){
-          this.walletInfo.auditMoney = num;
-        }else{
+    // 搜索
+    searchTable() {
+      this.queryAllCustomersList(this.currentPage, this.pageSize);
+    },
+
+    // 选择时间
+    chooseTime() {
+      this.startTime = this.getMyDate(this.dateTime[0]);
+      this.endTime = this.getMyDate(this.dateTime[1]);
+    },
+
+    // 查询审核员列表
+    queryAssessorList() {
+      $.ajax({
+        type: "GET",
+        url: config.baseURL + "/sys/getRoleName",
+        success: data => {
+          this.assessorList = data;
+        },
+        error: err => {
+          console.log(err.status);
+        }
+      });
+    },
+
+    // 切换按钮刷新表单
+    tabChange: function(index, url) {
+      this.currentIndex = index;
+      this.showIndex = index;
+      this.loading = true;
+      let postDate = {
+        npage: this.currentPage,
+        pagesize: this.pagesize,
+        userName: "",
+        mobile: "",
+        idNo: "",
+        startDateString: "",
+        finshDateString: "",
+        channel: ""
+      };
+      $.ajax({
+        url: config.baseURL + url,
+        type: "POST",
+        data: postDate,
+        success: data => {
+          // console.log(data.rows);
+          this.allCustomersData = data.rows;
+          this.loading = false;
+        },
+        error: err => {
+          console.log(err.status);
+        }
+      });
+    },
+
+    // 表格时间转换
+    dateFormat: function(row, column) {
+      let date = row[column.property];
+      // console.log(date);
+      if (date == undefined) {
+        return "";
+      }
+      let dateTime = new Date(date),
+        y = dateTime.getFullYear(),
+        m = dateTime.getMonth() + 1,
+        d = dateTime.getDate(),
+        h = dateTime.getHours(),
+        i = dateTime.getMinutes(),
+        s = dateTime.getSeconds();
+      return (
+        y +
+        "/" +
+        this.getzf(m) +
+        "/" +
+        this.getzf(d) +
+        " " +
+        this.getzf(h) +
+        ":" +
+        this.getzf(i) +
+        ":" +
+        this.getzf(s)
+      );
+    },
+
+    //转成2017-01-01
+    getMyDate(str) {
+      var oDate = new Date(str),
+        oYear = oDate.getFullYear(),
+        oMonth = oDate.getMonth() + 1,
+        oDay = oDate.getDate(),
+        oHour = oDate.getHours(),
+        oMin = oDate.getMinutes(),
+        oSen = oDate.getSeconds(),
+        oTime = oYear + "-" + this.getzf(oMonth) + "-" + this.getzf(oDay); //最后拼接时间
+      return oTime;
+    },
+
+    //补0操作
+    getzf(num) {
+      if (parseInt(num) < 10) {
+        num = "0" + num;
+      }
+      return num;
+    },
+
+    //默认日期显示一周
+    setDefaultDate() {
+      let newDate = new Date();
+      let year = newDate.getFullYear(),
+        month = newDate.getMonth() + 1,
+        day = newDate.getDate(),
+        defualtDate = year + "-" + this.getzf(month) + "-" + this.getzf(day),
+        defualtEndDate = timeFormat(defualtDate, -6);
+
+      /*开始结束时间赋值*/
+      // this.startTime = defualtEndDate;
+      // this.endTime = defualtDate;
+
+      this.dateTime.push(
+        new Date(defualtEndDate).getTime(),
+        new Date(defualtDate).getTime()
+      );
+    },
+
+    // 批量搁置
+    setCurrent() {
+      let postDate = {
+        ids: this.selectList,
+        type: true
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/updataLoanApply",
+        data: postDate,
+        success: function(data) {
+          alert(data);
+        },
+        error: function() {
+          alert("错误");
+        }
+      });
+    },
+
+    // 审核人分配
+    allotOperator(data) {
+      // console.log(data.id);
+      this.assessorId = data.id;
+      this.dialogAssessor = true;
+    },
+
+    // 提交审核员信息
+    submitAssessorForm() {
+      let params = {
+        id: this.assessorId,
+        Userid: this.assessorForm.assessor
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/setReviewer",
+        data: params,
+        success: data => {
+          if ((data.success = true)) {
+            Message({
+              message: data.message,
+              center: true
+            });
+            this.dialogAssessor = false;
+            this.queryAllCustomersList();
+          }
+        },
+        error: err => {
+          console.log(err.status);
+        }
+      });
+    },
+
+    // 点击业务员
+    handleSalesman() {
+      this.dialogSalesman = true;
+    },
+
+    // 查看客户信息
+    examine(val) {
+      this.auditStatus = val.approveResult;
+      this.listId = Number(val.id);
+      this.customerInformation = {};
+      this.outerVisible = true;
+      let param = {
+        id: this.listId
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/getCustomterMesage",
+        data: param,
+        success: data => {
+          this.customerInformation = data;
+
+          this.walletInfo.joinDate = data.applyTime; //注册时间
+          this.walletInfo.loginDate = data.createTime; //登陆时间
+          this.walletInfo.creditLine = data.applyAmt; //授信额度
+          this.walletInfo.auditMoney = data.approveAmt; //审核金额
+        },
+        error: err => {
           Message({
-            message: '审核金额不能为空',
+            message: err,
             center: true
           });
-          this.walletInfo.auditMoney = '';
         }
+      });
+    },
 
-      },
+    // 提交客户信息
+    submitCustomerInfo() {
+      let value = this.walletInfo.auditMoney;
+      let mark = this.customerInformation.remark;
+      console.log(this.auditStatus, value);
 
-      // 查询全部订单
-      queryAllCustomersList(a, b) {
-        let postDate = {
-          npage: a,
-          pagesize: b,
-          username: this.username,
-          startDateString: this.startTime,
-          finshDateString: this.endTime,
-          channel: ""
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/UnderReviewList",
-          data: postDate,
-          success: data => {
-            this.allCustomersData = data.rows;
-            this.total = data.total;
-            this.loading = false;
-          },
-          error: err => {
-            console.log(err);
-          }
-        });
-      },
-
-      // 搜索
-      searchTable() {
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
-      },
-
-      // 选择时间
-      chooseTime() {
-        this.startTime = this.getMyDate(this.dateTime[0]);
-        this.endTime = this.getMyDate(this.dateTime[1]);
-      },
-
-      // 查询审核员列表
-      queryAssessorList() {
-        $.ajax({
-          type: "GET",
-          url: config.baseURL + "/sys/getRoleName",
-          success: data => {
-            this.assessorList = data;
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 切换按钮刷新表单
-      tabChange: function (index, url) {
-        this.showIndex = index;
-        this.loading = true;
-        let postDate = {
-          npage: this.currentPage,
-          pagesize: this.pagesize,
-          userName: "",
-          mobile: "",
-          idNo: "",
-          startDateString: "",
-          finshDateString: "",
-          channel: ""
-        };
-        $.ajax({
-          url: config.baseURL + url,
-          type: "POST",
-          data: postDate,
-          success: data => {
-            // console.log(data.rows);
-            this.allCustomersData = data.rows;
-            this.loading = false;
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 表格时间转换
-      dateFormat: function (row, column) {
-        let date = row[column.property];
-        // console.log(date);
-        if (date == undefined) {
-          return "";
-        }
-        let dateTime = new Date(date),
-          y = dateTime.getFullYear(),
-          m = dateTime.getMonth() + 1,
-          d = dateTime.getDate(),
-          h = dateTime.getHours(),
-          i = dateTime.getMinutes(),
-          s = dateTime.getSeconds();
-        return (
-          y +
-          "/" +
-          this.getzf(m) +
-          "/" +
-          this.getzf(d) +
-          " " +
-          this.getzf(h) +
-          ":" +
-          this.getzf(i) +
-          ":" +
-          this.getzf(s)
-        );
-      },
-
-      //转成2017-01-01
-      getMyDate(str) {
-        var oDate = new Date(str),
-          oYear = oDate.getFullYear(),
-          oMonth = oDate.getMonth() + 1,
-          oDay = oDate.getDate(),
-          oHour = oDate.getHours(),
-          oMin = oDate.getMinutes(),
-          oSen = oDate.getSeconds(),
-          oTime = oYear + "-" + this.getzf(oMonth) + "-" + this.getzf(oDay); //最后拼接时间
-        return oTime;
-      },
-
-      //补0操作
-      getzf(num) {
-        if (parseInt(num) < 10) {
-          num = "0" + num;
-        }
-        return num;
-      },
-
-      //默认日期显示一周
-      setDefaultDate() {
-        let newDate = new Date();
-        let year = newDate.getFullYear(),
-          month = newDate.getMonth() + 1,
-          day = newDate.getDate(),
-          defualtDate = year + "-" + this.getzf(month) + "-" + this.getzf(day),
-          defualtEndDate = timeFormat(defualtDate, -6);
-
-        /*开始结束时间赋值*/
-        // this.startTime = defualtEndDate;
-        // this.endTime = defualtDate;
-
-        this.dateTime.push(new Date(defualtEndDate).getTime(), new Date(defualtDate).getTime());
-      },
-
-      // 批量搁置
-      setCurrent() {
-        let postDate = {
-          ids: this.selectList,
-          type: true
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/updataLoanApply",
-          data: postDate,
-          success: function (data) {
-            alert(data);
-          },
-          error: function () {
-            alert("错误");
-          }
-        });
-      },
-
-      // 审核人分配
-      allotOperator(data) {
-        // console.log(data.id);
-        this.assessorId = data.id;
-        this.dialogAssessor = true;
-      },
-
-      // 提交审核员信息
-      submitAssessorForm() {
-        let params = {
-          id: this.assessorId,
-          Userid: this.assessorForm.assessor
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/setReviewer",
-          data: params,
-          success: data => {
-            if ((data.success = true)) {
+      // 判断审核金额是否不为空或不为0 marks(必选)
+      if (value != "" || (value != 0 && mark != "")) {
+        // 判断审核状态是否为2，3，4
+        if (
+          this.auditStatus === 2 ||
+          this.auditStatus === 3 ||
+          this.auditStatus === 4
+        ) {
+          // 弹出提示框
+          this.AlertDialog = true;
+        } else {
+          // 审核状态不为2，3，4时执行
+          let params = {
+            type: this.radio,
+            id: this.listId,
+            approveAmt: value,
+            remark: mark
+          };
+          $.ajax({
+            type: "POST",
+            url: config.baseURL + "/sys/updataLoanApply",
+            data: params,
+            success: data => {
+              this.outerVisible = false;
               Message({
-                message: data.message,
+                message: data,
                 center: true
               });
-              this.dialogAssessor = false;
               this.queryAllCustomersList();
+            },
+            error: err => {
+              this.outerVisible = false;
+              Message({
+                message: "提交失败",
+                center: true
+              });
             }
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 点击业务员
-      handleSalesman() {
-        this.dialogSalesman = true;
-      },
-
-      // 查看客户信息
-      examine(val) {
-        this.auditStatus = val.approveResult;
-        this.listId = Number(val.id);
-        this.customerInformation = {};
-        this.outerVisible = true;
-        let param = {
-          id: this.listId
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/getCustomterMesage",
-          data: param,
-          success: data => {
-            this.customerInformation = data;
-
-            this.walletInfo.joinDate = data.applyTime; //注册时间
-            this.walletInfo.loginDate = data.createTime; //登陆时间
-            this.walletInfo.creditLine = data.applyAmt; //授信额度
-            this.walletInfo.auditMoney = data.approveAmt; //审核金额
-          },
-          error: err => {
-            Message({
-              message: err,
-              center: true
-            });
-          }
-        });
-      },
-
-      // 提交客户信息
-      submitCustomerInfo() {
-
-        let value = this.walletInfo.auditMoney;
-        let mark = this.customerInformation.remark;
-        console.log(this.auditStatus,value);
-
-        // 判断审核金额是否不为空或不为0 marks(必选)
-        if(value!='' || value != 0 && mark != ''){
-
-          // 判断审核状态是否为2，3，4
-          if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
-
-            // 弹出提示框
-            this.AlertDialog = true;
-
-          } else {
-
-            // 审核状态不为2，3，4时执行
-            let params = {
-              type: this.radio,
-              id: this.listId,
-              approveAmt: value,
-              remark: mark
-            };
-            $.ajax({
-              type: "POST",
-              url: config.baseURL + "/sys/updataLoanApply",
-              data: params,
-              success: data => {
-                this.outerVisible = false;
-                Message({
-                  message: data,
-                  center: true
-                });
-                this.queryAllCustomersList();
-              },
-              error: err => {
-                this.outerVisible = false;
-                Message({
-                  message: '提交失败',
-                  center: true
-                });
-              }
-            });
-          }
-        }else{
-          this.$message.error('审核金额和备注不能为空！');
+          });
         }
-
-
-      },
-
-      // 确认提交客户信息
-      yesSure() {
-        let params = {
-          type: this.radio,
-          id: this.listId,
-          approveAmt: this.walletInfo.auditMoney,
-          remark: this.customerInformation.remark
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/updataLoanApply",
-          data: params,
-          success: data => {
-            this.AlertDialog = false;
-            this.outerVisible = false;
-            Message({
-              message: data,
-              center: true
-            });
-            this.queryAllCustomersList();
-          },
-          error: err => {
-            this.AlertDialog = false;
-            this.outerVisible = false;
-            Message({
-              message: '提交失败',
-              center: true
-            });
-          }
-        });
-      },
-
-      // 查看风控报告
-      viewRiskManagementreport() {
-        let param = {
-          id: this.listId
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/getCreditReport",
-          data: param,
-          success: data => {
-            // console.log("风控报告数据：" + data);
-
-            if (data.tdReport) {
-              this.baseInfo = data.tdReport;
-            }
-            if (data.mifengreport) {
-              let date = data.mifengreport;
-              this.userBasicInformation = date.mifengreportApplicationCheck;
-              // console.log(this.userBasicInformation);
-              this.testTableData = date.list1;
-              this.operatorTableData = date.list2;
-              this.kinsfolkTableData = date.list6;
-
-              this.linkmanTableData = date.list4;
-              this.operatorDataTableData = date.list3;
-              this.userInfo = date.mifengreportUserInfoCheck;
-            }
-            this.CreditReport = true;
-          },
-          error: err => {
-            Message({
-              message: err,
-              center: true
-            });
-          }
-        });
-      },
-
-      //切换报告
-      handleClick(tab, event) {
-      },
-
-      //修改客户信息
-      modifyConsumerMessage() {
-        this.modifyConsumerInfo = true;
-      },
-
-      //修改认证信息
-      modifyAttestationInfo() {
-        this.modifyCredentials = true;
-      },
-
-      //修改客户关联信息
-      modifyRelevanceInfo() {
-        this.modifyAlevanceInfo = true;
-      },
-
-      clickImg(e, src) {
-        this.showImg = true;
-        // 获取当前图片地址
-        this.imgSrc = src;
-      },
-
-      viewImg() {
-        this.showImg = false;
-      },
-
-      // 分页插件-数量改变事件
-      handleSizeChange(val) {
-        this.pageSize = val;
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
-      },
-
-      // 分页插件-页数改变事件
-      handleCurrentChange(val) {
-        this.currentPage = val;
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
+      } else {
+        this.$message.error("审核金额和备注不能为空！");
       }
     },
-    mounted() {
-      // 设置默认日期
-      this.setDefaultDate();
 
-      // 查询全部列表
+    // 确认提交客户信息
+    yesSure() {
+      let params = {
+        type: this.radio,
+        id: this.listId,
+        approveAmt: this.walletInfo.auditMoney,
+        remark: this.customerInformation.remark
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/updataLoanApply",
+        data: params,
+        success: data => {
+          this.AlertDialog = false;
+          this.outerVisible = false;
+          Message({
+            message: data,
+            center: true
+          });
+          this.queryAllCustomersList();
+        },
+        error: err => {
+          this.AlertDialog = false;
+          this.outerVisible = false;
+          Message({
+            message: "提交失败",
+            center: true
+          });
+        }
+      });
+    },
+
+    // 查看风控报告
+    viewRiskManagementreport() {
+      let param = {
+        id: this.listId
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/getCreditReport",
+        data: param,
+        success: data => {
+          // console.log("风控报告数据：" + data);
+
+          if (data.tdReport) {
+            this.baseInfo = data.tdReport;
+          }
+          if (data.mifengreport) {
+            let date = data.mifengreport;
+            this.userBasicInformation = date.mifengreportApplicationCheck;
+            // console.log(this.userBasicInformation);
+            this.testTableData = date.list1;
+            this.operatorTableData = date.list2;
+            this.kinsfolkTableData = date.list6;
+
+            this.linkmanTableData = date.list4;
+            this.operatorDataTableData = date.list3;
+            this.userInfo = date.mifengreportUserInfoCheck;
+          }
+          this.CreditReport = true;
+        },
+        error: err => {
+          Message({
+            message: err,
+            center: true
+          });
+        }
+      });
+    },
+
+    //切换报告
+    handleClick(tab, event) {},
+
+    //修改客户信息
+    modifyConsumerMessage() {
+      this.modifyConsumerInfo = true;
+    },
+
+    //修改认证信息
+    modifyAttestationInfo() {
+      this.modifyCredentials = true;
+    },
+
+    //修改客户关联信息
+    modifyRelevanceInfo() {
+      this.modifyAlevanceInfo = true;
+    },
+
+    clickImg(e, src) {
+      this.showImg = true;
+      // 获取当前图片地址
+      this.imgSrc = src;
+    },
+
+    viewImg() {
+      this.showImg = false;
+    },
+
+    // 分页插件-数量改变事件
+    handleSizeChange(val) {
+      this.pageSize = val;
       this.queryAllCustomersList(this.currentPage, this.pageSize);
+    },
 
-      // 审核人列表
-      this.queryAssessorList();
+    // 分页插件-页数改变事件
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.queryAllCustomersList(this.currentPage, this.pageSize);
     }
-  };
+  },
+  mounted() {
+    // 设置默认日期
+    this.setDefaultDate();
+
+    // 查询全部列表
+    this.queryAllCustomersList(this.currentPage, this.pageSize);
+
+    // 审核人列表
+    this.queryAssessorList();
+  }
+};
 </script>
 <style>
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
 
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 </style>
 <style scoped>
-  .cur {
-    color: #fff;
-    background-color: #20a0ff;
-  }
+.cur {
+  color: #fff;
+  background-color: #20a0ff;
+}
 
-  #clientDetails,
-  #consumerMessage,
-  #credentials,
-  #relevance {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    border-bottom: none;
-    overflow-y: auto;
-  }
+#clientDetails,
+#consumerMessage,
+#credentials,
+#relevance {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  border-bottom: none;
+  overflow-y: auto;
+}
 
-  #clientDetails .el-row,
-  #consumerMessage .el-row,
-  #credentials .el-row,
-  #relevance .el-row {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-  }
+#clientDetails .el-row,
+#consumerMessage .el-row,
+#credentials .el-row,
+#relevance .el-row {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
 
-  #clientDetails label,
-  #consumerMessage label,
-  #credentials label,
-  #relevance label {
-    color: #000;
-    width: 100px;
-    display: inline-block;
-  }
+#clientDetails label,
+#consumerMessage label,
+#credentials label,
+#relevance label {
+  color: #000;
+  width: 100px;
+  display: inline-block;
+}
 
-  .contactInfo {
-    border: 1px solid #ccc;
-    margin-bottom: 2px;
-  }
+.contactInfo {
+  border: 1px solid #ccc;
+  margin-bottom: 2px;
+}
 
-  .title-style {
-    background: #ebebeb;
-  }
+.title-style {
+  background: #ebebeb;
+}
 
-  .imgInfo {
-    float: left;
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-  }
+.imgInfo {
+  float: left;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
 
-  .imgInfo label {
-    text-align: center;
-  }
+.imgInfo label {
+  text-align: center;
+}
 
-  .img {
-    width: 80px;
-    height: 80px;
-    display: flex;
-  }
+.img {
+  width: 80px;
+  height: 80px;
+  display: flex;
+}
 
-  .el-radio + .el-radio {
-    margin: 0;
-  }
+.el-radio + .el-radio {
+  margin: 0;
+}
 
-  .inlineBox {
-    display: inline-block;
-    width: 100%;
-  }
+.inlineBox {
+  display: inline-block;
+  width: 100%;
+}
 
-  .title {
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-  }
+.title {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
 
-  .input-width {
-    width: 215px;
-  }
+.input-width {
+  width: 215px;
+}
 
-  .btn-fullscreen {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    border-radius: 15px;
-    cursor: pointer;
-  }
+.btn-fullscreen {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+}
 
-  .el-main-info {
-    color: #999;
-  }
+.el-main-info {
+  color: #999;
+}
 
-  .l {
-    float: left;
-  }
+.l {
+  float: left;
+}
 
-  .r {
-    float: right;
-  }
+.r {
+  float: right;
+}
 
-  .report_t {
-    overflow: hidden;
-    color: #999;
-  }
+.report_t {
+  overflow: hidden;
+  color: #999;
+}
 
-  .el-card {
-    margin-top: 24px;
-  }
+.el-card {
+  margin-top: 24px;
+}
 
-  .panel_title {
-    margin-bottom: 10px;
-    border-radius: 10px;
-    position: relative;
-    height: 40px;
-    text-align: center;
-  }
+.panel_title {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  position: relative;
+  height: 40px;
+  text-align: center;
+}
 
-  .panel_title h2 {
-    height: 30px;
-    line-height: 30px;
-    display: inline-block;
-    background: #e88f08;
-    color: #fff;
-    border-radius: 100px;
-    padding: 0;
-    margin: 0;
-    font-size: 16px;
-    position: absolute;
-    z-index: 99;
-    width: 200px;
-    left: 50%;
-    margin-left: -100px;
-  }
+.panel_title h2 {
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  background: #e88f08;
+  color: #fff;
+  border-radius: 100px;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  position: absolute;
+  z-index: 99;
+  width: 200px;
+  left: 50%;
+  margin-left: -100px;
+}
 
-  .line {
-    background: #e88f08;
-    height: 4px;
-    top: 13px;
-    position: absolute;
-    width: 100%;
-    border-radius: 10px;
-  }
+.line {
+  background: #e88f08;
+  height: 4px;
+  top: 13px;
+  position: absolute;
+  width: 100%;
+  border-radius: 10px;
+}
 
-  .table {
-    width: 100%;
-    border-radius: 2px;
-    border: 1px solid #f1f1f1;
-    border-bottom: none;
-  }
+.table {
+  width: 100%;
+  border-radius: 2px;
+  border: 1px solid #f1f1f1;
+  border-bottom: none;
+}
 
-  /* .table tr:hover {
+/* .table tr:hover {
     background:#c0b184 ;
   } */
-  .table tr td {
-    padding: 10px;
-    border-bottom: 1px solid #f1f1f1;
-  }
+.table tr td {
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
 
-  .table tr th {
-    padding: 10px;
-    border-bottom: 1px solid #f1f1f1;
-    font-size: 14px;
-    text-align: left;
-    background: #f7f7f9;
-  }
+.table tr th {
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 14px;
+  text-align: left;
+  background: #f7f7f9;
+}
 
-  .table span {
-    margin-right: 20px;
-    display: inline-block;
-  }
+.table span {
+  margin-right: 20px;
+  display: inline-block;
+}
 
-  span.item {
-    width: 60px;
-    font-weight: bold;
-    text-align: right;
-  }
+span.item {
+  width: 60px;
+  font-weight: bold;
+  text-align: right;
+}
 
-  .tip_y {
-    background: #5cb85c;
-    padding: 2px 10px;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 12px;
-  }
+.tip_y {
+  background: #5cb85c;
+  padding: 2px 10px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 12px;
+}
 
-  span.remarks {
-    display: block;
-    padding-left: 85px;
-    padding-top: 5px;
-    color: #c0b184;
-  }
+span.remarks {
+  display: block;
+  padding-left: 85px;
+  padding-top: 5px;
+  color: #c0b184;
+}
 
-  .tip {
-    background: #ccbfae;
-    padding: 2px 10px;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 12px;
-  }
+.tip {
+  background: #ccbfae;
+  padding: 2px 10px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 12px;
+}
 
-  .wrap {
-    margin: 0 auto;
-    padding: 20px;
-    width: 640px;
-    border: 1px solid #ccc;
-  }
+.wrap {
+  margin: 0 auto;
+  padding: 20px;
+  width: 640px;
+  border: 1px solid #ccc;
+}
 
-  .form .row {
-    padding: 10px 0 0;
-  }
+.form .row {
+  padding: 10px 0 0;
+}
 
-  .btn {
-    display: block;
-    margin: 20px auto;
-    padding: 8px 16px;
-  }
+.btn {
+  display: block;
+  margin: 20px auto;
+  padding: 8px 16px;
+}
 
-  #report .title {
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-    width: 100%;
-  }
+#report .title {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+}
 
-  #report .input-width {
-    width: 215px;
-  }
+#report .input-width {
+  width: 215px;
+}
 
-  #report .flx {
-    width: 85%;
-    top: 0px;
-    padding-top: 10px;
-    overflow: hidden;
-    line-height: 30px;
-  }
+#report .flx {
+  width: 85%;
+  top: 0px;
+  padding-top: 10px;
+  overflow: hidden;
+  line-height: 30px;
+}
 
-  #report .fl {
-    float: left;
+#report .fl {
+  float: left;
 
-    font-size: 24px;
-    font-weight: bold;
-  }
+  font-size: 24px;
+  font-weight: bold;
+}
 
-  #report .fl span {
-    font-size: 12px;
-    font-weight: normal;
-  }
+#report .fl span {
+  font-size: 12px;
+  font-weight: normal;
+}
 
-  #report .fr {
-    float: right;
-    font-size: 12px;
-  }
+#report .fr {
+  float: right;
+  font-size: 12px;
+}
 
-  #report .bar {
-    position: relative;
-    width: 50%;
-    display: inline-block;
-  }
+#report .bar {
+  position: relative;
+  width: 50%;
+  display: inline-block;
+}
 
-  #report .progress-text {
-    position: absolute;
-    text-align: center;
-    font-size: 32px;
-    line-height: 126px;
-    width: 126px;
-    height: 126px;
-  }
+#report .progress-text {
+  position: absolute;
+  text-align: center;
+  font-size: 32px;
+  line-height: 126px;
+  width: 126px;
+  height: 126px;
+}
 
-  #report .progress-text p {
-    width: 100%;
-    position: absolute;
-    top: 80px;
-    font-size: 12px;
-    line-height: 20px;
-    text-align: center;
-  }
+#report .progress-text p {
+  width: 100%;
+  position: absolute;
+  top: 80px;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
 
-  #report .table {
-    border-spacing: 2px;
-    border-color: grey;
-    font-size: 13px;
-    padding-left: 20px;
-    width: 100%;
-    display: table;
-    border-collapse: collapse;
-    border: none;
-  }
+#report .table {
+  border-spacing: 2px;
+  border-color: grey;
+  font-size: 13px;
+  padding-left: 20px;
+  width: 100%;
+  display: table;
+  border-collapse: collapse;
+  border: none;
+}
 
-  #report thead tr {
-    border-bottom: 2px solid #eaeaea;
-  }
+#report thead tr {
+  border-bottom: 2px solid #eaeaea;
+}
 
-  #report th {
-    padding-left: 10px;
-    height: 36px;
-    text-align: left;
-  }
+#report th {
+  padding-left: 10px;
+  height: 36px;
+  text-align: left;
+}
 
-  .row1,
-  .row2,
-  .row3 {
-    width: 30%;
-  }
+.row1,
+.row2,
+.row3 {
+  width: 30%;
+}
 
-  #report .borderBottom1 {
-    border-bottom: 1px solid #eaeaea;
-  }
+#report .borderBottom1 {
+  border-bottom: 1px solid #eaeaea;
+}
 
-  #report .borderBottom2 {
-    border-bottom: 1px solid #eaeaea;
-  }
+#report .borderBottom2 {
+  border-bottom: 1px solid #eaeaea;
+}
 
-  #report .risk-detail-list {
-    margin-left: 40px;
-  }
+#report .risk-detail-list {
+  margin-left: 40px;
+}
 
-  ul,
-  li {
-    list-style: none;
-  }
+ul,
+li {
+  list-style: none;
+}
 
-  #report .check-table {
-    width: 100%;
-  }
+#report .check-table {
+  width: 100%;
+}
 </style>
