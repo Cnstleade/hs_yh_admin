@@ -548,7 +548,17 @@ export function getEleUserList(pageNumber, pageSize, startDate, endDate, keyword
 //后台管理模块 /adMin 电销回访
 export function getEleSalesmanRecall(userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId) {
   let data = {
-    userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
+    userName,
+    userMobile,
+    salesmanId,
+    loanApplyId,
+    loanOrderId,
+    recallType,
+    remark,
+    recallResult,
+    type,
+    money,
+    userId
   };
   return axios({
     url: '/electrical/salesmanRecall',
@@ -1008,11 +1018,12 @@ export function httpRefuseList(npage, pagesize, username, mobile, idNo, startDat
 }
 
 //后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
-export function httpSaveMenu(parentId, mname, sort) {
+export function httpSaveMenu(parentId, mname, sort, mid) {
   let data = {
     parentId,
     mname,
-    sort
+    sort,
+    mid
   };
   return axios({
     url: '/sys/saveMenu',

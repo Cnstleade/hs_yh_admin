@@ -290,7 +290,8 @@ export default {
           httpSaveMenu(
             this.roleForm.parentId,
             this.roleForm.mname,
-            this.roleForm.sort
+            this.roleForm.sort,
+            this.roleForm.mid
           )
             .then(res => {
               let data = res.data;

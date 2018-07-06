@@ -101,7 +101,7 @@
                   <template slot-scope="scope">
                       <el-tag
                           :type="scope.row.eduBack===1?'success':'danger'"
-                      >{{scope.row.isDel===1?'正常':'冻结'}}</el-tag>
+                      >{{scope.row.isDel===1?'是':'无'}}</el-tag>
                   </template>                      
                 </el-table-column>  
                 <el-table-column prop="status"  align="center" label="状态"   width="150"

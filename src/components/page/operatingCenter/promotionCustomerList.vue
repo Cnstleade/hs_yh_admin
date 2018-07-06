@@ -75,11 +75,11 @@
                     </tr>
                     <tr class="title_6" >
                         <td colspan="6">
-                            <el-table
+                            <!-- <el-table
                                     :data="userData"
                                     border
                                     style="width: 100%"
-                            >
+                                >
                                 <el-table-column prop="realName" label="姓名" align="center" ></el-table-column>
                                 <el-table-column prop="status"  align="center" label="状态"   width="150"
                                   >
@@ -119,7 +119,7 @@
                                       >{{scope.row.source===1?'苹果':scope.row.source===2?'安卓':'网页'}}</el-tag>
                                   </template> 
                                 </el-table-column>                                                                                         
-                            </el-table>
+                            </el-table> -->
                         </td>
                     </tr>
                     <tr>
@@ -592,6 +592,7 @@ export default {
     },
     onSubmit() {},
     handleShow(row) {
+      console.log(row);
       let _this = this;
       let CustUserId = row.id;
       _this.userData ? (_this.userData.length = 0) : (_this.userData = []);
@@ -604,10 +605,11 @@ export default {
       _this.idCardImgs
         ? (_this.idCardImgs.length = 0)
         : (_this.idCardImgs = []);
+      _this.userData.push(JSON.parse(JSON.stringify(row)));
       getCustomerPage(CustUserId)
         .then(res => {
           let data = res.data;
-          _this.userData.push(row);
+
           console.log();
           _this.rzData = data.contactUserDOList;
           _this.idCardImgs = [
