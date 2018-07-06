@@ -5,7 +5,7 @@ var qs = require('qs');
 axios.defaults.timeout = 5000;
 //axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
 axios.defaults.baseURL = 'http://47.88.171.117:8084';
-// axios.defaults.baseURL = 'http:192.168.43.247:8082';
+//axios.defaults.baseURL = 'http://192.168.1.124:8084';
 
 
 
@@ -629,13 +629,14 @@ export function getOverduemanager(npage, pagesize, begainTimeString, endTimeStri
 }
 
 //后台管理模块 /admin 电销中心 新增电销员
-export function getSalesmanId(salesmanId, custUserId, loanOrderId, loanApplyId, custUserName) {
+export function getSalesmanId(salesmanId, custUserId, loanOrderId, loanApplyId, custUserName, salesmanName) {
   let data = {
     salesmanId,
     custUserId,
     loanOrderId,
     loanApplyId,
-    custUserName
+    custUserName,
+    salesmanName
   };
   return axios({
     url: '/electrical/salesmanCustUser',
@@ -797,6 +798,234 @@ export function getOfflinePaymentapplyUpdata(realMoney, urlRemark, withdrawId, r
   };
   return axios({
     url: '/sys/offlinePaymentapplyupdate',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 角色展示
+export function getRoleList(startDate, EndDate) {
+  let data = {
+    startDate,
+    EndDate
+  };
+  return axios({
+    url: '/admin/rolelist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 角色展示 添加或修改角色·
+export function changeRoleList(rid, rname, jobTitle) {
+  let data = {
+    rid,
+    rname,
+    jobTitle
+  };
+  return axios({
+    url: '/admin/addRole',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 角色菜单的查找
+export function findRoleMenu(RoleId) {
+  let data = {
+    RoleId
+  };
+  return axios({
+    url: '/admin/findRoleMenu',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 修改角色菜单
+export function changeRoleMenu(rid, mids) {
+  let data = {
+    rid,
+    mids
+  };
+  return axios({
+    url: '/admin/saveRoleMenu',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / Admin 用户管理下面的用户列表
+export function httpGetuserlistbyusername(username, status, rName) {
+  let data = {
+    username,
+    status,
+    rName
+  };
+  return axios({
+    url: '/sys/getuserlistbyusername',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//credit 获取风控菜单
+export function httpGetRole() {
+  return axios({
+    url: "sys/getRole",
+    method: "get"
+  })
+}
+
+//后台管理模块 / Admin 用户列表下的修改用户
+export function httpUpdateuser(uid, username, phoneNumber, status, rid) {
+  let data = {
+    uid,
+    username,
+    phoneNumber,
+    status,
+    rid
+  };
+  return axios({
+    url: '/sys/updateuser',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / Admin 密码修改
+export function httpUpdatePassWord(newpassword, oldpasswoed) {
+  let data = {
+    newpassword,
+    oldpasswoed
+  };
+  return axios({
+    url: '/sys/updatePassWord',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 保存菜单栏
+export function httpSaveRoleMenu(rid, mids) {
+  let data = {
+    rid,
+    mids
+  };
+  return axios({
+    url: '/admin/saveRoleMenu',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//后台管理模块 /  Admin 系统管理 菜单字典管理
+export function httpMenulist(pageSize, pageNum, parentId, mname) {
+  let data = {
+    pageSize,
+    pageNum,
+    parentId,
+    mname
+  };
+  return axios({
+    url: '/sys/menulist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+// Admin 获取所有父菜单
+export function httpFindFatherMenu() {
+  return axios({
+    url: "/sys/findFatherMenu",
+    method: "get"
+  })
+}
+
+//后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
+export function httpAllocatedList(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+  let data = {
+    npage,
+    pagesize,
+    username,
+    mobile,
+    idNo,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/allocatedList',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
+export function httpUnderReviewList(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+  let data = {
+    npage,
+    pagesize,
+    username,
+    mobile,
+    idNo,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/UnderReviewList',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+//后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
+export function httpManagerReview(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+  let data = {
+    npage,
+    pagesize,
+    username,
+    mobile,
+    idNo,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/ManagerReview',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+//后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
+export function httpRefuseList(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+  let data = {
+    npage,
+    pagesize,
+    username,
+    mobile,
+    idNo,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/RefuseList',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
+export function httpSaveMenu(parentId, mname, sort) {
+  let data = {
+    parentId,
+    mname,
+    sort
+  };
+  return axios({
+    url: '/sys/saveMenu',
     method: 'post',
     data: qs.stringify(data)
   })

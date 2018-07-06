@@ -161,7 +161,7 @@
             <el-row>
               <el-col :span="8"><label>注册地</label><span></span></el-col>
               <el-col :span="8"><label>注册IP</label><span>{{customerInformation.ip}}</span></el-col>
-              <el-col :span="8"><label>来源</label><span>{{customerInformation.source}}</span></el-col>
+              <el-col :span="8"><label>来源</label><span>{{customerInformation.source==1?'ios':customerInformation.source==2?'android':'h5'}}</span></el-col>
             </el-row>
             <el-row class="title-style">
               <el-col :span="24">
@@ -273,7 +273,7 @@
                       <el-col :span="4">姓名:<span>{{item.real_name}}</span></el-col>
                       <el-col :span="4">关系:<span>{{item.relationship}}</span></el-col>
                       <el-col :span="6">电话:<span>{{item.mob_number}}</span></el-col>
-                      <el-col :span="10">地址:<span>{{item.address}}</span></el-col>
+                      <!-- <el-col :span="10">地址:<span>{{item.address}}</span></el-col> -->
                     </el-row>
                   </div>
                 </template>
@@ -349,7 +349,7 @@
                     <el-row style="display: flex;align-items: center">
                       <el-col :span="5">授信额度:<span>{{walletInfo.creditLine}}</span></el-col>
                       <el-col :span="5">审核金额:<span>{{walletInfo.auditMoney}}</span></el-col>
-                      <el-col :span="5">签到额度:<span>10.00</span></el-col>
+                      <el-col :span="5">签到次数:<span>{{walletInfo.counts}}</span></el-col>
                       <el-col :span="5">电子合同:
                         <el-button type="primary">点击查看</el-button>
                       </el-col>

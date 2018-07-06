@@ -1,381 +1,412 @@
 <template>
-  <!--时间格式化|dateServer-->
-  <div class="container">
-    <template>
-      <el-row>
-        <el-col :span="24">
-          <el-date-picker
-            v-model="dateTime"
-            type="daterange"
-            @blur="chooseTime"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="timestamp">
-          </el-date-picker>
-          <el-button icon="el-icon-search" type="primary" @click="searchTable" style="margin-left: 10px;"></el-button>
-          <el-button icon="el-icon-plus" type="success" @click="addRole"></el-button>
-        </el-col>
-      </el-row>
-    </template>
-    <template>
-      <el-table class="m20"
-                v-loading="loading"
-                element-loading-text="拼命加载中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)"
-                :data="characterList"
-                border height="600">
-        <el-table-column prop="rid" label="角色ID" align="center"></el-table-column>
-        <el-table-column prop="rname" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="createtime" label="创建时间" align="center"></el-table-column>
-        <el-table-column prop="jobTitle" label="备注" align="center"></el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button type="warning" size="mini" @click="handleEditRole(scope.$index, scope.row)">角色修改</el-button>
-            <el-button type="primary" size="mini" @click="handleEditMenu(scope.$index, scope.row)">菜单修改</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </template>
-    <!--<template>
-      <el-pagination
-        style="margin-top: 10px;text-align: right;"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </template>-->
+    <div class="container">
+        <el-row>
+            <el-alert
+              :title="title"
+              :closable="false"
+              type="info">
+            </el-alert>           
+        </el-row>  
+        <el-row class="m20" >
+            <el-col :span="6">
+             <el-button type="primary" @click="addRole">添加新角色</el-button>
+            </el-col>
+            <el-col  :span="18" class="col-flex-end">
+                    <!-- <el-button-group>
+                      <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                      <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                      <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                      <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                      
+                    </el-button-group>     -->
+                    <el-button  type="primary" @click="reset">重置</el-button>
+                    <!-- <div class="l20">
+                        <el-input
+                        style="padding:0px 10px 0px 0px"
+                          placeholder="请输入手机号码"
+                          v-model="search.input"
+                          clearable>
+                        </el-input> 
+                    </div>                                   -->
+                    <el-date-picker
+                    style="width:340px"
+                    class="l20"
+                      v-model="search.time"
+                      type="daterange"
+                      value-format="yyyy-MM-dd"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期">
+                    </el-date-picker>                
+                    <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+            </el-col>             
+        </el-row> 
+        <el-table
+            :data="tableData"  
+            border  
+            ref="multipleTable" 
+            tooltip-effect="dark"
+            style="width: 100%"
+            class="m20"
+            @selection-change="handleSelectionChange"
+            v-loading="loading"
+            id="eleTable"
+          >
+            <!-- <el-table-column
+              type="selection"
+              align="center"
+              width="55">
+            </el-table-column>         -->
+            <el-table-column prop="rid" label="角色id" align="center" width="100"></el-table-column>
+            <el-table-column prop="rname" label="角色名字" align="center" width="140"></el-table-column>
+            <el-table-column prop="createtime" label="创建时间" align="center" width="220" sortable>
+                <template slot-scope="scope">
+                    {{scope.row.createtime|dateServer}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="jobTitle" label="备注" align="center" ></el-table-column>
+            <!-- <el-table-column type="expand" label="更多详情" width="80" >
+              <template slot-scope="props" >
+                <el-alert
+                  title="提现情况"
+                  type="success"
+                  :closable="false"
+                  center
+                  >
+                </el-alert>
+                <el-table
+                  :data="props.row.detail.withdraws?props.row.detail.withdraws:[]"
+                  border 
+                  style="width: 100%"
+                  >
+                      <el-table-column prop="status" label="是否逾期" align="center" 
+                         :filters="[{ value: 0, text: '放款中 ' }, { value: 1, text: '放款成功' }, { value: 2, text: '逾期' }, { value: 3, text: '还款成功' }, { value: 4, text: '放款失败' }, { value: 5, text: '还款中' }, { value: 6, text: '还款失败' }]"
+                         :filter-method="filterStauts"                      
+                      >
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="scope.row.status===0?'':scope.row.status===1?'success':scope.row.status===2?'danger':scope.row.status===4?'success':scope.row.status===4?'info':scope.row.status===5?'':'warning'"
+                            >{{scope.row.status===0?'放款中':scope.row.status===1?'放款成功':scope.row.status===2?'逾期':scope.row.status===3?'还款成功':scope.row.status===4?'放款失败':scope.row.status===5?'还款中':'还款失败'}}</el-tag>
+                        </template>                         
+                      </el-table-column>
+                      <el-table-column  prop="overdue.overdueDay" label="逾期天数" align="center" sortable></el-table-column>
+                      <el-table-column  prop="overdue.lateFee" label="违约金" align="center" sortable></el-table-column>
+                </el-table>
+                <el-alert
+                  title="催收情况"
+                  type="success"
+                  :closable="false"
+                  center
+                  class="m20"
+                  >
+                </el-alert>                
+                <el-table
+                  :data="props.row.detail.loanCollectionRecords?props.row.detail.loanCollectionRecords:[]"
+                  border 
+                  style="width: 100%"
+                  >
+                      <el-table-column prop="id" label="id" align="center" ></el-table-column>
+                      <el-table-column prop="operatorName" label="催收员姓名" align="center" ></el-table-column>
+                      <el-table-column prop="remark" label="描述（备注）" align="center" ></el-table-column>
+                      <el-table-column prop="result" label="结果" align="center" >
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="scope.row.status===1?'':scope.row.status===2?'danger':'success'"
+                            >{{scope.row.status===1?'成功':scope.row.status===2?'失败':'进行中 '}}</el-tag>
+                        </template>                         
+                      </el-table-column>
+                      <el-table-column prop="type" label="催收方式" align="center" >
+                        <template slot-scope="scope">
+                            <el-tag
+                                :type="scope.row.status===1?'':scope.row.status===2?'danger':'success'"
+                            >{{scope.row.status===1?'电话':scope.row.status===2?'短信':'其他 '}}</el-tag>
+                        </template>                         
+                      </el-table-column>                      
+                </el-table>                
+              </template>
+            </el-table-column>  -->
+                <el-table-column prop="cz"  align="center" label="操作"  width="220" >
+                    <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="success"
+                        @click="handleRole(scope.$index, scope.row)"
+                       >角色修改</el-button>                      
+                    <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleAllocation(scope.$index, scope.row)"
+                       >菜单修改</el-button>
+                    </template> 
+                </el-table-column>            
+        </el-table>     
+        <el-row class="m20" v-if="total>0">
+             <div style="float:right">
+                 <el-pagination
+                   @current-change="handleCurrentChange"
+                    @size-change="handleSizeChange"
+                   :current-page="npage"
+                    :page-sizes="[10, 20, 30, 40]"
+                     :page-size="pagesize"
+                   background
+                   layout="total,sizes,prev, pager, next,jumper"
+                   :total="total">
+                 </el-pagination>   
+             </div>
+        </el-row>   
+        <el-dialog
+          title="角色修改"
+          :visible.sync="dialogVisible1"
+          center
+          width="30%"
+          >
 
-
-    <!--新增角色-->
-    <template>
-      <el-dialog
-        title="新增角色"
-        :visible.sync="addRoleModal"
-        width="20%">
-        <el-form :label-position="labelPosition" label-width="80px" :model="formAddRole">
-          <el-form-item label="名称">
-            <el-input v-model="formAddRole.name"></el-input>
-          </el-form-item>
-          <el-form-item label="职位名称">
-            <el-input v-model="formAddRole.jobName"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="addRoleInfo">确 定</el-button>
-        </span>
-      </el-dialog>
-    </template>
-
-    <!--修改角色-->
-    <template>
-      <el-dialog
-        title="修改角色"
-        :visible.sync="EditRoleModal"
-        width="20%">
-        <el-form :label-position="labelPosition" label-width="80px" :model="formEditRole">
-          <el-form-item label="名称">
-            <el-input v-model="formEditRole.name"></el-input>
-          </el-form-item>
-          <el-form-item label="职位名称">
-            <el-input v-model="formEditRole.jobName"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="EditRoleModal = false">取 消</el-button>
-          <el-button type="primary" @click="EditRoleInfo">确 定</el-button>
-        </span>
-      </el-dialog>
-    </template>
-
-    <!--修改角色菜单-->
-    <template>
-      <el-dialog
-        title="修改角色菜单"
-        :visible.sync="EditRoleMenuModal"
-        width="30%">
-        <tree-view :menuData="menuList"></tree-view>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="EditRoleMenuModal = false">取 消</el-button>
-          <el-button type="primary" @click="EditRoleMenuInfo">确 定</el-button>
-        </span>
-      </el-dialog>
-    </template>
-  </div>
+            <el-form :model="roleForm" status-icon  ref="roleForm" label-width="100px"  >
+              <el-form-item label="角色名:" prop="rname" >
+                <el-input type="input" v-model="roleForm.rname"  ></el-input>
+              </el-form-item>
+              <el-form-item label="角色备注:" prop="jobTitle" >
+                <el-input type="textarea"  v-model="roleForm.jobTitle" ></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
+                <!-- <el-button @click="resetForm('ruleForm2')">重置</el-button> -->
+                <el-button type="primary" style="margin-left:30px" @click="qx1('roleForm')">取消</el-button>
+              </el-form-item>
+            </el-form>
+        </el-dialog> 
+        <el-dialog
+          title="角色修改"
+          :visible.sync="dialogVisible2"
+          center
+          width="30%"
+          >
+              <el-tree
+              ref="tree"
+              default-expand-all
+                :data="treeData"
+                show-checkbox
+                node-key="mid"
+                :default-checked-keys="showCheck"
+                :props="defaultProps">
+              </el-tree>
+              <el-row style="text-align:center" class="m20">
+                <el-button type="primary" style="margin-left:30px" @click="getCheckedKeys">修改</el-button>
+                <el-button type="primary" style="margin-left:30px" @click="dialogVisible2=false">取消</el-button>    
+              </el-row>
+        </el-dialog>                                              
+    </div>
 </template>
 
 <script>
-  import {timeFormat} from "../../../config/time";
-  import {Message} from "element-ui";
-  import {config} from "../../../util/config";
-  import treeView from "./treeView"
-
-  export default {
-    data() {
-      return {
-        dateTime: [],                 // 选中时间
-        startTime: '',                // 开始时间
-        endTime: '',                  // 结束时间
-        loading: true,
-
-        addRoleModal: false,
-        EditRoleModal: false,
-        EditRoleMenuModal: false,
-        labelPosition: 'right',
-
-        currentPage: 1,
-        pageSize: 10,
-        total: null,
-        characterList: [],            // 角色列表
-        menuList: [],                 // 菜单列表
-        menuIdList: [],               // 选中菜单id列表
-        defaultChecked: [],           // 默认选中的菜单
-        formAddRole: {
-          name: '',                   // 新增角色名称
-          jobName: ''                 // 新增角色职位
-        },
-        editRoleId: '',
-        editMenuId: '',
-        formEditRole: {
-          name: '',                   // 修改角色名称
-          jobName: ''                 // 修改角色职位
-        },
-        defaultProps: {
-          children: 'list',
-          label: 'mname'
-        },
-      };
-    },
-
-    components: {
-      'tree-view': treeView
-    },
-
-    // 监听
-    watch: {},
-
-    // 计算
-    computed: {},
-
-    // 方法
-    methods: {
-
-      // 查询全部订单
-      queryRoleList() {
-        let postDate = {
-          startDate: this.startTime,
-          EndDate: this.endTime,
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/admin/rolelist",
-          data: postDate,
-          success: data => {
-            this.characterList = data;
-            this.loading = false;
-          },
-          error: err => {
-            console.log(err);
-          }
-        });
+import {
+  getRoleList,
+  changeRoleList,
+  findRoleMenu,
+  changeRoleMenu,
+  httpSaveRoleMenu,
+  httpSaveMenu
+} from "../../../service/http";
+export default {
+  data() {
+    return {
+      title: "角色管理列表",
+      search: {
+        input: "",
+        time: ""
       },
-
-      // 搜索
-      searchTable() {
-        this.queryRoleList();
+      tableData: [],
+      loading: true,
+      npage: 1,
+      pagesize: 10,
+      total: 0,
+      multipleSelection: [], //全部选中嘛
+      dialogVisible1: false,
+      dialogVisible2: false,
+      roleId: null,
+      roleForm: {
+        rid: "",
+        rname: "",
+        jobTitle: ""
       },
-
-      // 选择时间
-      chooseTime() {
-        this.startTime = this.getMyDate(this.dateTime[0]);
-        this.endTime = this.getMyDate(this.dateTime[1]);
+      defaultProps: {
+        children: "list",
+        label: "mname"
       },
-
-      // 表格时间转换
-      dateFormat: function (row, column) {
-        let date = row[column.property];
-        if (date == undefined) {
-          return "";
-        }
-        let dateTime = new Date(date),
-          y = dateTime.getFullYear(),
-          m = dateTime.getMonth() + 1,
-          d = dateTime.getDate(),
-          h = dateTime.getHours(),
-          i = dateTime.getMinutes(),
-          s = dateTime.getSeconds();
-        return (
-          y +
-          "/" +
-          this.getzf(m) +
-          "/" +
-          this.getzf(d) +
-          " " +
-          this.getzf(h) +
-          ":" +
-          this.getzf(i) +
-          ":" +
-          this.getzf(s)
-        );
-      },
-
-      getMyDate(str) {
-        let oDate = new Date(str),
-          oYear = oDate.getFullYear(),
-          oMonth = oDate.getMonth() + 1,
-          oDay = oDate.getDate(),
-          oHour = oDate.getHours(),
-          oMin = oDate.getMinutes(),
-          oSen = oDate.getSeconds();
-        return oYear + "-" + this.getzf(oMonth) + "-" + this.getzf(oDay) + ' ' + this.getzf(oHour) + ':' + this.getzf(oMin) + ':' + this.getzf(oSen); //最后拼接时间
-
-      },
-
-      getzf(num) {
-        if (parseInt(num) < 10) {
-          num = "0" + num;
-        }
-        return num;
-      },
-
-      // 角色新增
-      addRole() {
-        this.formAddRole = {};
-        this.addRoleModal = true;
-      },
-
-      // 新增角色信息
-      addRoleInfo() {
-        let postData = this.$qs.stringify({
-          rname: this.formAddRole.name,
-          jobTitle: this.formAddRole.jobName
-        });
-        this.$post('/admin/addRole', postData)
-          .then(res => {
-            if (res.success === true) {
-              Message({
-                message: res.message,
-                center: true
-              });
-              this.addRoleModal = false;
-              this.queryRoleList();
-            } else {
-              this.addRoleModal = false;
-              Message({
-                message: '新增失败',
-                center: true
-              })
-            }
-          })
-          .catch(err => {
-            Message({
-              message: '新增失败',
-              center: true
-            })
-          })
-      },
-
-      // 点击修改角色按钮
-      handleEditRole(index, row) {
-        this.EditRoleModal = true;
-        this.editRoleId = row.rid;
-        this.formEditRole.name = row.rname;
-        this.formEditRole.jobName = row.jobTitle;
-      },
-
-      // 修改角色信息
-      EditRoleInfo() {
-        let postData = this.$qs.stringify({
-          rid: this.editRoleId,
-          rname: this.formEditRole.name,
-          jobTitle: this.formEditRole.jobName
-        });
-        this.$post('/admin/addRole', postData)
-          .then(res => {
-            if (res.success === true) {
-              Message({
-                message: res.message,
-                center: true
-              });
-              this.EditRoleModal = false;
-              this.queryRoleList();
-            } else {
-              this.EditRoleModal = false;
-              Message({
-                message: '修改失败',
-                center: true
-              })
-            }
-          })
-          .catch(err => {
-            Message({
-              message: '修改失败',
-              center: true
-            })
-          })
-      },
-
-      // 点击修改菜单按钮
-      handleEditMenu(index, row) {
-        this.EditRoleMenuModal = true;
-        this.editMenuId = row.rid;
-
-        let postData = this.$qs.stringify({
-          RoleId: this.editMenuId
-        });
-        this.$post('/admin/findRoleMenu', postData).then(res => {
-          this.menuList = res;
-          console.log(res);
-        }).catch(err => {
-          console.log(err);
+      treeData: [],
+      showCheck: []
+    };
+  },
+  methods: {
+    getData() {
+      let _this = this;
+      getRoleList()
+        .then(res => {
+          let data = res.data;
+          _this.tableData = data;
+          _this.loading = false;
         })
-      },
-
-      handleCheckChange(data, checked, indeterminate) {
-        console.log(data, checked, indeterminate);
-      },
-
-      setCheckedKeys() {
-        this.$refs.tree.setCheckedKeys([3]);
-      },
-
-      // 修改角色菜单
-      EditRoleMenuInfo() {
-
-      }
-
-      // 分页插件-数量改变事件
-      // handleSizeChange(val) {
-      //   this.pageSize = val;
-      //   this.queryRoleList(this.currentPage, this.pageSize);
-      // },
-
-      // 分页插件-页数改变事件
-      // handleCurrentChange(val) {
-      //   this.currentPage = val;
-      //   this.queryRoleList(this.currentPage, this.pageSize);
-      // }
+        .catch();
     },
-    mounted() {
-      // 查询全部列表
-      this.queryRoleList();
+    handleSearch() {
+      this.getData();
+    },
+    handleAllocation(index, row) {
+      let RoleId = row.rid;
+      this.roleId = null;
+      this.roleId = RoleId;
+      let _this = this;
+      findRoleMenu(RoleId)
+        .then(res => {
+          _this.treeData = null;
+          let data = res.data;
+          _this.treeData = JSON.parse(JSON.stringify(data));
+          _this.dialogVisible2 = true;
+          let showCheck = [];
+          for (let a = 0; a < _this.treeData.length; a++) {
+            if (_this.treeData[a].checked) {
+              showCheck.push(_this.treeData[a].mid);
+            }
+            if (_this.treeData[a].list && _this.treeData[a].list.length > 0) {
+              for (let b = 0; b < _this.treeData[a].list.length; b++) {
+                if (_this.treeData[a].list[b].checked) {
+                  showCheck.push(_this.treeData[a].list[b].mid);
+                }
+              }
+            }
+          }
+          _this.showCheck.length = 0;
+          _this.showCheck = showCheck;
+        })
+        .catch();
+    },
+    handleRole(index, row) {
+      this.roleForm = null;
+      this.roleForm = Object.assign({}, row);
+      this.dialogVisible1 = true;
+    },
+    handleCurrentChange(val) {
+      this.npage = val;
+      this.handleSearch();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.handleSearch();
+    },
+    reset() {
+      (this.search = {
+        input: "",
+        time: ""
+      }),
+        this.getData();
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    handleConfig() {},
+    quxiao2() {},
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          changeRoleList(
+            this.roleForm.rid,
+            this.roleForm.rname,
+            this.roleForm.jobTitle
+          )
+            .then(res => {
+              let data = res.data;
+              if (data.success) {
+                this.resetForm(formName);
+                setTimeout(() => {
+                  this.dialogVisible1 = false;
+                }, 20);
+                this.$message({
+                  message: "修改角色成功",
+                  type: "success"
+                });
+                this.handleSearch();
+              } else {
+                this.$message.error("修改角色失败");
+              }
+            })
+            .catch();
+        } else {
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    qx1(formName) {
+      this.dialogVisible1 = false;
+      this.resetForm(formName);
+    },
+    getCheckedKeys() {
+      let _this = this;
+      httpSaveRoleMenu(this.roleId, this.$refs.tree.getCheckedKeys().join(","))
+        .then(res => {
+          let data = res.data;
+          if (data.success) {
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+            _this.dialogVisible2 = false;
+          } else {
+            this.$message.error("修改失败,请联系管理员");
+          }
+        })
+        .catch(err => {
+          this.$message.error("修改失败,请联系管理员");
+        });
+      // let params = new URLSearchParams();
+      // params.append("rid", this.roleId);
+      // params.append("mids", JSON.stringify(this.$refs.tree.getCheckedKeys()));
+      // this.$axios
+      //   .post("/admin/saveRoleMenu", params)
+      //   .then(res => {
+      //     let data = res.data;
+      //     if (data.success) {
+      //       this.$message({
+      //         message: "修改成功",
+      //         type: "success"
+      //       });
+      //       _this.dialogVisible2 = false;
+      //     } else {
+      //       this.$message.error("修改失败,请联系管理员");
+      //     }
+      //   })
+      //   .catch(err => {
+      //     this.$message.error("修改失败,请联系管理员");
+      //   });
+      // changeRoleMenu(this.roleId, this.$refs.tree.getCheckedKeys())
+      //   .then(res => {
+      //     let data = res.data;
+      //     if (data.success) {
+      //       this.$message({
+      //         message: "修改成功",
+      //         type: "success"
+      //       });
+      //       _this.dialogVisible2 = false;
+      //     } else {
+      //       this.$message.error("修改失败,请联系管理员");
+      //     }
+      //     console.log(data);
+      //   })
+      //   .catch(err => {
+      //     this.$message.error("修改失败,请联系管理员");
+      //   });
+    },
+    addRole() {
+      this.dialogVisible1 = true;
     }
-  };
+  },
+  mounted() {
+    this.getData();
+  }
+};
 </script>
-<style>
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
 
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
-</style>
-<style scoped>
+<style>
 </style>

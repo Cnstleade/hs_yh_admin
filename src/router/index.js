@@ -401,7 +401,15 @@ export default new Router({
           meta: {
             title: 'table',
           }
-        }        
+        },
+        {
+          // 申请重审客户
+          path: '/report',
+          component: resolve => require(['../components/page/table/report'], resolve),
+          meta: {
+            title: 'report',
+          }
+        }
       ]
     },
     {

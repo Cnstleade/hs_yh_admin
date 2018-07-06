@@ -147,6 +147,12 @@
 </template>
 
 <script>
+import {
+  getRoleList,
+  changeRoleList,
+  findRoleMenu,
+  changeRoleMenu
+} from "../../../service/http";
 export default {
   data() {
     return {
@@ -165,8 +171,11 @@ export default {
   },
   methods: {
     getData() {
+      let _this = this;
       url()
-        .then()
+        .then(res => {
+          let data = res.data;
+        })
         .catch();
     },
     handleSearch() {},
@@ -186,6 +195,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     }
+  },
+  mounted() {
+    this.getData();
   }
 };
 </script>

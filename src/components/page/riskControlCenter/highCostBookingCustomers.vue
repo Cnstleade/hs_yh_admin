@@ -109,7 +109,7 @@
             <el-row>
               <el-col :span="8"><label>注册地</label><span></span></el-col>
               <el-col :span="8"><label>注册IP</label><span></span></el-col>
-              <el-col :span="8"><label>来源</label>
+              <el-col :span="8"><label>来源</label><span>{{customerInformation.source==1?'ios':customerInformation.source==2?'android':'h5'}}</span></el-col>
                 <el-tag>网络</el-tag>
               </el-col>
             </el-row>
@@ -228,7 +228,7 @@
                     <el-row>
                       <el-col :span="5">授信额度:<span>0.00</span></el-col>
                       <el-col :span="5">分期额度:<span>0</span></el-col>
-                      <el-col :span="5">签到额度:<span>10.00</span></el-col>
+                      <el-col :span="5">签到次数:<span>{{walletInfo.counts}}</span></el-col>
                       <el-col :span="5">电子合同:
                         <el-button type="primary">点击查看</el-button>
                       </el-col>

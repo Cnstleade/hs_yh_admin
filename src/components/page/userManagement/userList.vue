@@ -1,368 +1,387 @@
 <template>
-  <div class="divFlex">
-    <template>
-      <el-tabs v-model="activeName" type="border-card">
-        <el-tab-pane label="全部" name="first">
-          <el-form class="formBox" :inline="true" size="mini">
-            <el-form-item label="用户名">
-              <el-input v-model="userName" style="width: 100px"></el-input>
+    <div class="container">
+        <el-row>
+            <el-alert
+              :title="title"
+              :closable="false"
+              type="info">
+            </el-alert>           
+        </el-row>  
+        <el-tabs v-model="activeName" type="border-card" class="m20" @tab-click="handleClick" v-loading="lodings">
+          <el-tab-pane label="可用客户列表" name="first">
+            <el-row class="m20" >
+                <el-col   class="col-flex-end">
+                        <el-button  type="primary" @click="reset">重置</el-button>
+                        <div class="l20">
+                            <el-input
+                            style="padding:0px 10px 0px 0px"
+                              placeholder="请输入用户名"
+                              v-model="search.input"
+                              clearable>
+                            </el-input> 
+                        </div>        
+                        <el-select class="l20" v-model="search.select" placeholder="请选择角色">
+                          <el-option
+                            v-for="item in roleList"
+                            :key="item.rid"
+                            :label="item.jobTitle"
+                            :value="item.rname">
+                          </el-option>
+                        </el-select>                                                    
+                        <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+                </el-col>             
+            </el-row> 
+            <el-table
+                :data="tableData"  
+                border  
+                ref="multipleTable" 
+                tooltip-effect="dark"
+                style="width: 100%;margin-bottom:40px"
+                class="m20"
+                @selection-change="handleSelectionChange"
+                v-loading="loading"
+                id="eleTable"
+               
+              >
+ 
+                <el-table-column prop="uid" label="序号" align="center" width="100" sortable></el-table-column>      
+                <el-table-column prop="username" label="姓名" align="center" width="120"></el-table-column>      
+                <el-table-column prop="list[0].rname" label="角色" align="center" ></el-table-column>      
+                <el-table-column prop="list[0].jobTitle" label="职位" align="center" ></el-table-column>      
+                <el-table-column prop="phoneNumber" label="手机号" align="center" width="180"></el-table-column>      
+                <el-table-column prop="createtime" label="创建时间" align="center" width="180">
+                </el-table-column>      
+                <el-table-column prop="createuserName" label="创建人" align="center" ></el-table-column>      
+                <el-table-column prop="cz"  align="center" label="操作"  width="250" >
+                    <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        type="success"
+                        @click="handleAllocation(scope.$index, scope.row)"
+                       >编辑</el-button>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleStop(scope.$index, scope.row)"
+                       >停用</el-button>                       
 
-              <role-list v-on:childByRoleUser="childByRoleUser" v-on:handResetBtn="handResetBtn"></role-list>
-
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" icon="search" @click="handSearch">搜索</el-button>
-              <!--<el-button type="info" icon="search" @click="handReset">重置</el-button>-->
-              <el-button type="primary" icon="search" @click="handAdd">新增</el-button>
-            </el-form-item>
-          </el-form>
-
-          <template>
-            <el-table :data="tableData" style="width: 100%">
-              <el-table-column prop="uid" label="序号" align="center"></el-table-column>
-              <el-table-column prop="username" label="姓名" align="center"></el-table-column>
-              <el-table-column label="角色" align="center">
-                <template slot-scope="scope">
-                  <span v-for="item in scope.row.list" :key="item.rname">
-                    {{item.rname}}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="职位" align="center">
-                <template slot-scope="scope">
-                  <span v-for="item in scope.row.list" :key="item.jobTitle">
-                    {{item.jobTitle}}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="phoneNumber" label="手机号" align="center"></el-table-column>
-              <el-table-column prop="createtime" label="创建时间" align="center"></el-table-column>
-              <el-table-column prop="createuserName" label="创建人" align="center"></el-table-column>
-              <el-table-column label="操作" align="center">
-                <template slot-scope="scope">
-                  <el-button type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">
-                    编辑
-                  </el-button>
-                  <el-button size="mini" type="danger" @click="handleStop(scope.$index, scope.row)">
-                    停用
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </template>
-
-        </el-tab-pane>
-
-        <el-tab-pane label="停用" name="second">
-
-          <el-form class="formBox" :inline="true" size="mini">
-            <el-form-item label="用户名">
-              <el-input v-model="userName"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="info" icon="search" @click="handQuery">查询</el-button>
-            </el-form-item>
-          </el-form>
-
-          <template>
-            <el-table :data="stopTableData" style="width: 100%">
-              <el-table-column prop="uid" label="序号" align="center"></el-table-column>
-              <el-table-column prop="username" label="姓名" align="center"></el-table-column>
-              <el-table-column label="角色" align="center">
-                <template slot-scope="scope">
-                  <span v-for="item in scope.row.list" :key="item.rname">
-                    {{item.rname}}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="职位" align="center">
-                <template slot-scope="scope">
-                  <span v-for="item in scope.row.list" :key="item.jobTitle">
-                    {{item.jobTitle}}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="phoneNumber" label="手机号" align="center"></el-table-column>
-              <el-table-column prop="createtime" label="创建时间" align="center"></el-table-column>
-              <el-table-column prop="createuserName" label="创建人" align="center"></el-table-column>
-            </el-table>
-          </template>
-
-        </el-tab-pane>
-
-        <!--<el-pagination
-          style="margin-top: 10px;text-align: right;"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>-->
-      </el-tabs>
-    </template>
-
-    <el-dialog title="用户新增" :visible.sync="modalUserAdd">
-      <el-form :model="form" id="addUser">
-        <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.username" auto-complete="off" :label-width="formLabelWidth"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.password" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" :label-width="formLabelWidth">
-          <el-input v-model="form.phoneNumber" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="角色" :label-width="formLabelWidth">
-
-          <role-list v-on:childByRoleUser="childByRoleUser"></role-list>
-
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="modalUserAdd = false">取 消</el-button>
-        <el-button type="primary" @click="userAdd">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="用户编辑" :visible.sync="modalUserEdit">
-      <el-form :model="form">
-        <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.username" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.password" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" :label-width="formLabelWidth">
-          <el-input v-model="form.phoneNumber" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="角色" :label-width="formLabelWidth">
-
-          <role-list v-on:childByRoleUser="childByRoleUser" :roleData="roleInfo"></role-list>
-
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="modalUserEdit = false">取 消</el-button>
-        <el-button type="primary" @click="userEdit">确 定</el-button>
-      </div>
-    </el-dialog>
-
-  </div>
+                    </template> 
+                </el-table-column>            
+            </el-table>     
+            <el-row class="m20" v-if="total>0">
+                 <div style="float:right">
+                     <el-pagination
+                       @current-change="handleCurrentChange"
+                        @size-change="handleSizeChange"
+                       :current-page="npage"
+                        :page-sizes="[10, 20, 30, 40]"
+                         :page-size="pagesize"
+                       background
+                       layout="total,sizes,prev, pager, next,jumper"
+                       :total="total">
+                     </el-pagination>   
+                 </div>
+            </el-row>  
+          </el-tab-pane>
+          <el-tab-pane label="停用客户列表" name="second">
+            <el-row class="m20" >
+                <el-col   class="col-flex-end">
+                        <!-- <el-button-group>
+                          <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                          <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                          <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                          <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                          <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
+                        </el-button-group>     -->
+                        <el-button  type="primary" @click="reset">重置</el-button>
+                        <div class="l20">
+                            <el-input
+                            style="padding:0px 10px 0px 0px"
+                              placeholder="请输入用户名"
+                              v-model="search.input"
+                              clearable>
+                            </el-input> 
+                        </div>        
+                        <el-select class="l20" v-model="search.select" placeholder="请选择角色">
+                          <el-option
+                            v-for="item in roleList"
+                            :key="item.rid"
+                            :label="item.jobTitle"
+                            :value="item.rname">
+                          </el-option>
+                        </el-select>                                                    
+                        <!-- <el-date-picker
+                        style="width:340px"
+                        class="l20"
+                          v-model="search.time"
+                          type="daterange"
+                          value-format="yyyy-MM-dd"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期">
+                        </el-date-picker>                 -->
+                        <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+                </el-col>             
+            </el-row> 
+            <el-table
+                :data="tableData"  
+                border  
+                ref="multipleTable" 
+                tooltip-effect="dark"
+                style="width: 100%;margin-bottom:40px"
+                class="m20"
+                @selection-change="handleSelectionChange"
+                v-loading="loading"
+                id="eleTable"
+              >
+                <el-table-column prop="uid" label="序号" align="center" width="100" sortable></el-table-column>      
+                <el-table-column prop="username" label="姓名" align="center" ></el-table-column>      
+                <el-table-column prop="list[0].rname" label="角色" align="center" ></el-table-column>      
+                <el-table-column prop="list[0].jobTitle" label="职位" align="center" ></el-table-column>      
+                <el-table-column prop="phoneNumber" label="手机号" align="center" ></el-table-column>      
+                <el-table-column prop="createtime" label="创建时间" align="center" >
+                </el-table-column>      
+                <el-table-column prop="createuserName" label="创建人" align="center" ></el-table-column>      
+            </el-table>  
+            <el-row class="m20" v-if="total>0">
+                 <div style="float:right">
+                     <el-pagination
+                       @current-change="handleCurrentChange"
+                        @size-change="handleSizeChange"
+                       :current-page="npage"
+                        :page-sizes="[10, 20, 30, 40]"
+                         :page-size="pagesize"
+                       background
+                       layout="total,sizes,prev, pager, next,jumper"
+                       :total="total">
+                     </el-pagination>   
+                 </div>
+            </el-row>  
+          </el-tab-pane>          
+        </el-tabs>        
+        <el-dialog
+          title="用户编辑"
+          :visible.sync="dialogVisible1"
+          center
+          width="30%"
+          >
+            <el-form :model="roleForm" status-icon  ref="roleForm" label-width="100px"  >
+              <el-form-item label="用户名:" prop="username" >
+                <el-input type="input" v-model="roleForm.username"  ></el-input>
+              </el-form-item>
+              <el-form-item label="手机号:" prop="phoneNumber" >
+                <el-input type="input" v-model="roleForm.phoneNumber"  ></el-input>
+              </el-form-item>
+              <el-form-item label="角色:" prop="rname" >
+                <el-select  v-model="roleForm.rid" placeholder="请选择角色">
+                  <el-option
+                    v-for="item in roleList"
+                    :key="item.rid"
+                    :label="item.jobTitle"
+                    :value="item.rid">
+                  </el-option>
+                </el-select>  
+              </el-form-item>                                          
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
+                <el-button type="primary" style="margin-left:30px" @click="qx1('roleForm')">取消</el-button>
+              </el-form-item>
+            </el-form>
+        </el-dialog>                              
+    </div>
 </template>
 
 <script>
-  import roleList from './roleList';
-  import {Message} from "element-ui";
-
-  export default {
-    name: "userList",
-    components: {
-      'role-list': roleList
-    },
-    data() {
-      return {
-        currentPage: 1,
-        pageSize: 10,
-        total: null,
-        idx: -1,
-        activeName: 'first',
-        modalUserAdd: false,
-        tableData: [],
-        modalUserEdit: false,
-        stopTableData: [],
-        formLabelWidth: '100px',
-        userName: '',
-        labelName: '',
-        id: '',
-
-        // loading: true, //查询全部时加载层
-        // loading1: true, //查询停用时加载层
-
-        roleInfo: {
-          roleId: '',
-          roleName: '',
-          jobTitle: ''
-        },
-
-        form: {
-          username: '',
-          password: '',
-          phoneNumber: '',
-        }
+import {
+  httpGetuserlistbyusername,
+  httpGetRole,
+  httpUpdateuser
+} from "../../../service/http";
+export default {
+  data() {
+    return {
+      title: "用户列表",
+      search: {
+        input: "",
+        select: ""
+      },
+      lodings: false,
+      tableData: [],
+      loading: true,
+      npage: 1,
+      pagesize: 10,
+      total: 0,
+      multipleSelection: [], //全部选中嘛
+      activeName: "first",
+      roleList: [],
+      dialogVisible1: false,
+      roleForm: {
+        uid: "",
+        username: "",
+        phoneNumber: "",
+        status: "",
+        rid: ""
       }
+    };
+  },
+  methods: {
+    _httpGetRole() {
+      httpGetRole()
+        .then(res => {
+          let data = res.data;
+          this.roleList = data;
+        })
+        .catch();
     },
-    methods: {
-      /*handleSizeChange(val) {
-
-      },
-      handleCurrentChange(val) {
-
-      },*/
-
-      // 监听子组件传过来的值
-      childByRoleUser(childValue) {
-        this.roleInfo.roleId = childValue.rid;
-        this.roleInfo.roleName = childValue.rname;
-        this.roleInfo.jobTitle = childValue.jobTitle;
-      },
-
-      handResetBtn() {
-        this.roleInfo = '';
-      },
-
-      // 搜索
-      handSearch() {
-        this.queryUserList();
-      },
-
-      // 新增
-      handAdd() {
-        this.modalUserAdd = true;
-        this.form = {};
-      },
-      // 提交新增
-      userAdd() {
-        let postData = this.$qs.stringify({
-          username: this.form.username,
-          password: this.form.password,
-          phoneNumber: this.form.phoneNumber,
-          rid: this.roleInfo.roleId
-        });
-        this.$post("/sys/adduser", postData).then(response => {
-          if (response.statu != 200) {
-            Message({
-              message: response.message,
-              center: true
-            });
-          } else {
-            this.modalUserAdd = false;
-            Message({
-              message: '添加成功',
-              center: true
-            });
-            this.queryUserList();
-          }
-        });
-      },
-
-      // 修改
-      handleEdit(index, row) {
-        this.id = row.uid;
-
-        this.form.username = row.username;
-        this.form.password = row.password;
-        this.form.phoneNumber = row.phoneNumber;
-
-        this.roleInfo.roleId = row.list[0].rid;
-        this.roleInfo.roleName = row.list[0].rname;
-        this.roleInfo.jobTitle = row.list[0].jobTitle;
-
-        this.modalUserEdit = true;
-      },
-
-      // 提交修改
-      userEdit() {
-        let postData = this.$qs.stringify({
-          uid: this.id,
-          username: this.form.username,
-          password: this.form.password,
-          phoneNumber: this.form.phoneNumber,
-          rid: this.roleInfo.roleId
-        });
-        this.$post("/sys/updateuser", postData).then(response => {
-          if (response.statu = 200) {
-            this.modalUserEdit = false;
-            Message({
-              message: '修改成功',
-              center: true
-            });
-            this.queryUserList();
-          } else {
-            this.modalUserEdit = false;
-            Message({
-              message: response,
-              center: true
+    getData(username, status, rName) {
+      let _this = this;
+      httpGetuserlistbyusername(username, status, rName)
+        .then(res => {
+          let data = res.data;
+          _this.tableData = data;
+          _this.loading = false;
+        })
+        .catch();
+    },
+    handleSearch() {
+      this.getData(
+        this.search.input,
+        this.activeName == "first" ? 1 : 0,
+        this.search.select
+      );
+    },
+    handleAllocation(index, row) {
+      this.roleForm = {
+        uid: "",
+        username: "",
+        phoneNumber: "",
+        status: "",
+        rid: ""
+      };
+      this.roleForm = {
+        uid: row.uid,
+        username: row.username,
+        phoneNumber: row.phoneNumber,
+        status: "",
+        rid: row.list[0] ? row.list[0].rid : ""
+      };
+      this.dialogVisible1 = true;
+    },
+    handleCurrentChange(val) {
+      this.npage = val;
+      this.handleSearch();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.handleSearch();
+    },
+    reset() {
+      (this.search = {
+        input: "",
+        select: ""
+      }),
+        this.getData();
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    handleClick(tab, event) {
+      this.lodings = true;
+      this.handleSearch();
+      setTimeout(() => {
+        this.lodings = false;
+      }, 500);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          httpUpdateuser(
+            this.roleForm.uid,
+            this.roleForm.username,
+            this.roleForm.phoneNumber,
+            "",
+            this.roleForm.rid
+          )
+            .then(res => {
+              let data = res.data;
+              if (data.statu == 200) {
+                this.resetForm(formName);
+                setTimeout(() => {
+                  this.dialogVisible1 = false;
+                }, 20);
+                this.$message({
+                  message: "修改角色成功",
+                  type: "success"
+                });
+                this.handleSearch();
+              } else {
+                this.$message.error(data.message);
+              }
             })
-          }
-        }).catch(err => {
-          this.modalUserEdit = false;
-          Message({
-            message: err,
-            center: true
-          })
-        });
-      },
-
-      // 停用用户
-      handleStop(index, row) {
-        let postData = this.$qs.stringify({
-          uid: row.uid,
-          status: 0
-        });
-        this.$post("/sys/updateuser", postData).then(response => {
-          Message({
-            message: response,
-            center: true
-          });
-          this.queryUserList();
-        }).catch(err => {
-          this.modalUserEdit = false;
-          Message({
-            message: err,
-            center: true
-          })
-        });
-      },
-
-      // 查询停用
-      handQuery() {
-        this.stopUserList();
-      },
-
-      // 全部列表
-      queryUserList() {
-        let data = this.$qs.stringify({
-          username: this.userName,
-          status: 1, //查询全部时的状态
-          rName: this.roleInfo.roleName
-        });
-        this.$post('/sys/getuserlistbyusername', data).then((res) => {
-          // this.loading = false; //查询成功关闭加载层
-          this.tableData = res;
-          this.total = res.length;
-        });
-      },
-
-      // 停用列表
-      stopUserList() {
-        let data = this.$qs.stringify({
-          username: this.form.name,
-          status: 0
-        });
-        this.$post('/sys/getuserlistbyusername', data).then((res) => {
-          this.stopTableData = res;
-        });
-      },
+            .catch();
+        } else {
+          return false;
+        }
+      });
     },
-    mounted() {
-
-      // 查询全部列表
-      this.queryUserList();
-
-      // 查询停用列表
-      this.stopUserList();
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleStop(index, row) {
+      this.roleForm = {
+        uid: "",
+        username: "",
+        phoneNumber: "",
+        status: "",
+        rid: ""
+      };
+      this.roleForm = {
+        uid: row.uid,
+        username: row.username,
+        phoneNumber: row.phoneNumber,
+        status: "",
+        rid: row.list[0] ? row.list[0].rid : ""
+      };
+      this.$confirm("此操作将永久停用该角色, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          httpUpdateuser(
+            this.roleForm.uid,
+            this.roleForm.username,
+            this.roleForm.phoneNumber,
+            0,
+            this.roleForm.rid
+          )
+            .then(res => {
+              let data = res.data;
+              if (data.statu == 200) {
+                this.$message({
+                  type: "success",
+                  message: "停用成功!"
+                });
+              } else {
+                this.$message.error(data.message);
+              }
+            })
+            .catch(err => {});
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
+  },
+  mounted() {
+    this.getData();
+    this._httpGetRole();
   }
+};
 </script>
 
-<style scoped>
-  .inputSize {
-    width: 200px;
-  }
-
-  #addUser .el-form-item__label {
-    width: 100px;
-  }
+<style>
 </style>

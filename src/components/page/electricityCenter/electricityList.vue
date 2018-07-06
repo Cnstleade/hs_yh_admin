@@ -162,7 +162,7 @@
                 <el-input v-model.number="ruleForm1.money" disabled></el-input>
               </el-form-item>  
               <el-form-item label="电销人员:"  >
-                <el-input v-model.number="ruleForm1.salesmanId" disabled>{{ruleForm1.salesman}}</el-input>
+                <el-input  disabled>{{ruleForm1.salesman}}</el-input>
                 <!-- <el-select v-model="ruleForm1.salesmanId" placeholder="电销人员">
                   <template v-for="(temp,index) in salesman">
                     <el-option  :key="index" :label="temp.username" :value="temp.uid">
@@ -323,9 +323,9 @@ export default {
         .catch();
     },
 
-    _getEleCompanyId(companyId) {
+    _getEleCompanyId(companyId, salesmanName) {
       let _this = this;
-      getEleCompanyId(companyId)
+      getEleCompanyId(companyId, salesmanName)
         .then(res => {
           let data = res.data;
           if (data.code === 200) {
@@ -346,14 +346,18 @@ export default {
               getReplies(tableData[a].custUserId)
                 .then(re => {
                   tableData[a].chbdetail = re.data.data;
-                  getSaleman(tableData[a].custUserId)
-                    .then(re => {
-                      tableData[a].chbSale = re.data.data;
-                      _this.tableData = tableData;
-                      _this.total = data.data.allpage;
-                      _this.loading = false;
-                    })
-                    .catch();
+                  // getSaleman(tableData[a].custUserId)
+                  //   .then(re => {
+                  //     tableData[a].chbSale = re.data.data;
+                  //     _this.tableData = tableData;
+                  //     _this.total = data.data.allpage;
+                  //     _this.loading = false;
+                  //   })
+                  //   .catch();
+                  tableData[a].chbSale = re.data.data;
+                  _this.tableData = tableData;
+                  _this.total = data.data.allpage;
+                  _this.loading = false;
                 })
                 .catch();
             }
@@ -385,12 +389,20 @@ export default {
     },
     handleConfig() {
       let _this = this;
+      let salesmanName = "";
+      for (let a = 0; a < this.salesman.length; a++) {
+        if (this.salesman[a].uid === this.salesmanId) {
+          salesmanName = this.salesman[a].username;
+          return;
+        }
+      }
       getSalesmanId(
         this.salesmanId,
         this.editSales.custUserId,
         this.editSales.loanOrderId,
         this.editSales.loanApplyId,
-        this.editSales.custUserName
+        this.editSales.custUserName,
+        this.salesmanName
       )
         .then(res => {
           let data = res.data;
