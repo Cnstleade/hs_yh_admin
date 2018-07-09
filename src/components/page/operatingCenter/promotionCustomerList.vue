@@ -75,27 +75,32 @@
                     </tr>
                     <tr class="title_6" >
                         <td colspan="6">
-                            <!-- <el-table
+                            <el-table
                                     :data="userData"
                                     border
                                     style="width: 100%"
                                 >
-                                <el-table-column prop="realName" label="姓名" align="center" ></el-table-column>
-                                <el-table-column prop="status"  align="center" label="状态"   width="150"
+                                <el-table-column prop="username" label="姓名" align="center" ></el-table-column>
+                                <!-- <el-table-column prop="status"  align="center" label="状态"   width="150"
                                   >
                                   <template slot-scope="scope">
                                       <el-tag
                                           :type="scope.row.status===1?'':scope.row.status===2?'success':scope.row.status===3?'info':scope.row.status===4?'warning':'danger'"
                                       >{{scope.row.status===1?'业务员维护中':scope.row.status===2?'审核分配中':scope.row.status===3?'审核中':scope.row.status===4?'弃用':'停用'}}</el-tag>
                                   </template>   
-                                </el-table-column> 
-                                <el-table-column prop="idcard" label="身份证号" align="center" width="180"></el-table-column>
-                                <el-table-column prop="phoneNumber" label="手机号" align="center" ></el-table-column>
-                                <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column>
-                                <el-table-column prop="wxNumber" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column>
-                                <el-table-column prop="detailAddress" label="地址" align="center" width="500"></el-table-column>
-                                <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
+                                </el-table-column>  -->
+                                <el-table-column prop="idCard" label="身份证号" align="center" width="180"></el-table-column>
+                                <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
+                                <!-- <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column> -->
+                                <el-table-column prop="wx" label="微信号" align="center" ></el-table-column>
+                                <el-table-column prop="qq" label="QQ" align="center" ></el-table-column>
+                                <el-table-column prop="status" label="客户状态" align="center" ></el-table-column>
+                                <el-table-column prop="createTime" label="创建时间" align="center" >
+                                  <template slot-scope="scope">
+                                      {{scope.row.createTime|dateServer}}
+                                  </template> 
+                                </el-table-column>
+                                <!-- <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
                                  >
                                   <template slot-scope="scope">
                                       <el-tag
@@ -110,16 +115,16 @@
                                           :type="scope.row.eduBack===1?'':scope.row.eduBack===2?'success':scope.row.eduBack===3?'info':scope.row.eduBack===4?'warning':scope.row.eduBack===5?'danger':''"
                                       >{{scope.row.eduBack===1?'高中':scope.row.eduBack===2?'大专':scope.row.eduBack===3?'本科':scope.row.eduBack===4?'硕士':scope.row.eduBack===5?'博士':'其它'}}</el-tag>
                                   </template>   
-                                </el-table-column>   
+                                </el-table-column>    -->
                                 <el-table-column prop="source"  align="center" label="来源"  width="80"
                                    >
-                                  <template slot-scope="scope">
+                                  <!-- <template slot-scope="scope">
                                       <el-tag
                                           :type="scope.row.source===1?'':scope.row.source===2?'success':'danger'"
                                       >{{scope.row.source===1?'苹果':scope.row.source===2?'安卓':'网页'}}</el-tag>
-                                  </template> 
+                                  </template>  -->
                                 </el-table-column>                                                                                         
-                            </el-table> -->
+                            </el-table>
                         </td>
                     </tr>
                     <tr>
@@ -411,6 +416,7 @@
                     </tr>
                 </table>
             </el-row> 
+
             <el-dialog
               id="dialog"
               width="60%"
@@ -429,7 +435,7 @@
 
                     <button type="button" @click="changImgIndex(-1)" class="el-carousel__arrow el-carousel__arrow--left"><i class="el-icon-arrow-left"></i></button>   
                     <button type="button"   @click="changImgIndex(1)" class="el-carousel__arrow el-carousel__arrow--right"><i class="el-icon-arrow-right"></i></button>                       
-            </el-dialog>   
+            </el-dialog>             
         </el-dialog>                 
     </div>
 </template>
@@ -644,12 +650,13 @@ export default {
         })
         .catch();
     },
-    changImgIndex(i) {
-      this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
+    changImgIndex(i) {  this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
+    //   this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
     },
-    handleImgShow(i) {
-      this.imgIndex = i;
+    handleImgShow() {
+    //   this.imgIndex = i;
       this.innerImgVisible = true;
+      
     }
   },
   mounted() {
