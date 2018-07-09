@@ -75,7 +75,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="applyAmt" label="申请金额" align="center"></el-table-column>
+        <el-table-column prop="applyAmt" label="授信额度" align="center"></el-table-column>
         <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
         <el-table-column label="审核结果" align="center" width="140">
           <template slot-scope="scope">
@@ -99,7 +99,7 @@
               {{scope.row.applyStatus ===0?'初始'
               :scope.row.applyStatus===1?'审核员审核中'
               :scope.row.applyStatus===2?'审核经理审核中'
-              :scope.row.applyStatus===3?'审核订单驳回中'
+              :scope.row.applyStatus===3?'审核订单重申中'
               :scope.row.applyStatus===4?'高风险用户':'审核完成'}}
             </span>
           </template>
@@ -107,7 +107,7 @@
         <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
                          width="150"></el-table-column>
         <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" v-if="showIndex!==3">
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
           </template>
@@ -171,9 +171,9 @@
                 <el-col :span="20">
                   <h3>基本信息</h3>
                 </el-col>
-                <el-col :span="4" align="right">
+                <!-- <el-col :span="4" align="right">
                   <el-button type="primary" size="mini" @click="modifyConsumerMessage">修改</el-button>
-                </el-col>
+                </el-col> -->
               </el-col>
             </el-row>
             <template v-if="customerInformation.custUserDOList">
@@ -263,9 +263,9 @@
               <el-col :span="20">
                 <h3>认证信息</h3>
               </el-col>
-              <el-col :span="4" align="right">
+              <!-- <el-col :span="4" align="right">
                 <el-button type="primary" size="mini" @click="modifyAttestationInfo">修改</el-button>
-              </el-col>
+              </el-col> -->
             </el-row>
             <el-row>
               <el-col :span="2"><label>联系人信息</label></el-col>
@@ -331,11 +331,11 @@
                 <el-col :span="12">
                   <h3>关联信息</h3>
                 </el-col>
-                <el-col :span="12" align="right">
+                <!-- <el-col :span="12" align="right">
                   <el-button type="danger" size="mini">刷新额度</el-button>
                   <el-button type="info" size="mini">提额项认证</el-button>
                   <el-button type="primary" size="mini" @click="modifyRelevanceInfo">修改</el-button>
-                </el-col>
+                </el-col> -->
               </el-col>
             </el-row>
             <el-row>
@@ -392,7 +392,7 @@
                     <el-row>
                       <el-col :span="8">
                         <label style="margin-right: 5px">通讯录联系人</label>
-                        <el-button type="primary">数量: {{customerInformation.credit.contactsCount}}</el-button>
+                        <el-button type="primary" @click="checkContacts">数量: {{customerInformation.credit.contactsCount}}</el-button>
                       </el-col>
                       <el-col :span="8" style="display: flex;align-items: center">
                         <label style="margin-right: 5px">声音路径:</label>
@@ -431,7 +431,7 @@
                 </template>
               </el-col>
             </el-row> -->
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>订单信息</label></el-col>
               <el-col :span="22">
                 <template v-if="customerInformation.loanOrderDOList">
@@ -460,7 +460,7 @@
                   </div>
                 </template>
               </el-col>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-col :span="2"><label>审核金额</label></el-col>
               <el-col :span="22">
@@ -1532,6 +1532,21 @@
         </div>
       </el-dialog>
     </template>
+            <!--查看通讯录联系人-->
+        <template>
+          <el-dialog
+            width="30%"
+            title="通讯录"
+            :visible.sync="contactList"
+            append-to-body>
+
+            <el-table :data="contacs" border height="400">
+              <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+              <el-table-column prop="mobile" label="号码" align="center"></el-table-column>
+            </el-table>
+
+          </el-dialog>
+        </template>
   </div>
 </template>
 
@@ -1543,8 +1558,11 @@ import BigImg from "./BigImg.vue";
 
 export default {
   name: "reviewCustomersAndWallets",
+  computed: {},
   data() {
     return {
+      contactList: false, // 通讯录列表
+      contacs: [], // 通讯录列表
       dialogAssessor: false,
       dialogSalesman: false,
       outerVisible: false,
@@ -1562,7 +1580,7 @@ export default {
       pageSize: 10,
       total: null,
       iscur: 0,
-      // showIndex: 1,
+      showIndex: 0,
       showImg: false,
       imgSrc: "",
       labelWidth: "200px",
@@ -1761,6 +1779,7 @@ export default {
     // 切换按钮刷新表单
     tabChange: function(index, url) {
       this.showIndex = index;
+      console.log(this.showIndex);
       this.loading = true;
       let postDate = {
         npage: this.currentPage,
@@ -1881,7 +1900,10 @@ export default {
       this.assessorId = data.id;
       this.dialogAssessor = true;
     },
-
+    // 查看通讯录列表
+    checkContacts() {
+      this.contactList = true;
+    },
     // 提交审核员信息
     submitAssessorForm() {
       let params = {
@@ -1933,6 +1955,8 @@ export default {
           this.walletInfo.loginDate = data.createTime; //登陆时间
           this.walletInfo.creditLine = data.applyAmt; //授信额度
           this.walletInfo.auditMoney = data.approveAmt; //审核金额
+          this.contacs = data.credit.custMobileList; // 通讯录信息
+          this.amount = data.credit.contactsCount;
         },
         error: err => {
           Message({
@@ -1946,11 +1970,13 @@ export default {
     // 提交客户信息
     submitCustomerInfo() {
       let value = this.walletInfo.auditMoney;
+      let maxValue = this.walletInfo.creditLine;
+      console.log(this.walletInfo.creditLine)
       let mark = this.customerInformation.remark;
       console.log(this.auditStatus, value);
 
       // 判断审核金额是否不为空或不为0 marks(必选)
-      if (value != "" || (value != 0 && mark != "")) {
+      if (value != "" && (value > 0 && mark != "" && value <= maxValue)) {
         // 判断审核状态是否为2，3，4
         if (
           this.auditStatus === 2 ||
@@ -1974,7 +2000,7 @@ export default {
             success: data => {
               this.outerVisible = false;
               Message({
-                message: data,
+                message: data.message,
                 center: true
               });
               this.queryAllCustomersList();
@@ -1989,7 +2015,9 @@ export default {
           });
         }
       } else {
-        this.$message.error("审核金额和备注不能为空！");
+        this.$message.error(
+          "审核金额和备注不能为空且审核金额不可大于授信额度！"
+        );
       }
     },
 

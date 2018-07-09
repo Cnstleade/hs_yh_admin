@@ -319,7 +319,7 @@ export default new Router({
           path: '/reviewCustomersAndWallets',
           component: resolve => require(['../components/page/riskControlCenter/reviewCustomersAndWallets'], resolve),
           meta: {
-            title: '审核客户及钱包',
+            title: '审核订单池',
           }
         },
         {
@@ -327,7 +327,7 @@ export default new Router({
           path: '/orderUnderReview',
           component: resolve => require(['../components/page/riskControlCenter/orderUnderReview'], resolve),
           meta: {
-            title: '审核中订单',
+            title: '审核员审核岗',
           }
         },
         {
@@ -335,7 +335,7 @@ export default new Router({
           path: '/auditedOrder',
           component: resolve => require(['../components/page/riskControlCenter/auditedOrder'], resolve),
           meta: {
-            title: '已审核订单',
+            title: '审核经理审核岗',
           }
         },
         {
@@ -354,6 +354,14 @@ export default new Router({
             title: '催收记录统计',
           },
         },
+        {
+          //提现金额
+          path: '/withdrawlist',
+          component: resolve => require(['../components/page/recordsCenter/withdrawlist'], resolve),
+          meta: {
+            title: '提现金额',
+          },
+        },        
         // {
         //   // 申请重审客户
         //   path: '/applyForCustomerReview',

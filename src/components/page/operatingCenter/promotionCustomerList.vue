@@ -149,7 +149,7 @@
                             </table>
                         </td>
                     </tr> -->
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor">授权验证</th>
                         <td colspan="5" >
                             <el-table
@@ -164,7 +164,7 @@
                                 <el-table-column prop="jdmm"  label="京东密码" ></el-table-column>
                             </el-table>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <th  class="bgcolor">认证资料</th>
                         <td colspan="5" >
@@ -348,12 +348,22 @@
                                     :data="hfjlData"
                                     border
                                     style="width: 100%">
-                                <el-table-column prop="xh"  align="center" label="序号" width="100"></el-table-column>
-                                <el-table-column prop="hfsj" align="center" label="回访时间" width="100" ></el-table-column>
-                                <el-table-column prop="hfr" align="center" label="回访人" width="100" ></el-table-column>
-                                <el-table-column prop="jg"  align="center" label="结果" width="100"></el-table-column>
-                                <el-table-column prop="bz"  align="center" label="备注" ></el-table-column>
-                                <el-table-column prop="fj" align="center" label="附件" width="100" ></el-table-column>
+                                <el-table-column prop="id"  align="center" label="序号" width="100"></el-table-column>
+                                <el-table-column prop="userName" align="center" label="用户名" width="100" ></el-table-column>
+                                <el-table-column prop="userMobile" align="center" label="手机号" width="120" ></el-table-column>
+                                <el-table-column prop="salesmanName"  align="center" label=催收员 width="100"></el-table-column>
+                                <el-table-column prop="createTime"  align="center" label="创建时间" width="180" >
+                        <template slot-scope="scope">
+                            {{scope.row.borrowTime|createTime}}
+                        </template>                                      
+                                </el-table-column>
+                                <el-table-column prop="updateTime" align="center" label="更新时间" width="180" >
+                        <template slot-scope="scope">
+                            {{scope.row.borrowTime|updateTime}}
+                        </template>                                      
+                                </el-table-column>
+                                <el-table-column prop="recallResult" align="center" label="回访结果"  ></el-table-column>
+                                <el-table-column prop="remark" align="center" label="备注" ></el-table-column>
                             </el-table>
                         </td>
                     </tr>
@@ -608,6 +618,7 @@ export default {
       _this.yhkData ? (_this.yhkData.length = 0) : (_this.yhkData = []);
       _this.hkjlData ? (_this.hkjlData.length = 0) : (_this.hkjlData = []);
       _this.zljData ? (_this.zljData.length = 0) : (_this.zljData = []);
+      _this.hfjlData ? (_this.hfjlData.length = 0) : (_this.hfjlData = []);
       _this.idCardImgs
         ? (_this.idCardImgs.length = 0)
         : (_this.idCardImgs = []);
@@ -646,17 +657,18 @@ export default {
           _this.hkjlData = data.loanRepaymentList;
           _this.yhkData = data.bankCardDTOVoList;
           _this.zljData = data.overdueList;
+          _this.hfjlData = data.SalesmanRecallList;
           _this.checkVisible = true;
         })
         .catch();
     },
-    changImgIndex(i) {  this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
-    //   this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
+    changImgIndex(i) {
+      this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
+      //   this.imgIndex = (this.imgIndex + i) % this.idCardImgs.length;
     },
     handleImgShow() {
-    //   this.imgIndex = i;
+      //   this.imgIndex = i;
       this.innerImgVisible = true;
-      
     }
   },
   mounted() {

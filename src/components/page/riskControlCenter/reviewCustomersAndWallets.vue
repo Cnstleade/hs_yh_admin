@@ -1,149 +1,428 @@
 <template>
-  <!--时间格式化|dateServer-->
-  <div class="container">
-    <template>
-      <el-row>
-        <el-col :span="6">
-          <el-button-group>
-            <el-button v-for="(tab ,index) in tabs"
-                       :key="index"
-                       :class="{cur:iscur==index}"
-                       @click="iscur=index,tabChange((index + 1),tab.url)">
-              {{tab.name}}
-            </el-button>
-          </el-button-group>
-        </el-col>
-        <el-col :span="18" style="text-align: right">
-          <el-date-picker
-            v-model="dateTime"
-            type="daterange"
-            @blur="chooseTime"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="timestamp">
-          </el-date-picker>
-          <el-input v-model="username" placeholder="请输入用户名" style="width: 200px"></el-input>
-          <el-button icon="el-icon-search" type="primary" @click="searchTable"></el-button>
-        </el-col>
-      </el-row>
-    </template>
-    <template>
-      <el-table class="m20"
-                v-loading="loading"
-                element-loading-text="拼命加载中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)"
-                :data="allCustomersData"
-                border height="600">
-        <!--@selection-change="chooseSelect"-->
-        <!--<el-table-column type="selection" width="55"></el-table-column>-->
-        <el-table-column prop="id" label="ID" align="center"></el-table-column>
-        <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
-        <el-table-column label="审核人" align="center">
-          <template slot-scope="scope">
-            <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
-              <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button>
-            </div>
-            <span v-else>
-              {{scope.row.operatorName}}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="来源" align="center">
-          <template slot-scope="scope">
-            <span>
-              {{scope.row.source==='1'?'IOS':scope.row.source==='2'?'Android':'线上'}}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="idNo" label="身份证号" align="center" width="150"></el-table-column>
-        <el-table-column prop="mobile" label="手机号" align="center" width="120"></el-table-column>
-        <!--<el-table-column prop="mobileDetails" label="手机详情" align="center"></el-table-column>-->
-        <el-table-column label="贷款状态" align="center">
-          <template slot-scope="scope">
-            <span>
-              {{scope.row.status===0?'重申中'
-              :scope.row.status===1?'审核中'
-              :scope.row.status===2?'拒绝'
-              :scope.row.status===3?'通过审核'
-              :scope.row.status===4?'已打款'
-              :scope.row.status===5?'还款':'完结'}}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="applyAmt" label="申请金额" align="center"></el-table-column>
-        <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
-        <el-table-column label="审核结果" align="center" width="140">
-          <template slot-scope="scope">
-            <el-tag
-              :type="scope.row.approveResult ===1?''
-                    :scope.row.approveResult===2?'danger'
-                    :scope.row.approveResult===3?'success'
-                    :scope.row.approveResult===4?'warning':'info'">
-              {{scope.row.approveResult ===1?'自动审核通过'
-              :scope.row.approveResult===2?'自动审核不通过'
-              :scope.row.approveResult===3?'人工审核通过'
-              :scope.row.approveResult===4?'人工审核不通过':'大数据风控中'}}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="approverName" label="审核经理" align="center"></el-table-column>
+    <div class="container">
+        <el-row>
+            <el-alert
+              :title="title"
+              :closable="false"
+              type="info">
+            </el-alert>           
+        </el-row>  
+        <el-tabs v-model="activeName" @tab-click="handleClic" type="border-card" v-loading="lodings" class="m20">
+            <el-tab-pane label="全部" name="first"> 
+                <el-row class="m20" >
+                    <el-col   class="col-flex-end">
+                            <!-- <el-button-group>
+                              <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                              <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                              <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                              <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                              <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
+                            </el-button-group>     -->
+                            <el-button  type="primary" @click="reset">重置</el-button>
+                            <!-- <el-select class="l20" v-model="search.withdrawStatu" placeholder="催收人员">
+                              <el-option
+                                v-for="item in withdrawStatus"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>                       -->
+                            <div class="l20">
+                                <el-input
+                                style="padding:0px 10px 0px 0px"
+                                  placeholder="请输入用户名"
+                                  v-model="search.input"
+                                  clearable>
+                                </el-input> 
+                            </div>                                  
+                            <el-date-picker
+                            style="width:340px"
+                            class="l20"
+                              v-model="search.time"
+                              type="daterange"
+                              value-format="yyyy-MM-dd"
+                              range-separator="至"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
+                            </el-date-picker>                
+                            <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+                    </el-col>             
+                </el-row> 
+                <el-table
+                    :data="tableData"  
+                    border  
+                    ref="multipleTable" 
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    class="m20"
+                    @selection-change="handleSelectionChange"
+                    v-loading="loading"
+                    id="eleTable"
+                  >
+                <el-table-column prop="id" label="ID" align="center"></el-table-column>
+                    <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
+                    <el-table-column label="审核人" align="center">
+                      <template slot-scope="scope">
+                        <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
+                          <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button>
+                        </div>
+                        <span v-else>
+                          {{scope.row.operatorName}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="来源" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.source==='1'?'IOS':scope.row.source==='2'?'Android':'线上'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="idNo" label="身份证号" align="center" width="150"></el-table-column>
+                    <el-table-column prop="mobile" label="手机号" align="center" width="120"></el-table-column>
+                    <!--<el-table-column prop="mobileDetails" label="手机详情" align="center"></el-table-column>-->
+                    <el-table-column label="贷款状态" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.status===0?'重申中'
+                          :scope.row.status===1?'审核中'
+                          :scope.row.status===2?'拒绝'
+                          :scope.row.status===3?'通过审核'
+                          :scope.row.status===4?'已打款'
+                          :scope.row.status===5?'还款':'完结'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyAmt" label="申请金额" align="center"></el-table-column>
+                    <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
+                    <el-table-column label="审核结果" align="center" width="140">
+                      <template slot-scope="scope">
+                        <el-tag
+                          :type="scope.row.approveResult ===1?''
+                                :scope.row.approveResult===2?'danger'
+                                :scope.row.approveResult===3?'success'
+                                :scope.row.approveResult===4?'warning':'info'">
+                          {{scope.row.approveResult ===1?'自动审核通过'
+                          :scope.row.approveResult===2?'自动审核不通过'
+                          :scope.row.approveResult===3?'人工审核通过'
+                          :scope.row.approveResult===4?'人工审核不通过':'大数据风控中'}}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="approverName" label="审核经理" align="center"></el-table-column>
 
-        <el-table-column label="订单状态" align="center" width="140">
-          <template slot-scope="scope">
-            <span>
-              {{scope.row.applyStatus ===0?'初始'
-              :scope.row.applyStatus===1?'审核员审核中'
-              :scope.row.applyStatus===2?'审核经理审核中'
-              :scope.row.applyStatus===3?'审核订单驳回中'
-              :scope.row.applyStatus===4?'高风险用户':'审核完成'}}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
-                         width="150"></el-table-column>
-        <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="this.showIndex != 1">
-          <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </template>
-    <template>
-      <el-pagination
-        style="margin-top: 10px;text-align: right;"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </template>
+                    <el-table-column label="订单状态" align="center" width="140">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.applyStatus ===0?'初始'
+                          :scope.row.applyStatus===1?'审核员审核中'
+                          :scope.row.applyStatus===2?'审核经理审核中'
+                          :scope.row.applyStatus===3?'审核订单重申中'
+                          :scope.row.applyStatus===4?'高风险用户':'审核完成'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
+                                     width="150"></el-table-column>
+                    <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
+                    <!-- <el-table-column label="操作" align="center" >
+                      <template slot-scope="scope">
+                        <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
+                      </template>
+                    </el-table-column> -->
+                </el-table>     
+                <el-row class="m20" v-if="total>0">
+                     <div style="float:right">
+                         <el-pagination
+                           @current-change="handleCurrentChange"
+                            @size-change="handleSizeChange"
+                           :current-page="npage"
+                            :page-sizes="[10, 20, 30, 40]"
+                             :page-size="pagesize"
+                           background
+                           layout="total,sizes,prev, pager, next,jumper"
+                           :total="total">
+                         </el-pagination>   
+                     </div>
+                </el-row>                
+            </el-tab-pane > 
+            <el-tab-pane label="已通过" name="second"> 
+                <el-row class="m20" >
+                    <el-col   class="col-flex-end">
+                            <!-- <el-button-group>
+                              <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                              <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                              <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                              <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                              <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
+                            </el-button-group>     -->
+                            <el-button  type="primary" @click="reset">重置</el-button>
+                            <!-- <el-select class="l20" v-model="search.withdrawStatu" placeholder="催收人员">
+                              <el-option
+                                v-for="item in withdrawStatus"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>                       -->
+                            <div class="l20">
+                                <el-input
+                                style="padding:0px 10px 0px 0px"
+                                  placeholder="请输入用户名"
+                                  v-model="search.input"
+                                  clearable>
+                                </el-input> 
+                            </div>                                  
+                            <el-date-picker
+                            style="width:340px"
+                            class="l20"
+                              v-model="search.time"
+                              type="daterange"
+                              value-format="yyyy-MM-dd"
+                              range-separator="至"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
+                            </el-date-picker>                
+                            <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+                    </el-col>             
+                </el-row> 
+                <el-table
+                    :data="tableData"  
+                    border  
+                    ref="multipleTable" 
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    class="m20"
+                    @selection-change="handleSelectionChange"
+                    v-loading="loading"
+                    id="eleTable"
+                  >
+                <el-table-column prop="id" label="ID" align="center"></el-table-column>
+                    <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
+                    <el-table-column label="审核人" align="center">
+                      <template slot-scope="scope">
+                        <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
+                          <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button>
+                        </div>
+                        <span v-else>
+                          {{scope.row.operatorName}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="来源" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.source==='1'?'IOS':scope.row.source==='2'?'Android':'线上'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="idNo" label="身份证号" align="center" width="150"></el-table-column>
+                    <el-table-column prop="mobile" label="手机号" align="center" width="120"></el-table-column>
+                    <!--<el-table-column prop="mobileDetails" label="手机详情" align="center"></el-table-column>-->
+                    <el-table-column label="贷款状态" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.status===0?'重申中'
+                          :scope.row.status===1?'审核中'
+                          :scope.row.status===2?'拒绝'
+                          :scope.row.status===3?'通过审核'
+                          :scope.row.status===4?'已打款'
+                          :scope.row.status===5?'还款':'完结'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyAmt" label="申请金额" align="center"></el-table-column>
+                    <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
+                    <el-table-column label="审核结果" align="center" width="140">
+                      <template slot-scope="scope">
+                        <el-tag
+                          :type="scope.row.approveResult ===1?''
+                                :scope.row.approveResult===2?'danger'
+                                :scope.row.approveResult===3?'success'
+                                :scope.row.approveResult===4?'warning':'info'">
+                          {{scope.row.approveResult ===1?'自动审核通过'
+                          :scope.row.approveResult===2?'自动审核不通过'
+                          :scope.row.approveResult===3?'人工审核通过'
+                          :scope.row.approveResult===4?'人工审核不通过':'大数据风控中'}}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="approverName" label="审核经理" align="center"></el-table-column>
 
-    <!--审核员对话框-->
-    <template>
-      <el-dialog title="分配客户" :visible.sync="dialogAssessor">
-        <el-form :model="assessorForm">
-          <el-form-item label="请选择审核员">
-            <el-select v-model="assessorForm.assessor" placeholder="请选择审核员">
-              <template v-for="item in assessorList">
-                <el-option :label="item.username" :value="item.uid"></el-option>
-              </template>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogAssessor = false">取 消</el-button>
-          <el-button type="primary" @click="submitAssessorForm">确 定</el-button>
-        </div>
-      </el-dialog>
+                    <el-table-column label="订单状态" align="center" width="140">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.applyStatus ===0?'初始'
+                          :scope.row.applyStatus===1?'审核员审核中'
+                          :scope.row.applyStatus===2?'审核经理审核中'
+                          :scope.row.applyStatus===3?'审核订单重申中'
+                          :scope.row.applyStatus===4?'高风险用户':'审核完成'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
+                                     width="150"></el-table-column>
+                    <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
+                    <el-table-column label="操作" align="center" >
+                      <template slot-scope="scope">
+                        <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
+                      </template>
+                    </el-table-column>
+                </el-table>     
+                <el-row class="m20" v-if="total>0">
+                     <div style="float:right">
+                         <el-pagination
+                           @current-change="handleCurrentChange"
+                            @size-change="handleSizeChange"
+                           :current-page="npage"
+                            :page-sizes="[10, 20, 30, 40]"
+                             :page-size="pagesize"
+                           background
+                           layout="total,sizes,prev, pager, next,jumper"
+                           :total="total">
+                         </el-pagination>   
+                     </div>
+                </el-row>                
+            </el-tab-pane > 
+            <el-tab-pane label="未通过" name="three"> 
+                <el-row class="m20" >
+                    <el-col   class="col-flex-end">
+                            <!-- <el-button-group>
+                              <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
+                              <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
+                              <el-button :type="execeedtimeType==2?'success':''" @click="changeExeceedtimeType(2)">M2</el-button>
+                              <el-button :type="execeedtimeType==3?'warning':''" @click="changeExeceedtimeType(3)">M3</el-button>
+                              <el-button :type="execeedtimeType==4?'danger':''" @click="changeExeceedtimeType(4)">M3+</el-button>
+                            </el-button-group>     -->
+                            <el-button  type="primary" @click="reset">重置</el-button>
+                            <!-- <el-select class="l20" v-model="search.withdrawStatu" placeholder="催收人员">
+                              <el-option
+                                v-for="item in withdrawStatus"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>                       -->
+                            <div class="l20">
+                                <el-input
+                                style="padding:0px 10px 0px 0px"
+                                  placeholder="请输入用户名"
+                                  v-model="search.input"
+                                  clearable>
+                                </el-input> 
+                            </div>                                  
+                            <el-date-picker
+                            style="width:340px"
+                            class="l20"
+                              v-model="search.time"
+                              type="daterange"
+                              value-format="yyyy-MM-dd"
+                              range-separator="至"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
+                            </el-date-picker>                
+                            <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
+                    </el-col>             
+                </el-row> 
+                <el-table
+                    :data="tableData"  
+                    border  
+                    ref="multipleTable" 
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    class="m20"
+                    @selection-change="handleSelectionChange"
+                    v-loading="loading"
+                    id="eleTable"
+                  >
+                <el-table-column prop="id" label="ID" align="center"></el-table-column>
+                    <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
+                    <el-table-column label="审核人" align="center">
+                      <template slot-scope="scope">
+                        <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
+                          <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button>
+                        </div>
+                        <span v-else>
+                          {{scope.row.operatorName}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="来源" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.source==='1'?'IOS':scope.row.source==='2'?'Android':'线上'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="idNo" label="身份证号" align="center" width="150"></el-table-column>
+                    <el-table-column prop="mobile" label="手机号" align="center" width="120"></el-table-column>
+                    <!--<el-table-column prop="mobileDetails" label="手机详情" align="center"></el-table-column>-->
+                    <el-table-column label="贷款状态" align="center">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.status===0?'重申中'
+                          :scope.row.status===1?'审核中'
+                          :scope.row.status===2?'拒绝'
+                          :scope.row.status===3?'通过审核'
+                          :scope.row.status===4?'已打款'
+                          :scope.row.status===5?'还款':'完结'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyAmt" label="申请金额" align="center"></el-table-column>
+                    <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
+                    <el-table-column label="审核结果" align="center" width="140">
+                      <template slot-scope="scope">
+                        <el-tag
+                          :type="scope.row.approveResult ===1?''
+                                :scope.row.approveResult===2?'danger'
+                                :scope.row.approveResult===3?'success'
+                                :scope.row.approveResult===4?'warning':'info'">
+                          {{scope.row.approveResult ===1?'自动审核通过'
+                          :scope.row.approveResult===2?'自动审核不通过'
+                          :scope.row.approveResult===3?'人工审核通过'
+                          :scope.row.approveResult===4?'人工审核不通过':'大数据风控中'}}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="approverName" label="审核经理" align="center"></el-table-column>
 
-    </template>
-
+                    <el-table-column label="订单状态" align="center" width="140">
+                      <template slot-scope="scope">
+                        <span>
+                          {{scope.row.applyStatus ===0?'初始'
+                          :scope.row.applyStatus===1?'审核员审核中'
+                          :scope.row.applyStatus===2?'审核经理审核中'
+                          :scope.row.applyStatus===3?'审核订单重申中'
+                          :scope.row.applyStatus===4?'高风险用户':'审核完成'}}
+                        </span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="applyTime" label="申请时间" align="center" :formatter="dateFormat"
+                                     width="150"></el-table-column>
+                    <el-table-column prop="channel" label="渠道" align="center" width="100"></el-table-column>
+                    <el-table-column label="操作" align="center">
+                      <template slot-scope="scope">
+                        <el-button type="primary" icon="el-icon-info" @click="examine(scope.row)">查看</el-button>
+                      </template>
+                    </el-table-column>
+                </el-table>     
+                <el-row class="m20" v-if="total>0">
+                     <div style="float:right">
+                         <el-pagination
+                           @current-change="handleCurrentChange"
+                            @size-change="handleSizeChange"
+                           :current-page="npage"
+                            :page-sizes="[10, 20, 30, 40]"
+                             :page-size="pagesize"
+                           background
+                           layout="total,sizes,prev, pager, next,jumper"
+                           :total="total">
+                         </el-pagination>   
+                     </div>
+                </el-row>                
+            </el-tab-pane >                          
+        </el-tabs >                                
     <!--客户信息表-->
     <template>
       <el-dialog
@@ -427,7 +706,7 @@
                 </template>
               </el-col>
             </el-row> -->
-            <el-row>
+            <!-- <el-row>
               <el-col :span="2"><label>订单信息</label></el-col>
               <el-col :span="22">
                 <template v-if="customerInformation.loanOrderDOList">
@@ -456,7 +735,7 @@
                   </div>
                 </template>
               </el-col>
-            </el-row>
+            </el-row> -->
             <!--<el-row>
               <el-col :span="2"><label>审核金额</label></el-col>
               <el-col :span="22">
@@ -520,7 +799,7 @@
           title="风控报告"
           :visible.sync="CreditReport"
           append-to-body>
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeNam" @tab-click="handleClick">
             <el-tab-pane label="芝麻信用报告" name="first" v-if="false">芝麻信用报告</el-tab-pane>
             <el-tab-pane label="同盾信用报告" name="second">
               <el-row v-if="JSON.stringify(baseInfo) !== '{}'">
@@ -1407,111 +1686,154 @@
           <el-button type="primary" @click="submitCustomerInfo">提 交</el-button>
         </div>-->
       </el-dialog>
-    </template>
-  </div>
+    </template>   
+    <!--审核员对话框-->
+    <!-- <template>
+      <el-dialog title="分配客户" :visible.sync="dialogAssessor">
+        <el-form :model="assessorForm">
+          <el-form-item label="请选择审核员">
+            <el-select v-model="assessorForm.assessor" placeholder="请选择审核员">
+              <template v-for="item in assessorList">
+                <el-option :label="item.username" :value="item.uid"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogAssessor = false">取 消</el-button>
+          <el-button type="primary" @click="submitAssessorForm">确 定</el-button>
+        </div>
+      </el-dialog>
+
+    </template>                               -->
+    </div>
 </template>
 
 <script>
-  import {timeFormat} from "../../../config/time";
-  import {Message} from "element-ui";
-  import {config} from "../../../util/config";
-  import BigImg from "./BigImg.vue";
+import {
+  httpLoanapply,
+  httpGetOverList,
+  httpGetNotApplyOrder,
+  httpGetCustomterMesage
+} from "../../../service/http";
+import { config } from "../../../util/config";
+import BigImg from "./BigImg.vue";
+import { timeFormat } from "../../../config/time";
+export default {
+  data() {
+    return {
+      lodings: false,
+      activeName: "first",
+      activeNam: "first",
+      url: httpLoanapply,
+      title: "审核订单池",
+      search: {
+        input: "",
+        time: ""
+      },
+      tableData: [],
+      loading: true,
+      npage: 1,
+      pagesize: 10,
+      total: 0,
+      withdrawStatus: [
+        { label: "放款中", value: 0 },
+        { label: "放款成功", value: 1 },
+        { label: "逾期", value: 2 },
+        { label: "还款成功", value: 3 },
+        { label: "放款失败 ", value: 4 },
+        { label: "还款中", value: 5 },
+        { label: "还款失败", value: 6 }
+      ],
+      multipleSelection: [], //全部选中嘛
+      outerVisible: false, // 客户信息表
+      dialogAssessor: false, // 审核员列表
+      contactList: false, // 通讯录列表
+      CreditReport: false, // 风控报告
 
-  export default {
-    name: "reviewCustomersAndWallets",
-    data() {
-      return {
-        outerVisible: false,          // 客户信息表
-        dialogAssessor: false,        // 审核员列表
-        contactList: false,           // 通讯录列表
-        CreditReport: false,          // 风控报告
+      dateTime: [], // 选中时间
+      startTime: "", // 开始时间
+      endTime: "", // 结束时间
 
-        dateTime: [],                 // 选中时间
-        startTime: '',                // 开始时间
-        endTime: '',                  // 结束时间
+      username: "", // 用户名搜索
+      radio: 1,
+      listId: null,
 
-        loading: true,
-        username: '',                 // 用户名搜索
-        radio: 1,
-        listId: null,
+      currentPage: 1,
+      pageSize: 10,
 
-        currentPage: 1,
-        pageSize: 10,
-        total: null,
+      iscur: 0,
+      showIndex: 1,
+      showImg: false,
+      imgSrc: "",
+      labelWidth: "200px",
 
-        iscur: 0,
-        showIndex: 1,
-        showImg: false,
-        imgSrc: "",
-        labelWidth: "200px",
+      auditStatus: "", // 审核状态
+      selectList: [],
+      contacs: [], // 通讯录列表
+      assessorForm: {
+        assessor: null
+      },
+      assessorId: null,
+      customerInformation: {}, // 客户信息表数据
 
-        auditStatus: '',              // 审核状态
-        selectList: [],
-        contacs: [],                  // 通讯录列表
-        assessorForm: {
-          assessor: null
+      //报告
+      showText: false,
+      userBasicInformation: {}, //用户基本信息检测用户基本信息检测
+      userInfo: {},
+      kinsfolkTableData: [], //亲属联系人
+      testTableData: [],
+      operatorTableData: [], //运营商消费数据
+      linkmanTableData: [], //联系人区域汇总
+      operatorDataTableData: [], //运行商数据分析
+      contactTableData: [], //联系人信息
+      esAddTableData: [], //电商信息
+      esDataTableData: [], //电商数据统计
+      tripTableData: [],
+      canvasimg: "",
+      canvasShow: true,
+      note: {
+        backgroundImage: ""
+      },
+      baseInfo: {},
+      row: {},
+      type: 0,
+      //报告
+      assessorList: [],
+      allCustomersData: [], // 列表数据
+      salesmanTable: [
+        {
+          userName: "aaaa",
+          name: "bbb",
+          email: "ccc@136.com",
+          phone: "13695412651",
+          endLogTime: "2018-06-08 14:26:35"
+        }
+      ],
+      pneumaticTable: [
+        {
+          callRecords: "无",
+          addressList: "50",
+          location: "123",
+          networkInfo: "yes",
+          educationInfo: "no",
+          hasVoice: "yes"
+        }
+      ],
+
+      // 钱包信息
+      walletInfo: {
+        joinDate: "", //注册时间
+        loginDate: "", //登陆时间
+        creditLine: "", //授信额度
+        auditMoney: "" //审核金额
+      },
+      tabs: [
+        {
+          name: "全部",
+          url: "/sys/loanapply"
         },
-        assessorId: null,
-        customerInformation: {}, // 客户信息表数据
-
-        //报告
-        showText: false,
-        activeName: "third",
-        userBasicInformation: {}, //用户基本信息检测用户基本信息检测
-        userInfo: {},
-        kinsfolkTableData: [], //亲属联系人
-        testTableData: [],
-        operatorTableData: [], //运营商消费数据
-        linkmanTableData: [], //联系人区域汇总
-        operatorDataTableData: [], //运行商数据分析
-        contactTableData: [], //联系人信息
-        esAddTableData: [], //电商信息
-        esDataTableData: [], //电商数据统计
-        tripTableData: [],
-        canvasimg: "",
-        canvasShow: true,
-        note: {
-          backgroundImage: ""
-        },
-        baseInfo: {},
-        row: {},
-        type: 0,
-        //报告
-        assessorList: [],
-        allCustomersData: [], // 列表数据
-        salesmanTable: [
-          {
-            userName: "aaaa",
-            name: "bbb",
-            email: "ccc@136.com",
-            phone: "13695412651",
-            endLogTime: "2018-06-08 14:26:35"
-          }
-        ],
-        pneumaticTable: [
-          {
-            callRecords: "无",
-            addressList: "50",
-            location: "123",
-            networkInfo: "yes",
-            educationInfo: "no",
-            hasVoice: "yes"
-          }
-        ],
-
-        // 钱包信息
-        walletInfo: {
-          joinDate: '',       //注册时间
-          loginDate: '',      //登陆时间
-          creditLine: '',     //授信额度
-          auditMoney: '',     //审核金额
-        },
-        tabs: [
-          {
-            name: "全部",
-            url: "/sys/loanapply"
-          },
-          /*{
+        /*{
             name: "待分配",
             url: "/sys/allocatedList"
           },
@@ -1527,835 +1849,575 @@
             name: "待驳回",
             url: "/sys/RejectedList"
           },*/
-          {
-            name: "已通过",
-            url: "/sys/getOverList"
-          },
-          /*{
+        {
+          name: "已通过",
+          url: "/sys/getOverList"
+        },
+        /*{
             name: "高风险",
             url: "/sys/RefuseList"
           },*/
-          {
-            name: "未通过",
-            url: "/sys/getNotApplyOrder"
-          }
-        ]
-      };
-    },
-
-    components: {
-      "big-img": BigImg
-    },
-
-    watch: {
-      // 监听输入变化
-      /*'walletInfo.auditMoney'(val, oldVal) {
-        if (val === '') {
-          Message({
-            message: '审核金额不能为空',
-            center: true
-          });
-          this.walletInfo.auditMoney = val;
-        } else if (val === '0') {
-          Message({
-            message: '审核金额不能为0',
-            center: true
-          });
-          this.walletInfo.auditMoney = val;
-        } else if (val < 0) {
-          Message({
-            message: '审核金额不能为负数',
-            center: true
-          });
-          this.walletInfo.auditMoney = this.walletInfo.creditLine;
-        } else if (val > this.walletInfo.creditLine) {
-          Message({
-            message: '审核金额不能大于授信额度',
-            center: true
-          });
-          this.walletInfo.auditMoney = this.walletInfo.creditLine;
-        } else if (this.walletInfo.creditLine > val > 0) {
-          this.walletInfo.auditMoney = val;
+        {
+          name: "未通过",
+          url: "/sys/getNotApplyOrder"
         }
-      }*/
+      ]
+    };
+  },
+  components: {
+    "big-img": BigImg
+  },
+  methods: {
+    getData(
+      npage,
+      pagesize,
+      userName,
+      startDateString,
+      finshDateString,
+      channel
+    ) {
+      let _this = this;
+      this.loading;
+      this.url(
+        npage,
+        pagesize,
+        userName,
+        startDateString,
+        finshDateString,
+        channel
+      )
+        .then(res => {
+          let data = res.data;
+          console.log(data);
+          _this.tableData = data.rows;
+
+          _this.total = data.total;
+          _this.loading = false;
+        })
+        .catch(err => {
+          _this.tableData = [];
+        });
     },
-
-    computed:{
-      amount(){
-        return this.contacs.length;
-      }
-    },
-
-    methods: {
-
-      // 截取整数部分
-      /*inpBlur() {
-        let val = this.walletInfo.auditMoney;
-        let num = parseInt(val);
-        if(!isNaN(num)){
-          this.walletInfo.auditMoney = num;
-          console.log('失去焦点时审核金额为：'+this.walletInfo.auditMoney);
-        }else{
-          Message({
-            message: '审核金额不能为空',
-            center: true
-          });
-          this.walletInfo.auditMoney = '';
-        }
-
-      },*/
-
-      // 查询全部订单
-      queryAllCustomersList(a, b) {
-        let postDate = {
-          npage: a,
-          pagesize: b,
-          userName: this.username,
-          startDateString: this.startTime,
-          finshDateString: this.endTime,
-          channel: ""
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/loanapply",
-          data: postDate,
-          success: data => {
-            this.allCustomersData = data.rows;
-            this.total = data.total;
-            this.loading = false;
-          },
-          error: err => {
-            console.log(err);
-          }
-        });
-      },
-
-      // 搜索
-      searchTable() {
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
-      },
-
-      // 选择时间
-      chooseTime() {
-        this.startTime = this.getMyDate(this.dateTime[0]);
-        this.endTime = this.getMyDate(this.dateTime[1]);
-      },
-
-      // 查询审核员列表
-      queryAssessorList() {
-        $.ajax({
-          type: "GET",
-          url: config.baseURL + "/sys/getRoleName",
-          success: data => {
-            this.assessorList = data;
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 切换按钮刷新表单
-      tabChange: function (index, url) {
-        this.showIndex = index;
-        this.loading = true;
-        let postDate = {
-          npage: this.currentPage,
-          pagesize: this.pagesize,
-          userName: "",
-          mobile: "",
-          idNo: "",
-          startDateString: "",
-          finshDateString: "",
-          channel: ""
-        };
-        $.ajax({
-          url: config.baseURL + url,
-          type: "POST",
-          data: postDate,
-          success: data => {
-            // console.log(data.rows);
-            this.allCustomersData = data.rows;
-            this.loading = false;
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 表格时间转换
-      dateFormat: function (row, column) {
-        let date = row[column.property];
-        // console.log(date);
-        if (date == undefined) {
-          return "";
-        }
-        let dateTime = new Date(date),
-          y = dateTime.getFullYear(),
-          m = dateTime.getMonth() + 1,
-          d = dateTime.getDate(),
-          h = dateTime.getHours(),
-          i = dateTime.getMinutes(),
-          s = dateTime.getSeconds();
-        return (
-          y +
-          "/" +
-          this.getzf(m) +
-          "/" +
-          this.getzf(d) +
-          " " +
-          this.getzf(h) +
-          ":" +
-          this.getzf(i) +
-          ":" +
-          this.getzf(s)
+    handleSearch() {
+      if (this.search.time && this.search.time.length) {
+        this.getData(
+          this.npage,
+          this.pagesize,
+          this.search.input,
+          this.search.time[0] + " 00:00:00",
+          timeFormat(this.search.time[1], 1) + " 00:00:00"
         );
-      },
-
-      //转成2017-01-01
-      getMyDate(str) {
-        var oDate = new Date(str),
-          oYear = oDate.getFullYear(),
-          oMonth = oDate.getMonth() + 1,
-          oDay = oDate.getDate(),
-          oHour = oDate.getHours(),
-          oMin = oDate.getMinutes(),
-          oSen = oDate.getSeconds(),
-          oTime = oYear + "-" + this.getzf(oMonth) + "-" + this.getzf(oDay); //最后拼接时间
-        return oTime;
-      },
-
-      //补0操作
-      getzf(num) {
-        if (parseInt(num) < 10) {
-          num = "0" + num;
-        }
-        return num;
-      },
-
-      //默认日期显示一周
-      setDefaultDate() {
-        let newDate = new Date();
-        let year = newDate.getFullYear(),
-          month = newDate.getMonth() + 1,
-          day = newDate.getDate(),
-          defualtDate = year + "-" + this.getzf(month) + "-" + this.getzf(day),
-          defualtEndDate = timeFormat(defualtDate, -6);
-
-        /*开始结束时间赋值*/
-        // this.startTime = defualtEndDate;
-        // this.endTime = defualtDate;
-
-        this.dateTime.push(new Date(defualtEndDate).getTime(), new Date(defualtDate).getTime());
-      },
-
-      // 批量搁置
-      // setCurrent() {
-      //   let postDate = {
-      //     ids: this.selectList,
-      //     type: true
-      //   };
-      //   $.ajax({
-      //     type: "POST",
-      //     url: config.baseURL + "/sys/updataLoanApply",
-      //     data: postDate,
-      //     success: function (data) {
-      //       alert(data);
-      //     },
-      //     error: function () {
-      //       alert("错误");
-      //     }
-      //   });
-      // },
-
-      // 审核人分配
-      allotOperator(data) {
-        // console.log(data.id);
-        this.assessorId = data.id;
-        this.dialogAssessor = true;
-      },
-
-      // 提交审核员信息
-      submitAssessorForm() {
-        let params = {
-          id: this.assessorId,
-          Userid: this.assessorForm.assessor
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/setReviewer",
-          data: params,
-          success: data => {
-            if ((data.success = true)) {
-              Message({
-                message: data.message,
-                center: true
-              });
-              this.dialogAssessor = false;
-              this.queryAllCustomersList();
-            }
-          },
-          error: err => {
-            console.log(err.status);
-          }
-        });
-      },
-
-      // 点击业务员
-      // handleSalesman() {
-      //   this.dialogSalesman = true;
-      // },
-
-      // 查看客户信息
-      examine(val) {
-        this.auditStatus = val.approveResult;
-        this.listId = Number(val.id);
-        this.customerInformation = {};
-        this.outerVisible = true;
-        let param = {
-          id: this.listId
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/getCustomterMesage",
-          data: param,
-          success: data => {
-            this.customerInformation = data;
-
-            this.walletInfo.joinDate = data.applyTime; // 注册时间
-            this.walletInfo.loginDate = data.createTime; // 登陆时间
-            this.walletInfo.creditLine = data.applyAmt; //  授信额度
-            this.walletInfo.auditMoney = data.approveAmt; //  审核金额
-
-            //this.contacs = data.custMobileList; // 通讯录信息
-
-            console.log(data,this.contacs);
-          },
-          error: err => {
-            Message({
-              message: err,
-              center: true
-            });
-          }
-        });
-      },
-
-      // 查看通讯录列表
-      checkContacts() {
-        this.contactList = true;
-
-      },
-
-      // 提交客户信息
-      // submitCustomerInfo() {
-      //
-      //   let value = this.walletInfo.auditMoney;
-      //   let mark = this.customerInformation.remark;
-      //   console.log(this.auditStatus,value);
-      //
-      //   // 判断审核金额是否不为空或不为0 marks(必选)
-      //   if(value!='' || value != 0 && mark != ''){
-      //
-      //     // 判断审核状态是否为2，3，4
-      //     if (this.auditStatus === 2 || this.auditStatus === 3 || this.auditStatus === 4) {
-      //
-      //       // 弹出提示框
-      //       this.AlertDialog = true;
-      //
-      //     } else {
-      //
-      //       // 审核状态不为2，3，4时执行
-      //       let params = {
-      //         type: this.radio,
-      //         id: this.listId,
-      //         approveAmt: value,
-      //         remark: mark
-      //       };
-      //       $.ajax({
-      //         type: "POST",
-      //         url: config.baseURL + "/sys/updataLoanApply",
-      //         data: params,
-      //         success: data => {
-      //           this.outerVisible = false;
-      //           Message({
-      //             message: data,
-      //             center: true
-      //           });
-      //           this.queryAllCustomersList();
-      //         },
-      //         error: err => {
-      //           this.outerVisible = false;
-      //           Message({
-      //             message: '提交失败',
-      //             center: true
-      //           });
-      //         }
-      //       });
-      //     }
-      //   }
-      //
-      //
-      // },
-
-      // 确认提交客户信息
-      // yesSure() {
-      //   let params = {
-      //     type: this.radio,
-      //     id: this.listId,
-      //     approveAmt: this.walletInfo.auditMoney,
-      //     remark: this.customerInformation.remark
-      //   };
-      //   $.ajax({
-      //     type: "POST",
-      //     url: config.baseURL + "/sys/updataLoanApply",
-      //     data: params,
-      //     success: data => {
-      //       this.AlertDialog = false;
-      //       this.outerVisible = false;
-      //       Message({
-      //         message: data,
-      //         center: true
-      //       });
-      //       this.queryAllCustomersList();
-      //     },
-      //     error: err => {
-      //       this.AlertDialog = false;
-      //       this.outerVisible = false;
-      //       Message({
-      //         message: '提交失败',
-      //         center: true
-      //       });
-      //     }
-      //   });
-      // },
-
-      // 查看风控报告
-      viewRiskManagementreport() {
-        let param = {
-          id: this.listId
-        };
-        $.ajax({
-          type: "POST",
-          url: config.baseURL + "/sys/getCreditReport",
-          data: param,
-          success: data => {
-            // console.log("风控报告数据：" + data);
-
-            if (data.tdReport) {
-              this.baseInfo = data.tdReport;
-            }
-            if (data.mifengreport) {
-              let date = data.mifengreport;
-              this.userBasicInformation = date.mifengreportApplicationCheck;
-              // console.log(this.userBasicInformation);
-              this.testTableData = date.list1;
-              this.operatorTableData = date.list2;
-              this.kinsfolkTableData = date.list6;
-
-              this.linkmanTableData = date.list4;
-              this.operatorDataTableData = date.list3;
-              this.userInfo = date.mifengreportUserInfoCheck;
-            }
-            this.CreditReport = true;
-          },
-          error: err => {
-            Message({
-              message: err,
-              center: true
-            });
-          }
-        });
-      },
-
-      //切换报告
-      handleClick(tab, event) {
-      },
-
-      //修改客户信息
-      // modifyConsumerMessage() {
-      //   this.modifyConsumerInfo = true;
-      // },
-
-      //修改认证信息
-      // modifyAttestationInfo() {
-      //   this.modifyCredentials = true;
-      // },
-
-      //修改客户关联信息
-      // modifyRelevanceInfo() {
-      //   this.modifyAlevanceInfo = true;
-      // },
-
-      clickImg(e, src) {
-        this.showImg = true;
-        // 获取当前图片地址
-        this.imgSrc = src;
-      },
-
-      viewImg() {
-        this.showImg = false;
-      },
-
-      // 分页插件-数量改变事件
-      handleSizeChange(val) {
-        this.pageSize = val;
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
-      },
-
-      // 分页插件-页数改变事件
-      handleCurrentChange(val) {
-        this.currentPage = val;
-        this.queryAllCustomersList(this.currentPage, this.pageSize);
+      } else {
+        this.getData(this.npage, this.pagesize, this.search.input, "", "");
       }
     },
-    mounted() {
-      // 设置默认日期
-      this.setDefaultDate();
+    handleAllocation(index, row) {},
+    handleCurrentChange(val) {
+      this.npage = val;
+      this.handleSearch();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.handleSearch();
+    },
+    reset() {
+      (this.search = {
+        input: "",
+        time: ""
+      }),
+        this.handleSearch();
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    filterStauts(value, row) {
+      return row.status === value;
+    },
+    handleClic(tab, event) {
+      tab.name === "second"
+        ? (this.url = httpGetOverList)
+        : tab.name === "three"
+          ? (this.url = httpGetNotApplyOrder)
+          : (this.url = httpLoanapply);
+      this.lodings = true;
+      this.getData(this.npage, this.pagesize);
+      setTimeout(() => {
+        this.lodings = false;
+      }, 500);
+    },
+    // 查看客户信息
+    examine(val) {
+      this.auditStatus = val.approveResult;
+      this.listId = Number(val.id);
+      this.customerInformation = {};
+      this.outerVisible = true;
+      let param = {
+        id: this.listId
+      };
+      httpGetCustomterMesage(this.listId)
+        .then(res => {
+          let data = res.data;
+          this.customerInformation = data;
+          this.walletInfo.joinDate = data.applyTime; // 注册时间
+          this.walletInfo.loginDate = data.createTime; // 登陆时间
+          this.walletInfo.creditLine = data.applyAmt; //  授信额度
+          this.walletInfo.auditMoney = data.approveAmt; //  审核金额
+          this.contacs = data.credit.custMobileList; // 通讯录信息
+          this.amount = data.credit.contactsCount;
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
+      // $.ajax({
+      //   type: "POST",
+      //   url: config.baseURL + "/sys/getCustomterMesage",
+      //   data: param,
+      //   success: data => {
+      //     this.customerInformation = data;
 
-      // 查询全部列表
-      this.queryAllCustomersList(this.currentPage, this.pageSize);
+      //     this.walletInfo.joinDate = data.applyTime; // 注册时间
+      //     this.walletInfo.loginDate = data.createTime; // 登陆时间
+      //     this.walletInfo.creditLine = data.applyAmt; //  授信额度
+      //     this.walletInfo.auditMoney = data.approveAmt; //  审核金额
 
-      // 审核人列表
-      this.queryAssessorList();
+      //     this.contacs = data.credit.custMobileList; // 通讯录信息
+      //     this.amount = data.credit.contactsCount;
+      //   },
+      //   error: err => {
+      //     Message({
+      //       message: err,
+      //       center: true
+      //     });
+      //   }
+      // });
+    },
+    // 表格时间转换
+    dateFormat: function(row, column) {
+      let date = row[column.property];
+      // console.log(date);
+      if (date == undefined) {
+        return "";
+      }
+      let dateTime = new Date(date),
+        y = dateTime.getFullYear(),
+        m = dateTime.getMonth() + 1,
+        d = dateTime.getDate(),
+        h = dateTime.getHours(),
+        i = dateTime.getMinutes(),
+        s = dateTime.getSeconds();
+      return (
+        y +
+        "/" +
+        this.getzf(m) +
+        "/" +
+        this.getzf(d) +
+        " " +
+        this.getzf(h) +
+        ":" +
+        this.getzf(i) +
+        ":" +
+        this.getzf(s)
+      );
+    },
+    handleClick() {},
+    //补0操作
+    getzf(num) {
+      if (parseInt(num) < 10) {
+        num = "0" + num;
+      }
+      return num;
+    },
+    // 查看通讯录列表
+    checkContacts() {
+      this.contactList = true;
+    },
+    // 查看风控报告
+    viewRiskManagementreport() {
+      let param = {
+        id: this.listId
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/getCreditReport",
+        data: param,
+        success: data => {
+          // console.log("风控报告数据：" + data);
+
+          if (data.tdReport) {
+            this.baseInfo = data.tdReport;
+          }
+          if (data.mifengreport) {
+            let date = data.mifengreport;
+            this.userBasicInformation = date.mifengreportApplicationCheck;
+            // console.log(this.userBasicInformation);
+            this.testTableData = date.list1;
+            this.operatorTableData = date.list2;
+            this.kinsfolkTableData = date.list6;
+
+            this.linkmanTableData = date.list4;
+            this.operatorDataTableData = date.list3;
+            this.userInfo = date.mifengreportUserInfoCheck;
+          }
+          this.CreditReport = true;
+        },
+        error: err => {
+          Message({
+            message: err,
+            center: true
+          });
+        }
+      });
+    },
+    viewImg() {
+      this.showImg = false;
+    },
+    clickImg(e, src) {
+      this.showImg = true;
+      // 获取当前图片地址
+      this.imgSrc = src;
     }
-  };
+  },
+  mounted() {
+    this.getData(this.npage, this.pagesize);
+  }
+};
 </script>
-<style>
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
 
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 </style>
 <style scoped>
-  .cur {
-    color: #fff;
-    background-color: #20a0ff;
-  }
+.cur {
+  color: #fff;
+  background-color: #20a0ff;
+}
 
-  #clientDetails,
-  #consumerMessage,
-  #credentials,
-  #relevance {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    border-bottom: none;
-    overflow-y: auto;
-  }
+#clientDetails,
+#consumerMessage,
+#credentials,
+#relevance {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  border-bottom: none;
+  overflow-y: auto;
+}
 
-  #clientDetails .el-row,
-  #consumerMessage .el-row,
-  #credentials .el-row,
-  #relevance .el-row {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-  }
+#clientDetails .el-row,
+#consumerMessage .el-row,
+#credentials .el-row,
+#relevance .el-row {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
 
-  #clientDetails label,
-  #consumerMessage label,
-  #credentials label,
-  #relevance label {
-    color: #000;
-    width: 100px;
-    display: inline-block;
-  }
+#clientDetails label,
+#consumerMessage label,
+#credentials label,
+#relevance label {
+  color: #000;
+  width: 100px;
+  display: inline-block;
+}
 
-  .contactInfo {
-    border: 1px solid #ccc;
-    margin-bottom: 2px;
-  }
+.contactInfo {
+  border: 1px solid #ccc;
+  margin-bottom: 2px;
+}
 
-  .title-style {
-    background: #ebebeb;
-  }
+.title-style {
+  background: #ebebeb;
+}
 
-  .imgInfo {
-    float: left;
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-  }
+.imgInfo {
+  float: left;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
 
-  .imgInfo label {
-    text-align: center;
-  }
+.imgInfo label {
+  text-align: center;
+}
 
-  .img {
-    width: 80px;
-    height: 80px;
-    display: flex;
-  }
+.img {
+  width: 80px;
+  height: 80px;
+  display: flex;
+}
 
-  .el-radio + .el-radio {
-    margin: 0;
-  }
+.el-radio + .el-radio {
+  margin: 0;
+}
 
-  .inlineBox {
-    display: inline-block;
-    width: 100%;
-  }
+.inlineBox {
+  display: inline-block;
+  width: 100%;
+}
 
-  .title {
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-  }
+.title {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
 
-  .input-width {
-    width: 215px;
-  }
+.input-width {
+  width: 215px;
+}
 
-  .btn-fullscreen {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    border-radius: 15px;
-    cursor: pointer;
-  }
+.btn-fullscreen {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+}
 
-  .el-main-info {
-    color: #999;
-  }
+.el-main-info {
+  color: #999;
+}
 
-  .l {
-    float: left;
-  }
+.l {
+  float: left;
+}
 
-  .r {
-    float: right;
-  }
+.r {
+  float: right;
+}
 
-  .report_t {
-    overflow: hidden;
-    color: #999;
-  }
+.report_t {
+  overflow: hidden;
+  color: #999;
+}
 
-  .el-card {
-    margin-top: 24px;
-  }
+.el-card {
+  margin-top: 24px;
+}
 
-  .panel_title {
-    margin-bottom: 10px;
-    border-radius: 10px;
-    position: relative;
-    height: 40px;
-    text-align: center;
-  }
+.panel_title {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  position: relative;
+  height: 40px;
+  text-align: center;
+}
 
-  .panel_title h2 {
-    height: 30px;
-    line-height: 30px;
-    display: inline-block;
-    background: #e88f08;
-    color: #fff;
-    border-radius: 100px;
-    padding: 0;
-    margin: 0;
-    font-size: 16px;
-    position: absolute;
-    z-index: 99;
-    width: 200px;
-    left: 50%;
-    margin-left: -100px;
-  }
+.panel_title h2 {
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  background: #e88f08;
+  color: #fff;
+  border-radius: 100px;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  position: absolute;
+  z-index: 99;
+  width: 200px;
+  left: 50%;
+  margin-left: -100px;
+}
 
-  .line {
-    background: #e88f08;
-    height: 4px;
-    top: 13px;
-    position: absolute;
-    width: 100%;
-    border-radius: 10px;
-  }
+.line {
+  background: #e88f08;
+  height: 4px;
+  top: 13px;
+  position: absolute;
+  width: 100%;
+  border-radius: 10px;
+}
 
-  .table {
-    width: 100%;
-    border-radius: 2px;
-    border: 1px solid #f1f1f1;
-    border-bottom: none;
-  }
+.table {
+  width: 100%;
+  border-radius: 2px;
+  border: 1px solid #f1f1f1;
+  border-bottom: none;
+}
 
-  /* .table tr:hover {
+/* .table tr:hover {
     background:#c0b184 ;
   } */
-  .table tr td {
-    padding: 10px;
-    border-bottom: 1px solid #f1f1f1;
-  }
+.table tr td {
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
 
-  .table tr th {
-    padding: 10px;
-    border-bottom: 1px solid #f1f1f1;
-    font-size: 14px;
-    text-align: left;
-    background: #f7f7f9;
-  }
+.table tr th {
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 14px;
+  text-align: left;
+  background: #f7f7f9;
+}
 
-  .table span {
-    margin-right: 20px;
-    display: inline-block;
-  }
+.table span {
+  margin-right: 20px;
+  display: inline-block;
+}
 
-  span.item {
-    width: 60px;
-    font-weight: bold;
-    text-align: right;
-  }
+span.item {
+  width: 60px;
+  font-weight: bold;
+  text-align: right;
+}
 
-  .tip_y {
-    background: #5cb85c;
-    padding: 2px 10px;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 12px;
-  }
+.tip_y {
+  background: #5cb85c;
+  padding: 2px 10px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 12px;
+}
 
-  span.remarks {
-    display: block;
-    padding-left: 85px;
-    padding-top: 5px;
-    color: #c0b184;
-  }
+span.remarks {
+  display: block;
+  padding-left: 85px;
+  padding-top: 5px;
+  color: #c0b184;
+}
 
-  .tip {
-    background: #ccbfae;
-    padding: 2px 10px;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 12px;
-  }
+.tip {
+  background: #ccbfae;
+  padding: 2px 10px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 12px;
+}
 
-  .wrap {
-    margin: 0 auto;
-    padding: 20px;
-    width: 640px;
-    border: 1px solid #ccc;
-  }
+.wrap {
+  margin: 0 auto;
+  padding: 20px;
+  width: 640px;
+  border: 1px solid #ccc;
+}
 
-  .form .row {
-    padding: 10px 0 0;
-  }
+.form .row {
+  padding: 10px 0 0;
+}
 
-  .btn {
-    display: block;
-    margin: 20px auto;
-    padding: 8px 16px;
-  }
+.btn {
+  display: block;
+  margin: 20px auto;
+  padding: 8px 16px;
+}
 
-  #report .title {
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-    width: 100%;
-  }
+#report .title {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+}
 
-  #report .input-width {
-    width: 215px;
-  }
+#report .input-width {
+  width: 215px;
+}
 
-  #report .flx {
-    width: 85%;
-    top: 0px;
-    padding-top: 10px;
-    overflow: hidden;
-    line-height: 30px;
-  }
+#report .flx {
+  width: 85%;
+  top: 0px;
+  padding-top: 10px;
+  overflow: hidden;
+  line-height: 30px;
+}
 
-  #report .fl {
-    float: left;
+#report .fl {
+  float: left;
 
-    font-size: 24px;
-    font-weight: bold;
-  }
+  font-size: 24px;
+  font-weight: bold;
+}
 
-  #report .fl span {
-    font-size: 12px;
-    font-weight: normal;
-  }
+#report .fl span {
+  font-size: 12px;
+  font-weight: normal;
+}
 
-  #report .fr {
-    float: right;
-    font-size: 12px;
-  }
+#report .fr {
+  float: right;
+  font-size: 12px;
+}
 
-  #report .bar {
-    position: relative;
-    width: 50%;
-    display: inline-block;
-  }
+#report .bar {
+  position: relative;
+  width: 50%;
+  display: inline-block;
+}
 
-  #report .progress-text {
-    position: absolute;
-    text-align: center;
-    font-size: 32px;
-    line-height: 126px;
-    width: 126px;
-    height: 126px;
-  }
+#report .progress-text {
+  position: absolute;
+  text-align: center;
+  font-size: 32px;
+  line-height: 126px;
+  width: 126px;
+  height: 126px;
+}
 
-  #report .progress-text p {
-    width: 100%;
-    position: absolute;
-    top: 80px;
-    font-size: 12px;
-    line-height: 20px;
-    text-align: center;
-  }
+#report .progress-text p {
+  width: 100%;
+  position: absolute;
+  top: 80px;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
 
-  #report .table {
-    border-spacing: 2px;
-    border-color: grey;
-    font-size: 13px;
-    padding-left: 20px;
-    width: 100%;
-    display: table;
-    border-collapse: collapse;
-    border: none;
-  }
+#report .table {
+  border-spacing: 2px;
+  border-color: grey;
+  font-size: 13px;
+  padding-left: 20px;
+  width: 100%;
+  display: table;
+  border-collapse: collapse;
+  border: none;
+}
 
-  #report thead tr {
-    border-bottom: 2px solid #eaeaea;
-  }
+#report thead tr {
+  border-bottom: 2px solid #eaeaea;
+}
 
-  #report th {
-    padding-left: 10px;
-    height: 36px;
-    text-align: left;
-  }
+#report th {
+  padding-left: 10px;
+  height: 36px;
+  text-align: left;
+}
 
-  .row1,
-  .row2,
-  .row3 {
-    width: 30%;
-  }
+.row1,
+.row2,
+.row3 {
+  width: 30%;
+}
 
-  #report .borderBottom1 {
-    border-bottom: 1px solid #eaeaea;
-  }
+#report .borderBottom1 {
+  border-bottom: 1px solid #eaeaea;
+}
 
-  #report .borderBottom2 {
-    border-bottom: 1px solid #eaeaea;
-  }
+#report .borderBottom2 {
+  border-bottom: 1px solid #eaeaea;
+}
 
-  #report .risk-detail-list {
-    margin-left: 40px;
-  }
+#report .risk-detail-list {
+  margin-left: 40px;
+}
 
-  ul,
-  li {
-    list-style: none;
-  }
+ul,
+li {
+  list-style: none;
+}
 
-  #report .check-table {
-    width: 100%;
-  }
+#report .check-table {
+  width: 100%;
+}
 </style>

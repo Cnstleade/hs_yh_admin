@@ -1031,3 +1031,115 @@ export function httpSaveMenu(parentId, mname, sort, mid) {
     data: qs.stringify(data)
   })
 }
+
+//后台管理模块 / admin 数据统计 提现金额列表
+export function httpWithdrawlist(npage, pagesize, begainTimeString, endTimeString, phonenumber, withdrawStatus) {
+  let data = {
+    npage,
+    pagesize,
+    begainTimeString,
+    endTimeString,
+    phonenumber,
+    withdrawStatus
+  };
+  return axios({
+    url: '/sys/withdrawlist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / admin 数据统计 提现金额列表
+export function httpCustUserList(npage, pagesize, source, realName, phoneNumber, idcard) {
+  let data = {
+    npage,
+    pagesize,
+    source,
+    realName,
+    phoneNumber,
+    idcard
+  };
+  return axios({
+    url: '/custUser/list',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 全部
+export function httpLoanapply(npage,
+  pagesize,
+  userName,
+  startDateString,
+  finshDateString,
+  channel) {
+  let data = {
+    npage,
+    pagesize,
+    userName,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/loanapply',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 已通过
+export function httpGetOverList(npage,
+  pagesize,
+  userName,
+  startDateString,
+  finshDateString,
+  channel) {
+  let data = {
+    npage,
+    pagesize,
+    userName,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/getOverList',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 未通过
+export function httpGetNotApplyOrder(npage,
+  pagesize,
+  userName,
+  startDateString,
+  finshDateString,
+  channel) {
+  let data = {
+    npage,
+    pagesize,
+    userName,
+    startDateString,
+    finshDateString,
+    channel
+  };
+  return axios({
+    url: '/sys/getNotApplyOrder',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 得到用户信息
+export function httpGetCustomterMesage(id) {
+  let data = {
+    id
+  };
+  return axios({
+    url: '/sys/getCustomterMesage',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}

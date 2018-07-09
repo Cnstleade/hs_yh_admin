@@ -496,33 +496,33 @@ export default {
 
 #preloader span:nth-child(1) {
   -webkit-animation: preloadera 1.5s infinite ease-in-out;
-  -moz-animation: preloaderb 1.5s infinite ease-in-out;
-  -ms-animation: preloaderc 1.5s infinite ease-in-out;
-  animation: preloaderd 1.5s infinite ease-in-out;
+  -moz-animation: preloadera 1.5s infinite ease-in-out;
+  -ms-animation: preloadera 1.5s infinite ease-in-out;
+  animation: preloadera 1.5s infinite ease-in-out;
 }
 
 #preloader span:nth-child(2) {
   left: 20px;
-  -webkit-animation: preloadera 1.5s infinite ease-in-out;
+  -webkit-animation: preloaderb 1.5s infinite ease-in-out;
   -moz-animation: preloaderb 1.5s infinite ease-in-out;
-  -ms-animation: preloaderc 1.5s infinite ease-in-out;
-  animation: preloaderd 1.5s infinite ease-in-out;
+  -ms-animation: preloaderb 1.5s infinite ease-in-out;
+  animation: preloaderb 1.5s infinite ease-in-out;
 }
 
 #preloader span:nth-child(3) {
   top: 0px;
-  -webkit-animation: preloadera 1.5s infinite ease-in-out;
-  -moz-animation: preloaderb 1.5s infinite ease-in-out;
+  -webkit-animation: preloaderc 1.5s infinite ease-in-out;
+  -moz-animation: preloaderc 1.5s infinite ease-in-out;
   -ms-animation: preloaderc 1.5s infinite ease-in-out;
-  animation: preloaderd 1.5s infinite ease-in-out;
+  animation: preloaderc 1.5s infinite ease-in-out;
 }
 
 #preloader span:nth-child(4) {
   top: 0px;
   left: 20px;
-  -webkit-animation: preloadera 1.5s infinite ease-in-out;
-  -moz-animation: preloaderb 1.5s infinite ease-in-out;
-  -ms-animation: preloaderc 1.5s infinite ease-in-out;
+  -webkit-animation: preloaderd 1.5s infinite ease-in-out;
+  -moz-animation: preloaderd 1.5s infinite ease-in-out;
+  -ms-animation: preloaderd 1.5s infinite ease-in-out;
   animation: preloaderd 1.5s infinite ease-in-out;
 }
 

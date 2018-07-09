@@ -14,7 +14,7 @@
                   <el-button type="primary">导出</el-button>
                 </el-button-group>                
             </el-col> -->
-      
+                    <el-button  type="primary" @click="reset">重置</el-button>
                     <el-select  v-model="custUserId" placeholder="催收员ID" class="l20">
                       <el-option
                         v-for="item in custUserIds"
@@ -193,8 +193,8 @@ import { timeFormat } from "../../../config/time";
 export default {
   data() {
     return {
-      imgRul:'',
-      innerImgVisible:false,
+      imgRul: "",
+      innerImgVisible: false,
       addVisible: false,
       addForm: {
         id: "",
@@ -241,10 +241,17 @@ export default {
     };
   },
   methods: {
-    getData(npage, pagesize, custUserId, startDate, endDate) {
+    getData(npage, pagesize, custUserId, loanCollectionId, startDate, endDate) {
       let _this = this;
       this.loading = true;
-      getLoanRepaymentFindAll(npage, pagesize, custUserId, startDate, endDate)
+      getLoanRepaymentFindAll(
+        npage,
+        pagesize,
+        custUserId,
+        loanCollectionId,
+        startDate,
+        endDate
+      )
         .then(res => {
           let data = res.data;
           _this.tableData = data.rows;
@@ -252,6 +259,33 @@ export default {
           _this.loading = false;
         })
         .catch();
+    },
+    reset() {
+      this.custUserId ='';
+      (this.search = {
+        time: [],
+        input: "",
+        roles: [
+          {
+            value: "0",
+            label: "催收员"
+          },
+          {
+            value: "1",
+            label: "无催收员"
+          },
+          {
+            value: "2",
+            label: "潘月"
+          },
+          {
+            value: "3",
+            label: "王怡婷"
+          }
+        ],
+        role: ""
+      }),
+        this.handleSearch();
     },
     getCustUserIds() {
       let _this = this;
@@ -268,19 +302,22 @@ export default {
         this.getData(
           this.npage,
           this.pagesize,
+          "",
           this.custUserId,
           this.search.time[0],
           timeFormat(this.search.time[1], 1)
         );
       } else {
-        this.getData(this.npage, this.pagesize, this.custUserId, "", "");
+        this.getData(this.npage, this.pagesize, "", this.custUserId, "", "");
       }
     },
     handleCurrentChange(val) {
       this.npage = val;
+      this.handleSearch();
     },
     handleSizeChange(val) {
       this.pagesize = val;
+      this.handleSearch();
     },
     handleAdd() {
       this.addVisible = true;
@@ -426,12 +463,11 @@ export default {
         }
       ];
     },
-    handleImg(index,row){
+    handleImg(index, row) {
       this.imgRul = null;
       this.imgRul = row.recordUrl;
-      this.innerImgVisible=true;
+      this.innerImgVisible = true;
     }
-    
   },
   created() {
     this.getCustUserIds();

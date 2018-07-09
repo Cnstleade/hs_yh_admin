@@ -265,7 +265,7 @@ export default {
           let showCheck = [];
           for (let a = 0; a < _this.treeData.length; a++) {
             if (_this.treeData[a].checked) {
-              showCheck.push(_this.treeData[a].mid);
+              // showCheck.push(_this.treeData[a].mid);
             }
             if (_this.treeData[a].list && _this.treeData[a].list.length > 0) {
               for (let b = 0; b < _this.treeData[a].list.length; b++) {

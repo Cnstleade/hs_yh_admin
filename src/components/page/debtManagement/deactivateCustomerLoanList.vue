@@ -8,8 +8,11 @@
             </el-alert>           
         </el-row>        
         <el-row class="m20">
-            <el-col :span="10" :offset="14" class="col-flex-end">
-                <div class="l20">
+            <el-col :span="14">
+                  <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>
+            <el-col :span="10"  class="col-flex-end">
+                <div >
                     <el-input
                     style="padding:0px 10px 0px 0px"
                       placeholder="请输入关键词"
@@ -17,7 +20,7 @@
                       clearable>
                     </el-input> 
                 </div>  
-                <el-button class="l20" style="margin-left:10px" icon="el-icon-search"  type="success" circle></el-button>   
+                <el-button  style="margin-left:10px" icon="el-icon-search"  type="success" circle></el-button>   
             </el-col>
         </el-row>
         <el-row class="m20">
@@ -54,6 +57,7 @@
     </div>
 </template>
 <script>
+import { timeFormat } from "../../../config/time";
 export default {
   data() {
     return {
@@ -299,6 +303,48 @@ export default {
     },
     handleSizeChange(val) {
       this.pagesize = val;
+    },
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "序号",
+          "姓名",
+          "身份证",
+          "手机号",
+          "时间",
+          "状态",
+          "结果"
+        ];
+        const filterVal = [
+          "id",
+          "realname",
+          "idCard",
+          "phonenume",
+          "applytime",
+          "status",
+          "result"
+        ];
+        let list = JSON.parse(JSON.stringify(this.tableData));
+
+        for (var i = 0; i < list.length; i++) {
+          console.log(list[i].status);
+          list[i].status = list[i].status === 1 ? "完成" : "进行中";
+          list[i].result =
+            list[i].result === 1
+              ? "通过"
+              : list[i].result === 2 ? "人工" : "拒绝";
+          list[i].applytime = timeFormat(list[i].applytime);
+        }
+        console.log(list);
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "列表excel");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
   }
 };

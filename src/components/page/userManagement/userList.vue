@@ -280,7 +280,7 @@ export default {
         input: "",
         select: ""
       }),
-        this.getData();
+        this.handleSearch();
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
