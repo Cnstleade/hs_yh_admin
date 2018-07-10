@@ -3,8 +3,8 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
 //axios.defaults.baseURL = 'http://192.168.1.124:8084';
 
 
@@ -661,10 +661,14 @@ export function getSavrUserReply(custUserId, custUserOpinionId, replyContent) {
 
 
 //后台管理模块 admin 运营中心 推广情况统计
-export function getPromoterList() {
+export function getPromoterList(npage,pagesize) {
+  let data = {
+    npage,pagesize
+  };
   return axios({
     url: '/promoter/list',
-    method: 'get',
+    method: 'post',
+    data: qs.stringify(data)
   })
 }
 

@@ -14,6 +14,7 @@ import "../src/assets/iconfont/iconfont.css";
 import { get, post, put, patch } from "./service/http";
 import QRCode from 'qrcode' ;
 import FastClick from 'fastclick'
+import VueLozyLoad from 'vue-lazyload'
 var qs = require('qs');
 Vue.use(Element, {
   size: 'small',
@@ -23,7 +24,10 @@ FastClick.attach(document.body)
 Object.keys(custom).forEach(key => {
   Vue.filter(key, custom[key])
 })
-
+Vue.use(VueLozyLoad,{
+  loading:require('./assets/logo.png'),
+  error:require('./assets/logo.png'),
+})
 Vue.use(ElementUI);
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios;

@@ -43,6 +43,7 @@
             <el-table
                     :data="tableData"
                     border
+                    v-loading="loading"
                     style="width: 100%">
                 <el-table-column prop="id"  align="center" label="渠道id"  width="100" ></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" align="center" width="180" sortable>
@@ -60,6 +61,7 @@
                       </div>
                     </template>
                 </el-table-column>
+                <el-table-column prop="promotionMobile" align="center" label="推广人账号"  ></el-table-column>                
                 <el-table-column prop="applyPassSum" align="center" label="机申通过数量" width="120" ></el-table-column>
                 <el-table-column prop="registeredSum"  align="center" label="注册数量"   ></el-table-column>
                 <el-table-column prop="applySum"  align="center" label="申请数量"   ></el-table-column>                   
@@ -195,6 +197,7 @@ export default {
       addVisible: false,
       showVisible: false,
       imgVisible: false,
+      loading: false,
       addForm: {
         id: "",
         price: "",
@@ -231,27 +234,35 @@ export default {
         filter: "color"
       };
     },
-    _getPromoterList() {
+    _getPromoterList(npage, pagesize) {
       let _this = this;
-      getPromoterList()
+
+      _this.loading = true;
+      getPromoterList(npage, pagesize)
         .then(res => {
           let data = res.data;
           let self = _this;
-          for (let a = 0; a < data.length; a++) {
+          _this.total = data.total;
+          for (let a = 0; a < data.rows.length; a++) {
             console.log(_this);
-            data[a].chbqrcode = self._config(data[a].qrcode);
+            data.rows[a].chbqrcode = self._config(data.rows[a].qrcode);
           }
-          _this.tableData = data;
+          _this.tableData = data.rows;
+          _this.loading = false;
           console.log(_this.tableData);
         })
-        .catch();
+        .catch(err => {});
     },
-
+    handleSearch() {
+      this._getPromoterList(this.npage, this.pagesize);
+    },
     handleCurrentChange(val) {
       this.npage = val;
+      this.handleSearch();
     },
     handleSizeChange(val) {
       this.pagesize = val;
+      this.handleSearch();
     },
     handleAdd() {
       this.addVisible = true;
@@ -266,8 +277,7 @@ export default {
     handleSelect(item) {
       console.log(item);
     },
-    loadAll() {
-    },
+    loadAll() {},
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -309,7 +319,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this._getPromoterList();
+      this._getPromoterList(this.npage, this.pagesize);
     }, 20);
   }
 };
