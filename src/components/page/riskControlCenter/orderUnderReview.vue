@@ -75,7 +75,7 @@
         </el-table-column>
         <el-table-column prop="applyAmt" label="授信额度" align="center"></el-table-column>
         <el-table-column prop="approveAmt" label="通过金额" align="center"></el-table-column>
-        <el-table-column label="审核结果" align="center" width="140">
+        <el-table-column label="审核结果" align="center" width="160">
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.approveResult ===1?''
@@ -1776,7 +1776,7 @@ export default {
       this.loading = true;
       let postDate = {
         npage: this.currentPage,
-        pagesize: this.pagesize,
+        pagesize: this.pageSize,
         userName: "",
         mobile: "",
         idNo: "",

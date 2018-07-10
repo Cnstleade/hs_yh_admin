@@ -176,7 +176,10 @@ export default {
         .then(res => {
           let data = res.data;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {},
     handleAllocation(index, row) {},

@@ -8,6 +8,9 @@
             </el-alert>           
         </el-row>  
         <el-row class="m20" >
+        <el-col :span="6">
+                <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>            
             <el-col   class="col-flex-end">
                     <!-- <el-button-group>
                       <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
@@ -224,7 +227,10 @@ export default {
           _this.total = data.allsize;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       if (this.search.time && this.search.time.length) {
@@ -269,6 +275,46 @@ export default {
     },
     filterStauts(value, row) {
       return row.status === value;
+    },
+        //excel导出数据
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "提现ID",
+          "提现时间",
+          "提现金额",
+          "状态",
+          "用户姓名",
+          "手机号码",
+          "身份证号",
+          "银行卡号",
+        ];
+        const filterVal = [
+          "id",
+          "borrowTime",
+          "withdrawMoney",
+          "status",
+          "userName",
+          "mobile",
+          "id_no",
+          "card_id_card",
+        ];
+        let list = JSON.parse(JSON.stringify(this.tableData));
+
+        for (var i = 0; i < list.length; i++) {
+          list[i].status =
+            list[i].status===0?'放款中':list[i].status===1?'放款成功':list[i].status===2?'逾期':list[i].status===3?'还款成功':list[i].status===4?'放款失败':list[i].status===5?'还款中':'还款失败'
+          list[i].borrowTime = timeFormat(list[i].borrowTime);
+        }
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "提现金额列表");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
   },
   mounted() {

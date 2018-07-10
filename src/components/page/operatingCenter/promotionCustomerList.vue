@@ -226,13 +226,13 @@
                                       {{scope.row.createTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>
-                                <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column>
+                                <!-- <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column> -->
                               
                             </el-table>
                         </td>
                     </tr>                    
                     <tr>
-                        <th  class="bgcolor">分期账单信息</th>
+                        <th  class="bgcolor">提现账单信息</th>
                         <td colspan="5" >
                             <el-table
                                     :data="fqzdData"
@@ -250,10 +250,19 @@
                                       {{scope.row.returnTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
-                                <el-table-column prop="withdrawMoney" align="center"  label="还款金额" ></el-table-column>
+                                <el-table-column prop="returnMoney" align="center"  label="还款金额" ></el-table-column>
+                                <el-table-column prop="withdrawMoney" align="center"  label="提现金额" ></el-table-column>
+                                <el-table-column prop="status" label="状态" align="center" 
+                                >
+                                  <template slot-scope="scope">
+                                      <el-tag
+                                          :type="scope.row.status===0?'':scope.row.status===1?'success':scope.row.status===2?'danger':scope.row.status===4?'success':scope.row.status===4?'info':scope.row.status===5?'':'warning'"
+                                      >{{scope.row.status===0?'放款中':scope.row.status===1?'放款成功':scope.row.status===2?'逾期':scope.row.status===3?'还款成功':scope.row.status===4?'放款失败':scope.row.status===5?'还款中':'还款失败'}}</el-tag>
+                                  </template>                         
+                                </el-table-column>                            
                             </el-table>
                         </td>
-                    </tr>
+                    </tr>                    
                     <tr>
                         <th  class="bgcolor">还款记录</th>
                         <td colspan="5" >
@@ -354,12 +363,12 @@
                                 <el-table-column prop="salesmanName"  align="center" label=催收员 width="100"></el-table-column>
                                 <el-table-column prop="createTime"  align="center" label="创建时间" width="180" >
                         <template slot-scope="scope">
-                            {{scope.row.borrowTime|createTime}}
+                            {{scope.row.createTime|dateServer}}
                         </template>                                      
                                 </el-table-column>
                                 <el-table-column prop="updateTime" align="center" label="更新时间" width="180" >
                         <template slot-scope="scope">
-                            {{scope.row.borrowTime|updateTime}}
+                            {{scope.row.updateTime| dateServer}}
                         </template>                                      
                                 </el-table-column>
                                 <el-table-column prop="recallResult" align="center" label="回访结果"  ></el-table-column>
@@ -367,7 +376,7 @@
                             </el-table>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor">通话记录</th>
                         <td colspan="5" >
                             <table class="table table_2">
@@ -423,7 +432,7 @@
                                 </el-col>
                             </el-row>
                         </td>
-                    </tr>
+                    </tr> -->
                 </table>
             </el-row> 
 
@@ -593,7 +602,10 @@ export default {
           _this.total = data.allsize;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       this.getData(this.npage, this.pagesize, this.keywords);
@@ -657,7 +669,7 @@ export default {
           _this.hkjlData = data.loanRepaymentList;
           _this.yhkData = data.bankCardDTOVoList;
           _this.zljData = data.overdueList;
-          _this.hfjlData = data.SalesmanRecallList;
+          _this.hfjlData = data.salesmanRecallList;
           _this.checkVisible = true;
         })
         .catch();

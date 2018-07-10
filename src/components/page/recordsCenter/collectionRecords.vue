@@ -8,7 +8,10 @@
             </el-alert>           
         </el-row>        
         <el-row class="m20" >
-            <el-col   class="col-flex-end">
+         <el-col :span="6">
+                <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>                  
+            <el-col  :span="18"  class="col-flex-end">
                   <el-date-picker
                     v-model="month"
                     type="month"
@@ -55,9 +58,9 @@
                 </template>
             </el-table-column>
             <el-table-column prop="collect_money_m1" label="已收M1" align="center" sortable ></el-table-column>
-            <el-table-column prop="collect_money_m2" label="已收M1" align="center"  sortable ></el-table-column>
-            <el-table-column prop="collect_money_m3" label="已收M1" align="center"  sortable ></el-table-column>
-            <el-table-column prop="collect_money_m4" label="已收M1" align="center"  sortable ></el-table-column>
+            <el-table-column prop="collect_money_m2" label="已收M2" align="center"  sortable ></el-table-column>
+            <el-table-column prop="collect_money_m3" label="已收M3" align="center"  sortable ></el-table-column>
+            <el-table-column prop="collect_money_m4" label="已收M3+" align="center"  sortable ></el-table-column>
             <!-- <el-table-column prop="overdue_day" label="逾期天数" align="center" sortable ></el-table-column>
             <el-table-column prop="late_fee" label="逾期金" align="center" sortable ></el-table-column>
             <el-table-column prop="ned_return_money" label="需要还钱数" align="center" sortable ></el-table-column>
@@ -159,7 +162,10 @@ export default {
           _this.total = data.allsize;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     _getMonth(a, b) {
       return getMonth(a, b);
@@ -195,6 +201,52 @@ export default {
 
     filterStauts(value, row) {
       return row.status === value;
+    },
+    //excel导出数据
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "序号",
+          "催收员",
+          "催收本金",
+          "应催收违约金",
+          "已催收违约金",
+          "已收M1",
+          "已收M2",
+          "已收M3",
+          "已收M3+"
+        ];
+        const filterVal = [
+          "i",
+          "name",
+          "mallOverdueMoney",
+          "all_late_fee",
+          "borrowDay",
+          "collect_money_m1",
+          "collect_money_m2",
+          "collect_money_m3",
+          "collect_money_m4"
+        ];
+        let list = JSON.parse(JSON.stringify(this.tableData));
+
+        for (var i = 0; i < list.length; i++) {
+          list[i].i = i + 1;
+
+          list[i].borrowDay =
+            list[i].collect_money_m1 +
+            list[i].collect_money_m2 +
+            list[i].collect_money_m3 +
+            list[i].collect_money_m4;
+        }
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "催收记录统计");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
   },
   mounted() {

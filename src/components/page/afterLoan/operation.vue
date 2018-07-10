@@ -828,7 +828,10 @@ export default {
           _this.tableData = tableData;
           _this.total = data.allsize;
         })
-        .catch(err => {});
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       if (this.search.time && this.search.time.length) {
@@ -1119,7 +1122,6 @@ export default {
             this.$refs.upload1.submit();
           }
         } else {
-         
           return false;
         }
       });
@@ -1182,7 +1184,7 @@ export default {
     },
     handleRemove(file, fileList) {
       this.imgAdd = false;
-       this.$message.error("必须上传图片凭证");
+      this.$message.error("必须上传图片凭证");
       console.log(file, fileList);
     },
     handlePreview(file) {},

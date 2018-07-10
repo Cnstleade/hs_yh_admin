@@ -8,8 +8,10 @@
             </el-alert>           
         </el-row>        
         <el-row class="m20" >
-         
-            <el-col   class="col-flex-end">
+            <el-col :span="6">
+                <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>            
+            <el-col  :span="18" class="col-flex-end">
                 <el-button type="primary" @click="cz">重置</el-button>
                     <el-date-picker
                     class="l20"
@@ -133,7 +135,10 @@ export default {
           this.total = data.allsize;
           this.loading = false;
         })
-        .catch(err => {});
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       console.log(this.search.time);
@@ -174,6 +179,52 @@ export default {
     },
     filterStauts(value, row) {
       return row.status === value;
+    },
+    //excel导出数据
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "序号",
+          "姓名",
+          "手机号",
+          "身份证号",
+          "申请时间",
+          "催收员",
+          "提现金额",
+          "滞纳天数",
+          "滞纳金额"
+        ];
+        const filterVal = [
+          "id",
+          "userName",
+          "mobile",
+          "idNo",
+          "borrow_time",
+          "collectorName",
+          "withdraw_money",
+          "overdue_day",
+          "late_fee"
+        ];
+        let list = JSON.parse(JSON.stringify(this.tableData));
+
+        for (var i = 0; i < list.length; i++) {
+          // list[i].status =
+          //   list[i].status === 4
+          //     ? "借款中"
+          //     : list[i].status === 8 ? "完结" : "";
+          // list[i].cash_outType =
+          // list[i].cash_outType===0?'无提现记录':list[i].cash_outType===1?'有余额':'无余额'
+          list[i].borrow_time = timeFormat(list[i].borrow_time);
+        }
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "贷后列表");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
   },
   mounted() {

@@ -10,7 +10,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card" v-loading="lodings" class="m20">
             <el-tab-pane label="未分配" name="first">
         <el-row class="m20" >
-            <el-col   class="col-flex-end">
+       
+            <el-col  :span="18" class="col-flex-end">
                     <el-button-group>
                       <el-button :type="execeedtimeType==0?'info':''" @click="changeExeceedtimeType(0)">重置</el-button>
                       <el-button :type="execeedtimeType==1?'primary':''" @click="changeExeceedtimeType(1)">M1</el-button>
@@ -483,7 +484,10 @@ export default {
           _this.tableData = tableData;
           _this.total = data.allsize;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       if (this.search.time && this.search.time.length) {

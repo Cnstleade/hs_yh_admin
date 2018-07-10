@@ -360,7 +360,10 @@ export default {
           _this.total = data.allsize;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       if (this.search.time && this.search.time.length) {

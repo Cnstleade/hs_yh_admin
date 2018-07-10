@@ -251,7 +251,10 @@ export default {
           _this.tableData = data.rows;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       this.getData(

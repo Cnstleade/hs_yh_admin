@@ -8,6 +8,9 @@
             </el-alert>           
         </el-row>        
         <el-row class="m20" >
+            <!-- <el-col :span="6">
+                <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>              -->
             <el-col  style="float:right" :span="12" class="col-flex">
                     <el-date-picker
                     style="width:340px"
@@ -172,10 +175,7 @@ export default {
       search: {
         time: null,
         order: "",
-        orders: [
-          { label: "借款中", value: 4 },
-          { label: "完结", value: 8 }
-        ],
+        orders: [{ label: "借款中", value: 4 }, { label: "完结", value: 8 }],
         tixian: "",
         tixians: [
           { label: "没有体现", value: 0 },
@@ -238,7 +238,10 @@ export default {
           this.total = data.allsize;
           this.loading = false;
         })
-        .catch(err => {});
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       console.log(this.search.time);
@@ -277,9 +280,57 @@ export default {
     filterCashOutType(value, row) {
       return row.cash_outType === value;
     },
-    filterStauts(value, row){
-      return row.status === value;      
-    }    
+    filterStauts(value, row) {
+      return row.status === value;
+    },
+    //excel导出数据
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "订单号",
+          "姓名",
+          "手机号",
+          "身份证号",
+          "申请时间",
+          "申请金额",
+          "审核金额",
+          "订单状态",
+          "提现状态"
+        ];
+        const filterVal = [
+          "id",
+          "userName",
+          "mobile",
+          "idNo",
+          "applyTime",
+          "applyAmt",
+          "approveAmt",
+          "status",
+          "cash_outType"
+        ];
+        let list = JSON.parse(JSON.stringify(this.tableData));
+
+        for (var i = 0; i < list.length; i++) {
+          list[i].status =
+            list[i].status === 4
+              ? "借款中"
+              : list[i].status === 8 ? "完结" : "";
+          list[i].cash_outType =
+            list[i].cash_outType === 0
+              ? "无提现记录"
+              : list[i].cash_outType === 1 ? "有余额" : "无余额";
+          list[i].applyTime = timeFormat(list[i].applyTime);
+        }
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "贷后列表");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
+    }
   },
   mounted() {
     this.getData(this.npage, this.pagesize);

@@ -258,7 +258,10 @@ export default {
           _this.total = data.total;
           _this.loading = false;
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     reset() {
       this.custUserId ='';

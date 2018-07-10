@@ -284,11 +284,31 @@ export default {
   },
   methods: {
     _getEleSalesmanRecall(
-userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
+      userName,
+      userMobile,
+      salesmanId,
+      loanApplyId,
+      loanOrderId,
+      recallType,
+      remark,
+      recallResult,
+      type,
+      money,
+      userId
     ) {
       let _this = this;
       getEleSalesmanRecall(
-userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, recallResult, type, money, userId
+        userName,
+        userMobile,
+        salesmanId,
+        loanApplyId,
+        loanOrderId,
+        recallType,
+        remark,
+        recallResult,
+        type,
+        money,
+        userId
       )
         .then(res => {
           let data = res.data;
@@ -344,7 +364,10 @@ userName, userMobile, salesmanId, loanApplyId, loanOrderId, recallType, remark, 
           } else {
           }
         })
-        .catch();
+        .catch(err => {
+          _this.tableData = [];
+          _this.loading = false;
+        });
     },
     handleSearch() {
       if (this.time && this.time.length) {

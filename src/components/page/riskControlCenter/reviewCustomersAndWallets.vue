@@ -1896,6 +1896,7 @@ export default {
         })
         .catch(err => {
           _this.tableData = [];
+          _this.loading = false;
         });
     },
     handleSearch() {

@@ -7,6 +7,12 @@
         type="info">
       </el-alert>
     </el-row>
+        <el-row class="m20" >
+            <el-col :span="6">
+                <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
+            </el-col>             
+
+        </el-row>     
     <el-row class="m20">
       <!--:span-method="objectSpanMethod"-->
       <el-table
@@ -52,15 +58,16 @@
   </div>
 </template>
 <script>
-  import {config} from "../../../util/config";
-  export default {
-    data() {
-      return {
-        overdueTable: [],
-      };
-    },
-    methods: {
-      /*objectSpanMethod({row, column, rowIndex, columnIndex}) {
+import { config } from "../../../util/config";
+import { timeFormat } from "../../../config/time";
+export default {
+  data() {
+    return {
+      overdueTable: []
+    };
+  },
+  methods: {
+    /*objectSpanMethod({row, column, rowIndex, columnIndex}) {
         if (columnIndex === 0 || columnIndex === 1) {
           if (rowIndex % 4 === 0) {
             return {
@@ -75,26 +82,92 @@
           }
         }
       },*/
-      // 查询逾期统计列表
-      queryOverdueStatistical() {
-        $.ajax({
-          type: 'GET',
-          url: config.baseURL+'/sys/loanandexceed',
-          success: data => {
-            console.log(data);
-            this.overdueTable = data;
-          },
-          error: err => {
-            console.log(err);
-          }
-        })
-      }
-      ,
+    // 查询逾期统计列表
+    queryOverdueStatistical() {
+      $.ajax({
+        type: "GET",
+        url: config.baseURL + "/sys/loanandexceed",
+        success: data => {
+          console.log(data);
+          this.overdueTable = data;
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
     },
-    mounted() {
-      this.queryOverdueStatistical();
+    //excel导出数据
+    export2Excel() {
+      require.ensure([], () => {
+        const {
+          export_json_to_excel
+        } = require("../../../vendor/Export2Excel");
+        const tHeader = [
+          "序号",
+          "审核员",
+          "订单总数",
+          "总逾期本金",
+          "总逾期违约金",
+          "m1逾期订单",
+          "m1本金总额",
+          "m1违约金",
+          "m2逾期订单",
+          "m2本金总额",
+          "m2违约金",
+          "m3逾期订单",
+          "m3本金总额",
+          "m3违约金", 
+          "m3+逾期订单",
+          "m3+本金总额",
+          "m3+违约金",                    
+        ];
+        const filterVal = [
+          "id",
+          "username",
+          "applyNumber",
+          "allOverdueMoney",
+          "allLate_free",
+          "allOverdueMoney_m1",
+          "allLate_free_m1",
+          "m1",
+          "allOverdueMoney_m2",
+          "allLate_free_m2",
+          "m2",
+          "allOverdueMoney_m3",
+          "allLate_free_m3",
+          "m3",
+          "allOverdueMoney_m4",
+          "allLate_free_m4",
+          "m4",                            
+        ];
+        let list = JSON.parse(JSON.stringify(this.overdueTable));
+
+        for (var i = 0; i < list.length; i++) {
+          // list[i].status =
+          //   list[i].status === 4
+          //     ? "借款中"
+          //     : list[i].status === 8 ? "完结" : "";
+          // list[i].cash_outType =
+          //   list[i].cash_outType === 0
+          //     ? "无提现记录"
+          //     : list[i].cash_outType === 1 ? "有余额" : "无余额";
+          list[i].m1 = (list[i].overdueApplyNumber_m1/list[i].applyNumber).toFixed(2);
+          list[i].m2 = (list[i].overdueApplyNumber_m2/list[i].applyNumber).toFixed(2);
+          list[i].m3 = (list[i].overdueApplyNumber_m3/list[i].applyNumber).toFixed(2);
+          list[i].m4 = (list[i].overdueApplyNumber_m4/list[i].applyNumber).toFixed(2);
+        }
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "滞纳金管理");
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
-  };
+  },
+  mounted() {
+    this.queryOverdueStatistical();
+  }
+};
 </script>
 <style scoped>
 </style>

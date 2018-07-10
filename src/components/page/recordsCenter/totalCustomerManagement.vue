@@ -174,13 +174,13 @@
                                 <el-table-column prop="status"  align="center" label="状态"   width="150"
                                   >
                                   <template slot-scope="scope">
-                                      <el-tag
-                                          :type="scope.row.status===1?'':scope.row.status===2?'success':scope.row.status===3?'info':scope.row.status===4?'warning':'danger'"
-                                      >{{scope.row.status===1?'业务员维护中':scope.row.status===2?'审核分配中':scope.row.status===3?'审核中':scope.row.status===4?'弃用':'停用'}}</el-tag>
+                                                           <el-tag
+                          :type="scope.row.status===1?'':'danger'"
+                      >{{scope.row.status===1?'正常':'冻结'}}</el-tag>
                                   </template>   
                                 </el-table-column> 
                                 <el-table-column prop="idcard" label="身份证号" align="center" width="180"></el-table-column>
-                                <el-table-column prop="phoneNumber" label="手机号" align="center" ></el-table-column>
+                                <el-table-column prop="phoneNumber" label="手机号" align="center" width="140"></el-table-column>
                                 <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column>
                                 <el-table-column prop="wxNumber" label="微信号" align="center" ></el-table-column>
                                 <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column>
@@ -311,7 +311,7 @@
                                       {{scope.row.createTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>
-                                <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column>
+                                <!-- <el-table-column prop="protocolNo"  label="宝付返还接口" align="center" min-width="300" ></el-table-column> -->
                               
                             </el-table>
                         </td>
@@ -335,7 +335,8 @@
                                       {{scope.row.returnTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
-                                <el-table-column prop="withdrawMoney" align="center"  label="还款金额" ></el-table-column>
+                                <el-table-column prop="returnMoney" align="center"  label="还款金额" ></el-table-column>
+                                <el-table-column prop="withdrawMoney" align="center"  label="提现金额" ></el-table-column>
                                 <el-table-column prop="status" label="状态" align="center" 
                                 >
                                   <template slot-scope="scope">
@@ -447,12 +448,12 @@
                                 <el-table-column prop="salesmanName"  align="center" label=催收员 width="100"></el-table-column>
                                 <el-table-column prop="createTime"  align="center" label="创建时间" width="180" >
                         <template slot-scope="scope">
-                            {{scope.row.borrowTime|createTime}}
+                            {{scope.row.createTime|dateServer}}
                         </template>                                      
                                 </el-table-column>
                                 <el-table-column prop="updateTime" align="center" label="更新时间" width="180" >
                         <template slot-scope="scope">
-                            {{scope.row.borrowTime|updateTime}}
+                            {{scope.row.updateTime|dateServer}}
                         </template>                                      
                                 </el-table-column>
                                 <el-table-column prop="recallResult" align="center" label="回访结果"  ></el-table-column>
@@ -460,7 +461,7 @@
                             </el-table>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor">通话记录</th>
                         <td colspan="5" >
                             <table class="table table_2">
@@ -516,7 +517,7 @@
                                 </el-col>
                             </el-row>
                         </td>
-                    </tr>
+                    </tr> -->
                 </table>
             </el-row> 
             <el-dialog
@@ -583,9 +584,7 @@ export default {
           cz: "查看"
         }
       ],
-      zljData: [
-
-      ],
+      zljData: [],
       hfjlData: [
         {
           xh: "28663",
@@ -700,8 +699,8 @@ export default {
       _this.fqzdData ? (_this.fqzdData.length = 0) : (_this.fqzdData = []);
       _this.yhkData ? (_this.yhkData.length = 0) : (_this.yhkData = []);
       _this.hkjlData ? (_this.hkjlData.length = 0) : (_this.hkjlData = []);
-      _this.zljData ? (_this.zljData.length = 0) : (_this.zljData = []);  
-           _this.hfjlData ? (_this.hfjlData.length = 0) : (_this.hfjlData = []);    
+      _this.zljData ? (_this.zljData.length = 0) : (_this.zljData = []);
+      _this.hfjlData ? (_this.hfjlData.length = 0) : (_this.hfjlData = []);
       _this.idCardImgs
         ? (_this.idCardImgs.length = 0)
         : (_this.idCardImgs = []);
@@ -738,7 +737,8 @@ export default {
           _this.hkjlData = data.loanRepaymentList;
           _this.yhkData = data.bankCardDTOVoList;
           _this.zljData = data.overdueList;
-                  _this.hfjlData = data.SalesmanRecallList;
+
+          _this.hfjlData = data.salesmanRecallList;
           _this.checkVisible = true;
         })
         .catch();

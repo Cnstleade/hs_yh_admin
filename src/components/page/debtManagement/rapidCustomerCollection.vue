@@ -325,7 +325,7 @@
                             </el-table>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor">通话记录</th>
                         <td colspan="5" >
                             <table class="table table_2">
@@ -381,7 +381,7 @@
                                 </el-col>
                             </el-row>
                         </td>
-                    </tr>
+                    </tr> -->
                 </table>
             </el-row> 
             <el-dialog
