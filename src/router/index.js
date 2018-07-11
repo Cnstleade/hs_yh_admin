@@ -4,6 +4,7 @@ import Router from 'vue-router';
 Vue.use(Router);
 
 export default new Router({
+  // mode: 'history',
   routes: [{
       path: '/',
       redirect: '/login'
@@ -361,7 +362,7 @@ export default new Router({
           meta: {
             title: '提现金额',
           },
-        },        
+        },
         // {
         //   // 申请重审客户
         //   path: '/applyForCustomerReview',

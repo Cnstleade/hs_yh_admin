@@ -22,7 +22,15 @@
                         :label="item.username"
                         :value="item.uid">
                       </el-option>
-                    </el-select>                                     
+                    </el-select> 
+                    <div class="l20">
+                        <el-input
+                        style="padding:0px 10px 0px 0px"
+                          placeholder="请输入姓名"
+                          v-model="search.name"
+                          clearable>
+                        </el-input> 
+                    </div>                                                          
                     <el-date-picker
                       class="l20"
                          style="width:340px"
@@ -87,6 +95,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="custname" label="客户名" align="center" ></el-table-column>
+            <el-table-column prop="username" label="催收人姓名" align="center" ></el-table-column>            
             <el-table-column prop="success" label="是否还款成功" align="center" >
                 <template slot-scope="scope">              
                     <el-tag
@@ -229,7 +238,8 @@ export default {
             label: "王怡婷"
           }
         ],
-        role: ""
+        role: "",
+        name: ""
       },
       tableData: [],
       npage: 1,
@@ -241,7 +251,15 @@ export default {
     };
   },
   methods: {
-    getData(npage, pagesize, custUserId, loanCollectionId, startDate, endDate) {
+    getData(
+      npage,
+      pagesize,
+      custUserId,
+      loanCollectionId,
+      startDate,
+      endDate,
+      custname
+    ) {
       let _this = this;
       this.loading = true;
       getLoanRepaymentFindAll(
@@ -250,7 +268,8 @@ export default {
         custUserId,
         loanCollectionId,
         startDate,
-        endDate
+        endDate,
+        custname
       )
         .then(res => {
           let data = res.data;
@@ -264,7 +283,7 @@ export default {
         });
     },
     reset() {
-      this.custUserId ='';
+      this.custUserId = "";
       (this.search = {
         time: [],
         input: "",
@@ -286,7 +305,8 @@ export default {
             label: "王怡婷"
           }
         ],
-        role: ""
+        role: "",
+        name: ""
       }),
         this.handleSearch();
     },
@@ -308,10 +328,11 @@ export default {
           "",
           this.custUserId,
           this.search.time[0],
-          timeFormat(this.search.time[1], 1)
+          timeFormat(this.search.time[1], 1),
+          this.search.name
         );
       } else {
-        this.getData(this.npage, this.pagesize, "", this.custUserId, "", "");
+        this.getData(this.npage, this.pagesize, "", this.custUserId, "", "",this.search.name);
       }
     },
     handleCurrentChange(val) {

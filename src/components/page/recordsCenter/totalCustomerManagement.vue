@@ -124,13 +124,18 @@
                       >{{scope.row.status===1?'正常':'冻结'}}</el-tag>
                   </template>   
                 </el-table-column>                  
-                <el-table-column prop="cz"  align="center" label="操作"  width="80" >
+                <el-table-column prop="cz"  align="center" label="操作"  width="150" >
                     <template slot-scope="scope">
                     <el-button
                         size="mini"
                         type="success"
                         @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-                    </template> 
+                
+                    <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleDongjie(scope.$index, scope.row)">冻结</el-button>
+                    </template>                     
                 </el-table-column>
             </el-table>
         </el-row> 
@@ -544,7 +549,11 @@
 </template>
 
 <script>
-import { getCustUserList, getCustomerPage } from "../../../service/http";
+import {
+  getCustUserList,
+  getCustomerPage,
+  httpUpdateCuster
+} from "../../../service/http";
 export default {
   data() {
     return {
@@ -742,6 +751,40 @@ export default {
           _this.checkVisible = true;
         })
         .catch();
+    },
+    handleDongjie(index, row) {
+      let CustUserId = row.id;
+      let _this = this;
+      this.$confirm("此操作将永久冻结该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          httpUpdateCuster(CustUserId)
+            .then(res => {
+              let data = res.data;
+              if (data.success) {
+                this.$message({
+                  type: "success",
+                  message: data.messager
+                });
+              }else{
+                  this.$message.error(data.messager)
+              }
+              _this.handleSearch();
+            })
+            .catch(err=>{
+                let data = err.data;
+                this.$message.error(data.messager)
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

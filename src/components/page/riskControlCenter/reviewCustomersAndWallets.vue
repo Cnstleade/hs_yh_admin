@@ -57,7 +57,6 @@
                     class="m20"
                     @selection-change="handleSelectionChange"
                     v-loading="loading"
-                    id="eleTable"
                   >
                 <el-table-column prop="id" label="ID" align="center"></el-table-column>
                     <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
@@ -195,7 +194,6 @@
                     class="m20"
                     @selection-change="handleSelectionChange"
                     v-loading="loading"
-                    id="eleTable"
                   >
                 <el-table-column prop="id" label="ID" align="center"></el-table-column>
                     <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>
@@ -333,7 +331,6 @@
                     class="m20"
                     @selection-change="handleSelectionChange"
                     v-loading="loading"
-                    id="eleTable"
                   >
                 <el-table-column prop="id" label="ID" align="center"></el-table-column>
                     <el-table-column prop="userName" label="姓名" align="center" width="80"></el-table-column>

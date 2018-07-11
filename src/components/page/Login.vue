@@ -59,7 +59,7 @@
             data: params,
             success: (data) => {
               if (data.success === true) {
-                localStorage.setItem("fk_username", this.ruleForm.username);
+                sessionStorage.setItem("fk_username", this.ruleForm.username);
                 this.$router.push("/admin");
               } else {
                 Message({

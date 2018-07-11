@@ -361,14 +361,15 @@ export function httpGetrevewerlist() {
 }
 
 //后台管理模块 / admin 数据中心 还款记录管理
-export function getLoanRepaymentFindAll(npage, pagesize, custUserId, loanCollectionId, startDate, endDate) {
+export function getLoanRepaymentFindAll(npage, pagesize, custUserId, loanCollectionId, startDate, endDate,custname) {
   let data = {
     npage,
     pagesize,
     custUserId,
     loanCollectionId,
     startDate,
-    endDate
+    endDate,
+    custname
   };
   return axios({
     url: '/loanRepayment/findAll',
@@ -661,9 +662,10 @@ export function getSavrUserReply(custUserId, custUserOpinionId, replyContent) {
 
 
 //后台管理模块 admin 运营中心 推广情况统计
-export function getPromoterList(npage,pagesize) {
+export function getPromoterList(npage, pagesize) {
   let data = {
-    npage,pagesize
+    npage,
+    pagesize
   };
   return axios({
     url: '/promoter/list',
@@ -1143,6 +1145,19 @@ export function httpGetCustomterMesage(id) {
   };
   return axios({
     url: '/sys/getCustomterMesage',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / 得到用户信息
+export function httpUpdateCuster(id, status=0) {
+  let data = {
+    id,
+    status
+  };
+  return axios({
+    url: '/custUser/update',
     method: 'post',
     data: qs.stringify(data)
   })

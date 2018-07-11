@@ -393,10 +393,10 @@ export default {
     handleConfig() {
       let _this = this;
       let salesmanName = "";
+
       for (let a = 0; a < this.salesman.length; a++) {
         if (this.salesman[a].uid === this.salesmanId) {
           salesmanName = this.salesman[a].username;
-          return;
         }
       }
       getSalesmanId(
@@ -405,7 +405,7 @@ export default {
         this.editSales.loanOrderId,
         this.editSales.loanApplyId,
         this.editSales.custUserName,
-        this.salesmanName
+        salesmanName
       )
         .then(res => {
           let data = res.data;
@@ -415,8 +415,8 @@ export default {
               type: "success"
             });
             _this.editSales = null;
-            _this.dialogVisible2 = false;
             _this.handleSearch();
+            _this.dialogVisible2 = false;
           }
         })
         .catch();
@@ -439,11 +439,13 @@ export default {
         custUserId: row.custUserId
       };
       this._getEleCompanyId(row.companyId);
+      this.handleSearch();
     },
 
     handleEmit(index, row) {
       this.dialogVisible2 = true;
       this.salesmanId = null;
+      this.salesmanId = row.salesmanId;
       this.username = null;
       let companyId = row.companyId;
       this._getEleCompanyId(row.companyId);

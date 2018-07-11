@@ -83,7 +83,7 @@
     },
     computed: {
       username() {
-        let username = localStorage.getItem("fk_username");
+        let username = sessionStorage.getItem("fk_username");
         if (username != '' && username != null && username != 'undefined') {
           return username ? username : this.name;
         }else {
@@ -95,7 +95,7 @@
       // 用户名下拉菜单选择事件
       handleCommand(command) {
         if (command == "loginout") {
-          localStorage.removeItem("fk_username");
+          sessionStorage.removeItem("fk_username");
           this.$router.push("/login");
         } else {
           this.$router.push("/" + command);

@@ -61,7 +61,7 @@
                       </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="promotionMobile" align="center" label="推广人账号"  ></el-table-column>                
+                <el-table-column prop="promotionMoblie" align="center" label="推广人账号"  ></el-table-column>                
                 <el-table-column prop="applyPassSum" align="center" label="机申通过数量" width="120" ></el-table-column>
                 <el-table-column prop="registeredSum"  align="center" label="注册数量"   ></el-table-column>
                 <el-table-column prop="applySum"  align="center" label="申请数量"   ></el-table-column>                   
