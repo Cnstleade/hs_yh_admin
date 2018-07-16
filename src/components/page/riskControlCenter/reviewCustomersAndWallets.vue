@@ -1703,6 +1703,25 @@
       </el-dialog>
 
     </template>                               -->
+    <!--审核员对话框-->
+    <template>
+      <el-dialog title="分配客户" :visible.sync="dialogAssessor">
+        <el-form :model="assessorForm">
+          <el-form-item label="请选择审核员">
+            <el-select v-model="assessorForm.assessor" placeholder="请选择审核员">
+              <template v-for="item in assessorList">
+                <el-option :label="item.username" :value="item.uid" :key="item.uid"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogAssessor = false">取 消</el-button>
+          <el-button type="primary" @click="submitAssessorForm">确 定</el-button>
+        </div>
+      </el-dialog>
+
+    </template>    
     </div>
 </template>
 
@@ -2073,7 +2092,42 @@ export default {
       this.showImg = true;
       // 获取当前图片地址
       this.imgSrc = src;
-    }
+    },
+       // 审核人分配
+    allotOperator(data) {
+      // console.log(data.id);
+      this.assessorId = data.id;
+      this.dialogAssessor = true;
+    },
+       // 提交审核员信息
+    submitAssessorForm() {
+      let params = {
+        id: this.assessorId,
+        Userid: this.assessorForm.assessor
+      };
+      $.ajax({
+        type: "POST",
+        url: config.baseURL + "/sys/setReviewer",
+        data: params,
+        success: data => {
+          if ((data.success = true)) {
+            Message({
+              message: data.message,
+              center: true
+            });
+            this.dialogAssessor = false;
+            this.queryAllCustomersList(
+              this.url,
+              this.currentPage,
+              this.pageSize
+            );
+          }
+        },
+        error: err => {
+          console.log(err.status);
+        }
+      });
+    },
   },
   mounted() {
     this.getData(this.npage, this.pagesize);

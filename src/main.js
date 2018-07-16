@@ -35,7 +35,7 @@ Vue.use(VueLozyLoad, {
 })
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-Vue.prototype.$axios = axios;
+Vue.prototype.$axios = axios; 
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$qs = qs;
 Vue.prototype.$get = get;

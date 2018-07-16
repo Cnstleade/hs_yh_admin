@@ -356,7 +356,7 @@ export default {
                   //   .catch();
                   tableData[a].chbSale = re.data.data;
                   _this.tableData = tableData;
-                  _this.total = data.data.allpage;
+                  _this.total = data.data.allsize;
                   _this.loading = false;
                 })
                 .catch();
@@ -457,7 +457,7 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-
+ 
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         console.log(this.ruleForm1);

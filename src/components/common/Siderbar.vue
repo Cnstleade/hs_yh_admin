@@ -49,6 +49,7 @@ export default {
         })
         .catch(err => {
           // this.$message.error("请联系管理员或者重新登录");
+          // this.$router.push("/login");
           _this.items = [
             {
               icon: "icon-gongzuotai",
@@ -130,8 +131,8 @@ export default {
                   mname: "催收操作"
                 },
                 {
-                  nurl:'/operation',
-                  mname:'催收操作管理'
+                  nurl: "/operation",
+                  mname: "催收操作管理"
                 }
               ]
             },
