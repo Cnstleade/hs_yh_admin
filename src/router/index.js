@@ -5,7 +5,8 @@ Vue.use(Router);
 
 export default new Router({
   // mode: 'history',
-  routes: [{
+  routes: [
+    {
       path: '/',
       redirect: '/login'
     },
@@ -142,6 +143,14 @@ export default new Router({
           }
         },
         {
+          // 菜单字典管理
+          path: '/systemManagement',
+          component: resolve => require(['../components/page/systemManagement/systemManagement.vue'], resolve),
+          meta: {
+            title: '系统参数',
+          }
+        },        
+        {
           // 日志管理
           path: '/logManagement',
           component: resolve => require(['../components/page/systemManagement/logManagement.vue'], resolve),
@@ -149,6 +158,15 @@ export default new Router({
             title: '日志管理',
           }
         },
+
+        {
+          // 系统公告
+          path: '/systemAnnouncement',
+          component: resolve => require(['../components/page/systemManagement/systemAnnouncement.vue'], resolve),
+          meta: {
+            title: '系统公告',
+          }
+        },        
         {
           // 消息管理
           path: '/messageManagement',

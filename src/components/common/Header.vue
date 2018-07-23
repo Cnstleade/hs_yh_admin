@@ -87,7 +87,7 @@
         if (username != '' && username != null && username != 'undefined') {
           return username ? username : this.name;
         }else {
-          this.$router.push("/login");
+          // this.$router.push("/login");
         }
       }
     },

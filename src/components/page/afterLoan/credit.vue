@@ -95,10 +95,11 @@
                   style="width: 100%"
                   >
                       <el-table-column prop="id" label="id" align="center" sortable></el-table-column>
-                      <el-table-column prop="withdrawMoney" label="提现金额" align="center" sortable></el-table-column>
+                       <el-table-column prop="withdrawMoney" label="实际到账金额" align="center" sortable></el-table-column>
+                       <el-table-column prop="raiseMoney" label="提现金额" align="center" sortable></el-table-column>   
                       <el-table-column prop="borrowTime" label="提现时间" align="center" sortable>
                         <template slot-scope="scope">
-                            {{scope.row.borrowTime|dateServer}}
+                            {{scope.row.creatime|dateServer}}
                         </template>                          
                       </el-table-column>
                       <el-table-column prop="status" label="是否逾期" align="center" 

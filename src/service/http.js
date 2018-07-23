@@ -3,9 +3,11 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-//axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.withCredentials = true;
+//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+axios.defaults.baseURL = 'http://47.88.171.117:8084';
 //axios.defaults.baseURL = 'http://192.168.1.124:8084';
+//axios.defaults.baseURL = 'http://192.168.25.138:8084';
 
 
 
@@ -361,7 +363,7 @@ export function httpGetrevewerlist() {
 }
 
 //后台管理模块 / admin 数据中心 还款记录管理
-export function getLoanRepaymentFindAll(npage, pagesize, custUserId, loanCollectionId, startDate, endDate,custname) {
+export function getLoanRepaymentFindAll(npage, pagesize, custUserId, loanCollectionId, startDate, endDate, custname) {
   let data = {
     npage,
     pagesize,
@@ -1151,13 +1153,109 @@ export function httpGetCustomterMesage(id) {
 }
 
 //后台管理模块 / 得到用户信息
-export function httpUpdateCuster(id, status=0) {
+export function httpUpdateCuster(id, status = 0) {
   let data = {
     id,
     status
   };
   return axios({
     url: '/custUser/update',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 / admin 系统管理 系统参数设置（展示）
+export function httpParametershow() {
+  return axios({
+    url: "/sys/parametershow",
+    method: "get",
+  })
+}
+
+//后台管理模块 / admin 系统管理 系统参数设置（修改）
+export function httpUpdateparameter(minMoney, maxMoney, list) {
+  let data = {
+    chooseMoneyVo: {
+      minMoney,
+      maxMoney
+    },
+    list
+  };
+  return axios({
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    url: '/sys/updateparameter',
+    method: 'post',
+    data: JSON.stringify(data)
+  })
+}
+
+//后台管理模块 /  admin 系统管理 公告列表展示
+export function httpGetannouncealist(npage, pagesize) {
+  let data = {
+    npage,
+    pagesize
+  };
+  return axios({
+    url: '/sys/getannouncealist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /  admin 系统管理 公告修改
+export function httpGetannounceaupdate(id, title, content) {
+  let data = {
+    id,
+    title,
+    content
+  };
+  return axios({
+    url: '/sys/getannounceaupdate',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+
+//后台管理模块 / admin 系统管理 公告失效
+export function httpAnnounceadelate(id) {
+  return axios({
+    url: "/sys/announceadelate",
+    method: "get",
+    params: {
+      'id': id
+    }
+  })
+}
+
+//后台管理模块 /  系统管理 公告添加
+export function httpAnnounceadd(title, content) {
+  let data = {
+
+    title,
+    content
+  };
+  return axios({
+    url: '/sys/announceadd',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /  admin 系统管理 系统利率添加
+export function httpParameteradd(rateAll, borrowDay, overdue_rate) {
+  let data = {
+
+    rateAll,
+    borrowDay,
+    overdue_rate
+
+  };
+  return axios({
+    url: '/sys/parameteradd',
     method: 'post',
     data: qs.stringify(data)
   })
