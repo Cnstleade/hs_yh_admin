@@ -26,64 +26,93 @@
 </template>
 
 <script>
-  import {config} from "../../util/config";
-  import {Message} from "element-ui"
+import { config } from "../../util/config";
+import { Message } from "element-ui";
 
-  export default {
-    data() {
-      return {
-        ruleForm: {
-          username: "",
-          password: ""
-        },
-        rules: {
-          username: [
-            {required: true, message: "请输入用户名", trigger: "blur"}
-          ],
-          password: [
-            {required: true, message: "请输入密码", trigger: "blur"}
-          ]
-        }
-      };
-    },
-    methods: {
-      submitForm() {
-        if (this.ruleForm.username != '' && this.ruleForm.password != '') {
-          let params = {
-            username: this.ruleForm.username,
-            password: this.ruleForm.password
-          };
-          $.ajax({
-            type: 'POST',
-            url: config.baseURL + '/sys/login',
-            data: params,
-            success: (data) => {
-              if (data.success === true) {
-                sessionStorage.setItem("fk_username", this.ruleForm.username);
-                this.$router.push("/admin");
-              } else {
-                Message({
-                  message: data.message,
-                  center: true
+export default {
+  data() {
+    return {
+      ruleForm: {
+        username: "",
+        password: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+      }
+    };
+  },
+  methods: {
+    submitForm() {
+      if (this.ruleForm.username != "" && this.ruleForm.password != "") {
+        let params = {
+          username: this.ruleForm.username,
+          password: this.ruleForm.password
+        };
+        $.ajax({
+          type: "POST",
+          url: config.baseURL + "/sys/login",
+          data: params,
+          success: data => {
+            if (data.code === 200) {
+              let info = {
+                username: this.ruleForm.username,
+                password: this.ruleForm.password,
+                role: data.data,
+                loginId:data.loginId
+                // loginId:55555
+                // role: [
+                //   "url1",
+                //   "affair",
+                //   "url2",
+                //   "role",
+                //   "url2",
+                //   "message",
+                //   "user",
+                //   "logging",
+                //   "acyclicMessage",
+                //   "passwordManagement",
+                //   "myWorkbench"
+                // ]
+              };
+              this.$store
+                .dispatch("Logins", info)
+                .then(re => {
+                  console.log("成功看");
+                })
+                .catch(err => {
+                  console.log("++++++++++++++++++++++++++++++" + err);
                 });
-              }
-            },
-            error: (err) => {
+              this.$message({
+                message: data.msg,
+                type: "success"
+              });
+              sessionStorage.setItem("fk_username", this.ruleForm.username);
+              this.$router.push("/admin");
+            } else {
               Message({
-                message: err,
+                message: data.message,
                 center: true
               });
             }
-          })
-        } else {
-          Message({
-            message: '填写用户名和密码',
-            center: true
-          });
-        }
+          },
+          error: err => {
+            Message({
+              message: err,
+              center: true
+            });
+          }
+        });
+      } else {
+        Message({
+          message: "填写用户名和密码",
+          center: true
+        });
+      }
 
-
-        /*this.$refs[formName].validate(valid => {
+      /*this.$refs[formName].validate(valid => {
           if (valid) {
             localStorage.setItem("fk_username", this.ruleForm.username);
             this.$router.push("/");
@@ -91,48 +120,48 @@
             return false;
           }
         });*/
-      }
     }
-  };
+  }
+};
 </script>
 
 <style>
-  .login-wrap {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: #324157;
-  }
+.login-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #324157;
+}
 
-  .ms-title {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    margin-top: -230px;
-    text-align: center;
-    font-size: 30px;
-    color: #fff;
-  }
+.ms-title {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -230px;
+  text-align: center;
+  font-size: 30px;
+  color: #fff;
+}
 
-  .ms-login {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 300px;
-    height: 160px;
-    margin: -150px 0 0 -190px;
-    padding: 40px;
-    border-radius: 5px;
-    background: #fff;
-  }
+.ms-login {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 300px;
+  height: 160px;
+  margin: -150px 0 0 -190px;
+  padding: 40px;
+  border-radius: 5px;
+  background: #fff;
+}
 
-  .login-btn {
-    text-align: center;
-  }
+.login-btn {
+  text-align: center;
+}
 
-  .login-btn button {
-    width: 100%;
-    height: 36px;
-  }
+.login-btn button {
+  width: 100%;
+  height: 36px;
+}
 </style>
 

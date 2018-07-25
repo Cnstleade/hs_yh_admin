@@ -192,6 +192,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import {
   httpGetuserlistbyusername,
   httpGetRole,
@@ -223,6 +224,13 @@ export default {
         rid: ""
       }
     };
+  },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
   },
   methods: {
     _httpGetRole() {
@@ -299,6 +307,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           httpUpdateuser(
+            this.loginId,
             this.roleForm.uid,
             this.roleForm.username,
             this.roleForm.phoneNumber,
@@ -352,6 +361,7 @@ export default {
       })
         .then(() => {
           httpUpdateuser(
+            this.loginId,
             this.roleForm.uid,
             this.roleForm.username,
             this.roleForm.phoneNumber,

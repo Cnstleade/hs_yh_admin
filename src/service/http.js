@@ -3,9 +3,10 @@ var qs = require('qs');
 
 //axios 配置
 axios.defaults.timeout = 5000;
-axios.defaults.withCredentials = true;
-//axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
-axios.defaults.baseURL = 'http://47.88.171.117:8084';
+// axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://localhost:8084'; //本地服务器
+//axios.defaults.baseURL = 'http://47.88.171.117:8084';
+// axios.defaults.baseURL = '/api/';
 //axios.defaults.baseURL = 'http://192.168.1.124:8084';
 //axios.defaults.baseURL = 'http://192.168.25.138:8084';
 
@@ -307,8 +308,9 @@ export function getCustUserList(npage, pagesize, source, realName, phoneNumber, 
 }
 
 //后台管理模块 / admin 贷后管理 全部列表
-export function getExeceedtimeapplyList(npage, pagesize, begainTimeString, endTimeString, phonenumber, execeedtimeType, distributionStatus, collectorId) {
+export function getExeceedtimeapplyList(loginId, npage, pagesize, begainTimeString, endTimeString, phonenumber, execeedtimeType, distributionStatus, collectorId) {
   let data = {
+    loginId,
     npage,
     pagesize,
     begainTimeString,
@@ -701,8 +703,9 @@ export function getSaleman(custUserId) {
 }
 
 //admin 电销中心 查询已分配的电销员
-export function getCollectionCount(begainTimeString, endTimeString) {
+export function getCollectionCount(loginId, begainTimeString, endTimeString) {
   let data = {
+    loginId,
     begainTimeString,
     endTimeString
   };
@@ -714,8 +717,9 @@ export function getCollectionCount(begainTimeString, endTimeString) {
 }
 
 //admin 电销中心 查询已分配的电销员
-export function getSmsrecordlist(begainTimeString, endTimeString, npage, pagesize, phonenumber) {
+export function getSmsrecordlist(loginId, begainTimeString, endTimeString, npage, pagesize, phonenumber) {
   let data = {
+    loginId,
     begainTimeString,
     endTimeString,
     npage,
@@ -886,8 +890,9 @@ export function httpGetRole() {
 }
 
 //后台管理模块 / Admin 用户列表下的修改用户
-export function httpUpdateuser(uid, username, phoneNumber, status, rid) {
+export function httpUpdateuser(loginId, uid, username, phoneNumber, status, rid) {
   let data = {
+    loginId,
     uid,
     username,
     phoneNumber,
@@ -902,8 +907,9 @@ export function httpUpdateuser(uid, username, phoneNumber, status, rid) {
 }
 
 //后台管理模块 / Admin 密码修改
-export function httpUpdatePassWord(newpassword, oldpasswoed) {
+export function httpUpdatePassWord(loginId, newpassword, oldpasswoed) {
   let data = {
+    loginId,
     newpassword,
     oldpasswoed
   };
@@ -989,8 +995,9 @@ export function httpUnderReviewList(npage, pagesize, username, mobile, idNo, sta
   })
 }
 //后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
-export function httpManagerReview(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+export function httpManagerReview(loginId, npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
   let data = {
+    loginId,
     npage,
     pagesize,
     username,
@@ -1007,8 +1014,9 @@ export function httpManagerReview(npage, pagesize, username, mobile, idNo, start
   })
 }
 //后台管理模块 / Admin 风控中心下的审核客户及钱包下的待分配订单
-export function httpRefuseList(npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
+export function httpRefuseList(loginId, npage, pagesize, username, mobile, idNo, startDateString, finshDateString, channel) {
   let data = {
+    loginId,
     npage,
     pagesize,
     username,

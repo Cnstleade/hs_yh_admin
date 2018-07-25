@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getApplyConversion } from "@/service/http";
 export default {
   data() {

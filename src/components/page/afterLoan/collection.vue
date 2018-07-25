@@ -400,6 +400,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import {
   getExeceedtimeapplyList,
   httpExeceedtimeapplydetail,
@@ -450,8 +451,16 @@ export default {
       index: 0
     };
   },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   methods: {
     getData(
+      loginId,
       npage,
       pagesize,
       begainTimeString,
@@ -463,6 +472,7 @@ export default {
     ) {
       let _this = this;
       getExeceedtimeapplyList(
+        loginId,
         npage,
         pagesize,
         begainTimeString,
@@ -496,6 +506,7 @@ export default {
         if (this.execeedtimeType == 0) {
           this.collectorId = null;
           this.getData(
+            this.loginId,
             this.npage,
             this.pagesize,
             this.search.time[0] + " 00:00:00",
@@ -507,6 +518,7 @@ export default {
           );
         } else {
           this.getData(
+            this.loginId,
             this.npage,
             this.pagesize,
             this.search.time[0] + " 00:00:00",
@@ -521,6 +533,7 @@ export default {
         if (this.execeedtimeType == 0) {
           this.collectorId = null;
           this.getData(
+            this.loginId,
             this.npage,
             this.pagesize,
             "",
@@ -532,6 +545,7 @@ export default {
           );
         } else {
           this.getData(
+            this.loginId,
             this.npage,
             this.pagesize,
             "",
@@ -612,6 +626,7 @@ export default {
                 });
                 _this.dialogVisible = false;
                 _this.getData(
+                  this.loginId,
                   this.npage,
                   this.pagesize,
                   "",
@@ -638,6 +653,7 @@ export default {
                 });
                 _this.dialogVisible = false;
                 _this.getData(
+                  this.loginId,
                   this.npage,
                   this.pagesize,
                   "",
@@ -672,6 +688,7 @@ export default {
         : (this.distributionStatus = 1);
       this.lodings = true;
       this.getData(
+        this.loginId,
         this.npage,
         this.pagesize,
         "",
@@ -687,6 +704,7 @@ export default {
   },
   mounted() {
     this.getData(
+      this.loginId,
       this.npage,
       this.pagesize,
       "",
@@ -696,6 +714,7 @@ export default {
       this.distributionStatus
     );
     this.getrevewerlist();
+    console.log(this.loginId);
   }
 };
 </script>

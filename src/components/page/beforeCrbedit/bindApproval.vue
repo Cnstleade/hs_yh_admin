@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import axios from "axios";
 import { Message } from "element-ui";
 import { config } from "../../../util/config";
@@ -122,6 +123,13 @@ export default {
       pageSize: 10,
       total: null
     };
+  },
+    computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
   },
   methods: {
     onSubmit() {
@@ -158,6 +166,7 @@ export default {
       let arry = this.multipleSelection;
       console.log(this.multipleSelection);
       let postDate = {
+        loginId:this.loginId,
         ids: arry,
         type: true
       };
@@ -166,7 +175,10 @@ export default {
         url: config.baseURL + "/sys/updataLoanApply",
         data: postDate,
         success: function(data) {
-          alert(data);
+          Message({
+            message: data.message,
+            center: true
+          });
         },
         error: function() {
           alert("错误");
@@ -199,6 +211,7 @@ export default {
       let arry = [];
       arry.push(row.id);
       let postDate = {
+         loginId:this.loginId,
         ids: arry,
         type: true
       };
@@ -208,7 +221,7 @@ export default {
         data: postDate,
         success: function(data) {
           Message({
-            message: data,
+            message: data.message,
             center: true
           });
           _this.queryPeopleApprovalBind(this.currentPage, this.pageSize);
@@ -245,8 +258,6 @@ export default {
   margin-top: 10px;
   text-align: right;
 }
-
-
 
 #bindTableStyle .el-tag {
   width: 70px;

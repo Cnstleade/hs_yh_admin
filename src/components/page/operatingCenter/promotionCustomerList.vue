@@ -93,7 +93,7 @@
                                 <el-table-column prop="mobile" label="手机号" align="center" ></el-table-column>
                                 <!-- <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column> -->
                                 <el-table-column prop="wx" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="qq" label="QQ" align="center" ></el-table-column>
+                                <!-- <el-table-column prop="qq" label="QQ" align="center" ></el-table-column> -->
                                 <el-table-column prop="status" label="客户状态" align="center" ></el-table-column>
                                 <el-table-column prop="createTime" label="创建时间" align="center" >
                                   <template slot-scope="scope">
@@ -656,13 +656,13 @@ export default {
                   : "",
               label: "身份证反面"
             },
-            {
-              src:
-                data.custIdcardImageList && data.custIdcardImageList[0]
-                  ? data.custIdcardImageList[0].handStorageUrl
-                  : "",
-              label: "手持照"
-            }
+            // {
+            //   src:
+            //     data.custIdcardImageList && data.custIdcardImageList[0]
+            //       ? data.custIdcardImageList[0].handStorageUrl
+            //       : "",
+            //   label: "手持照"
+            // }
           ];
           _this.qbData.push(data.walletMessage);
           _this.fqzdData = data.withDrawDOList;

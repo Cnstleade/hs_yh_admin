@@ -225,15 +225,15 @@
                   </span>
                 </el-col>
                 <el-col :xl="8" :lg="8">
-                  <label>婚姻状况</label>
+                  <!-- <label>婚姻状况</label>
                   <span>
                     {{customerInformation.custUserDOList.mariage===1?'未婚'
                     :customerInformation.custUserDOList.mariage===2?'已婚':'离婚'}}
-                  </span>
+                  </span> -->
                 </el-col>
                 <el-col :xl="8" :lg="8">
                   <label>创建时间</label>
-                  <span>{{customerInformation.custUserDOList.createTime}}</span>
+                  <span>{{customerInformation.custUserDOList.createTime| dateServer}}</span>
                 </el-col>
               </el-row>
               <el-row>
@@ -310,13 +310,12 @@
                              @click="clickImg($event,imgInfo.reverseStorageUrl)">
                       </span>
                     </p>
-                    <p class="imgInfo">
-                      <!--<label>手持身份证照</label>-->
+                    <!-- <p class="imgInfo">
                       <span class="img">
                         <img :src="imgInfo.handStorageUrl" width="100%"
                              @click="clickImg($event,imgInfo.handStorageUrl)">
                       </span>
-                    </p>
+                    </p> -->
 
                     <!-- 放大图片 -->
                     <big-img v-if="showImg" @clickit="viewImg" :imgSrc="imgSrc"></big-img>
@@ -461,9 +460,12 @@
             </el-row> -->
             <el-row>
               <el-col :span="2"><label>审核金额</label></el-col>
-              <el-col :span="22">
-                <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="walletInfo.auditMoney" :disabled="currentIndex==2"></el-input>
+              <el-col :span="3">
+                <el-input min="1" style="width: 100px" @blur="inpBlur" v-model="auditMoney"></el-input>
               </el-col>
+              <el-col :span="12" >
+                <span style="line-height:32px;color:red">{{chbmessage}}</span>
+              </el-col>  
             </el-row>
             <el-row>
               <el-col :span="2"><label>备注</label></el-col>
@@ -1549,20 +1551,22 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { timeFormat } from "../../../config/time";
 import { Message } from "element-ui";
 import { config } from "../../../util/config";
 import BigImg from "./BigImg.vue";
-
+import { httpParametershow } from "../../../service/http";
 export default {
   name: "reviewCustomersAndWallets",
-  computed: {
-
-  },
+  computed: {},
   data() {
     return {
       contactList: false, // 通讯录列表
-            contacs: [], // 通讯录列表
+      chbmessage: "",
+      contacs: [], // 通讯录列表
+      chooseMoneyVo: {}, //金钱判断
+      auditMoney: null,
       currentIndex: 0,
       dialogAssessor: false,
       dialogSalesman: false,
@@ -1664,46 +1668,81 @@ export default {
       ]
     };
   },
-
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   components: {
     "big-img": BigImg
   },
 
   watch: {
     // 监听输入变化
-    "walletInfo.auditMoney"(val, oldVal) {
-      if (val === "") {
-        Message({
-          message: "审核金额不能为空",
-          center: true
-        });
-        this.walletInfo.auditMoney = val;
-      } else if (val === "0") {
-        Message({
-          message: "审核金额不能为0",
-          center: true
-        });
-        this.walletInfo.auditMoney = val;
-      } else if (val < 0) {
-        Message({
-          message: "审核金额不能为负数",
-          center: true
-        });
-        this.walletInfo.auditMoney = this.walletInfo.creditLine;
-      } else if (val > this.walletInfo.creditLine) {
-        Message({
-          message: "审核金额不能大于授信额度",
-          center: true
-        });
-        this.walletInfo.auditMoney = this.walletInfo.creditLine;
-      } else if (this.walletInfo.creditLine > val > 0) {
-        this.walletInfo.auditMoney = val;
+    auditMoney(val, oldVal) {
+      console.log(oldVal);
+
+      if (oldVal == null || oldVal == undefined || oldVal == "") {
+      } else {
+        // if (val === "") {
+        //   this.chbmessage = "请输入审核金额";
+        //   // Message({
+        //   //   message: "请输入审核金额",
+        //   //   center: true
+        //   // });
+        //   this.auditMoney = val;
+        // } else
+        if (val <= this.chooseMoneyVo.minMoney) {
+          // else if (val === "0") {
+          //   Message({
+          //     message: "审核金额不能为0",
+          //     center: true
+          //   });
+          //   this.walletInfo.auditMoney = val;
+          // } else if (val < 0) {
+          //   Message({
+          //     message: "审核金额不能为负数",
+          //     center: true
+          //   });
+          //   this.walletInfo.auditMoney = this.walletInfo.creditLine;
+          // }
+          this.chbmessage = "审核金额不能小于最小授信额度";
+          // Message({
+          //   message: "审核金额不能小于最小授信额度",
+          //   center: true
+          // });
+          this.auditMoney = this.chooseMoneyVo.minMoney;
+        } else if (val >= this.walletInfo.creditLine) {
+          this.chbmessage =
+            "当审核金额大于授信额度将以最大授信额度" +
+            this.walletInfo.creditLine +
+            "提交";
+          // Message({
+          //   message: "审核金额不能大于授信额度",
+          //   center: true
+          // });
+          this.auditMoney = this.walletInfo.creditLine;
+        } else {
+          this.auditMoney = val;
+        }
       }
-      console.log(this.walletInfo.auditMoney);
     }
   },
 
   methods: {
+    //得到系统参数
+    _httpParametershow() {
+      httpParametershow()
+        .then(res => {
+          let data = res.data;
+          this.chooseMoneyVo = data.chooseMoneyVo;
+        })
+        .catch(err => {
+          this.$message.error("网络错误请联系管理员");
+        });
+    },
     // 截取整数部分
     inpBlur() {
       let val = this.walletInfo.auditMoney;
@@ -1722,6 +1761,7 @@ export default {
     // 查询全部订单
     queryAllCustomersList(a, b) {
       let postDate = {
+        loginId: this.loginId,
         npage: a,
         pagesize: b,
         userName: this.username,
@@ -1775,6 +1815,7 @@ export default {
       this.showIndex = index;
       this.loading = true;
       let postDate = {
+        loginId: this.loginId,
         npage: this.currentPage,
         pagesize: this.pageSize,
         userName: "",
@@ -1871,6 +1912,7 @@ export default {
     // 批量搁置
     setCurrent() {
       let postDate = {
+        loginId: this.loginId,
         ids: this.selectList,
         type: true
       };
@@ -1879,7 +1921,10 @@ export default {
         url: config.baseURL + "/sys/updataLoanApply",
         data: postDate,
         success: function(data) {
-          alert(data);
+          this.$message({
+            message: data.message,
+            type: "success"
+          });
         },
         error: function() {
           alert("错误");
@@ -1897,6 +1942,7 @@ export default {
     // 提交审核员信息
     submitAssessorForm() {
       let params = {
+        loginId: this.loginId,
         id: this.assessorId,
         Userid: this.assessorForm.assessor
       };
@@ -1941,12 +1987,12 @@ export default {
         success: data => {
           this.customerInformation = data;
 
-          this.walletInfo.joinDate = data.applyTime; //注册时间
-          this.walletInfo.loginDate = data.createTime; //登陆时间
+          this.walletInfo.joinDate = data.custUserDOList.createTime; //注册时间
+          this.walletInfo.loginDate = data.lastLoginTime; //登陆时间
           this.walletInfo.creditLine = data.applyAmt; //授信额度
           this.walletInfo.auditMoney = data.approveAmt; //审核金额
           this.contacs = data.credit.custMobileList; // 通讯录信息
-          this.amount = data.credit.contactsCount;          
+          this.amount = data.credit.contactsCount;
         },
         error: err => {
           Message({
@@ -1959,14 +2005,19 @@ export default {
 
     // 提交客户信息
     submitCustomerInfo() {
-      let value = this.walletInfo.auditMoney;
+      let value = this.auditMoney;
       let maxValue = this.walletInfo.creditLine;
+      console.log(this.walletInfo.creditLine);
       let mark = this.customerInformation.remark;
       console.log(this.auditStatus, value);
 
       // 判断审核金额是否不为空或不为0 marks(必选)
-      if (value != "" && (value > 0 && mark != "" && value <= maxValue)) {
+      if (
+        value != "" &&
+        (value >= this.chooseMoneyVo.minMoney && value <= maxValue)
+      ) {
         // 判断审核状态是否为2，3，4
+
         if (
           this.auditStatus === 2 ||
           this.auditStatus === 3 ||
@@ -1976,32 +2027,67 @@ export default {
           this.AlertDialog = true;
         } else {
           // 审核状态不为2，3，4时执行
-          let params = {
-            type: this.radio,
-            id: this.listId,
-            approveAmt: value,
-            remark: mark
-          };
-          $.ajax({
-            type: "POST",
-            url: config.baseURL + "/sys/updataLoanApply",
-            data: params,
-            success: data => {
-              this.outerVisible = false;
-              Message({
-                message: data.message,
-                center: true
+          if (this.radio == 1) {
+            let params = {
+              loginId: this.loginId,
+              type: this.radio,
+              id: this.listId,
+              approveAmt: value,
+              remark: mark
+            };
+            $.ajax({
+              type: "POST",
+              url: config.baseURL + "/sys/updataLoanApply",
+              data: params,
+              success: data => {
+                this.outerVisible = false;
+                Message({
+                  message: data.message,
+                  center: true
+                });
+                this.queryAllCustomersList();
+              },
+              error: err => {
+                this.outerVisible = false;
+                Message({
+                  message: "提交失败",
+                  center: true
+                });
+              }
+            });
+          } else {
+            if (mark != "") {
+              let params = {
+                loginId: this.loginId,
+                type: this.radio,
+                id: this.listId,
+                approveAmt: value,
+                remark: mark
+              };
+              $.ajax({
+                type: "POST",
+                url: config.baseURL + "/sys/updataLoanApply",
+                data: params,
+                success: data => {
+                  this.outerVisible = false;
+                  Message({
+                    message: data.message,
+                    center: true
+                  });
+                  this.queryAllCustomersList();
+                },
+                error: err => {
+                  this.outerVisible = false;
+                  Message({
+                    message: "提交失败",
+                    center: true
+                  });
+                }
               });
-              this.queryAllCustomersList();
-            },
-            error: err => {
-              this.outerVisible = false;
-              Message({
-                message: "提交失败",
-                center: true
-              });
+            } else {
+              this.$message.error("备注不能为空！");
             }
-          });
+          }
         }
       } else {
         this.$message.error(
@@ -2013,9 +2099,10 @@ export default {
     // 确认提交客户信息
     yesSure() {
       let params = {
+        loginId: this.loginId,
         type: this.radio,
         id: this.listId,
-        approveAmt: this.walletInfo.auditMoney,
+        approveAmt: this.auditMoney,
         remark: this.customerInformation.remark
       };
       $.ajax({
@@ -2026,7 +2113,7 @@ export default {
           this.AlertDialog = false;
           this.outerVisible = false;
           Message({
-            message: data,
+            message: data.message,
             center: true
           });
           this.queryAllCustomersList();
@@ -2123,6 +2210,13 @@ export default {
       this.queryAllCustomersList(this.currentPage, this.pageSize);
     }
   },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   mounted() {
     // 设置默认日期
     this.setDefaultDate();
@@ -2132,6 +2226,7 @@ export default {
 
     // 审核人列表
     this.queryAssessorList();
+    this._httpParametershow();
   }
 };
 </script>

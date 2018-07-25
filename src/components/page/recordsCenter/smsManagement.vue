@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import axios from "axios";
 import { getSmsrecordlist } from "../../../service/http";
 import Timer from "../../../config/timer";
@@ -159,11 +160,26 @@ export default {
       index: 0
     };
   },
+    computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   methods: {
-    getData(begainTimeString, endTimeString, npage, pagesize, phonenumber) {
+    getData(
+      loginId,
+      begainTimeString,
+      endTimeString,
+      npage,
+      pagesize,
+      phonenumber
+    ) {
       let _this = this;
       this.loading = true;
       getSmsrecordlist(
+        loginId,
         begainTimeString,
         endTimeString,
         npage,
@@ -185,6 +201,7 @@ export default {
     handleSearch() {
       if (this.search.time && this.search.time.length) {
         this.getData(
+          this.loginId,
           this.search.time[0] + " 00:00:00",
           timeFormat(this.search.time[1], 1) + " 00:00:00",
           this.npage,
@@ -193,6 +210,7 @@ export default {
         );
       } else {
         this.getData(
+          this.loginId,
           "",
           "",
           this.npage,
@@ -224,7 +242,7 @@ export default {
     }
   },
   mounted() {
-    this.getData("", "", this.npage, this.pagesize);
+    this.getData(this.loginId,"", "", this.npage, this.pagesize);
   }
 };
 </script>

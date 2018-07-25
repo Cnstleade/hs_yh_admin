@@ -10,7 +10,11 @@ import 'element-ui/lib/theme-chalk/index.css';
 import jQuery from 'jquery'
 import Element from 'element-ui';
 import * as custom from './config/dateFilter';
+import store from './store'
 import "../src/assets/iconfont/iconfont.css";
+import {
+  powerRouter
+} from './router';
 import {
   get,
   post,
@@ -35,7 +39,7 @@ Vue.use(VueLozyLoad, {
 })
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-Vue.prototype.$axios = axios; 
+Vue.prototype.$axios = axios;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$qs = qs;
 Vue.prototype.$get = get;
@@ -70,9 +74,71 @@ Vue.prototype.$patch = patch;
 
 // })
 /* eslint-disable no-new */
+router.beforeEach((to, from, next) => {
+  console.log(to, store.getters.role);
+  if (store.getters.role) { //判断role 是否存在
+    let arr = Array.isArray(store.getters.role) ? store.getters.role : store.getters.role.split(',');
+    console.log(arr);
+    if (store.getters.newrouter.length !== 0) {
+      let ar = arr.concat(['admin', '404', '403', 'login','appRegister'])
+      next();
+      if (ar.some(v => {
+          return to.fullPath.slice(1) == v
+        })) {
+        next();
+      } else {
+        next('/403')
+      }
+    } else {
+
+      let newrouter, roles = [];
+      arr.forEach(role => {
+        console.log(role);
+
+        if (powerRouter[0].children.filter(route => {
+            if (route.meta) {
+              return route.meta.role == role
+            } else {
+              return true
+            }
+          })[0] !== undefined) {
+          roles.push(
+            powerRouter[0].children.filter(route => {
+              if (route.meta) {
+                return route.meta.role == role
+              } else {
+                return true
+              }
+            })[0]
+          )
+        }
+
+      })
+      newrouter = powerRouter
+      newrouter[0].children = roles;
+      router.addRoutes(newrouter) //添加动态路由
+      console.log(newrouter, roles)
+      store.dispatch('Roles', newrouter).then(res => {
+        next({ ...to
+        })
+      }).catch(() => {
+
+      })
+    }
+  } else {
+    if (['/login'].indexOf(to.path) !== -1) {
+      next()
+    } else {
+      sessionStorage.removeItem('hsjr_username');
+      next('/login')
+    }
+  }
+})
 new Vue({
   el: '#app',
   router,
+  store,
+
   components: {
     App
   },

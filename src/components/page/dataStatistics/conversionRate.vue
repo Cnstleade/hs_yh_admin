@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getUserConversionByMonth, getUserConversionByDate } from "@/service/http";
 export default {
   data() {

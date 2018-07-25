@@ -55,155 +55,162 @@
 </template>
 
 <script>
-  import bus from "../../config/bus";
+import bus from "../../config/bus";
 
-  export default {
-    data() {
-      return {
-        name: "admin",
-        fullscreen: false,
-        color: "#242f42",
-        predefineColors: [
-          "#ff4500",
-          "#ff8c00",
-          "#ffd700",
-          "#90ee90",
-          "#00ced1",
-          "#1e90ff",
-          "#c71585",
-          "rgba(255, 69, 0, 0.68)",
-          "rgb(255, 120, 0)",
-          "hsv(51, 100, 98)",
-          "hsva(120, 40, 94, 0.5)",
-          "hsl(181, 100%, 37%)",
-          "hsla(209, 100%, 56%, 0.73)",
-          "#c7158577"
-        ]
-      };
-    },
-    computed: {
-      username() {
-        let username = sessionStorage.getItem("fk_username");
-        if (username != '' && username != null && username != 'undefined') {
-          return username ? username : this.name;
-        }else {
-          // this.$router.push("/login");
-        }
-      }
-    },
-    methods: {
-      // 用户名下拉菜单选择事件
-      handleCommand(command) {
-        if (command == "loginout") {
-          sessionStorage.removeItem("fk_username");
-          this.$router.push("/login");
-        } else {
-          this.$router.push("/" + command);
-        }
-      },
-      // 侧边栏折叠
-      collapseChage() {
-        this.collapse = !this.collapse;
-        bus.$emit("collapse", this.collapse);
-      },
-      // 全屏事件
-      handleFullScreen() {
-        let element = document.documentElement;
-        if (this.fullscreen) {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitCancelFullScreen) {
-            document.webkitCancelFullScreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-        } else {
-          if (element.requestFullscreen) {
-            element.requestFullscreen();
-          } else if (element.webkitRequestFullScreen) {
-            element.webkitRequestFullScreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.msRequestFullscreen) {
-            // IE11
-            element.msRequestFullscreen();
-          }
-        }
-        this.fullscreen = !this.fullscreen;
+export default {
+  data() {
+    return {
+      name: "admin",
+      fullscreen: false,
+      color: "#242f42",
+      predefineColors: [
+        "#ff4500",
+        "#ff8c00",
+        "#ffd700",
+        "#90ee90",
+        "#00ced1",
+        "#1e90ff",
+        "#c71585",
+        "rgba(255, 69, 0, 0.68)",
+        "rgb(255, 120, 0)",
+        "hsv(51, 100, 98)",
+        "hsva(120, 40, 94, 0.5)",
+        "hsl(181, 100%, 37%)",
+        "hsla(209, 100%, 56%, 0.73)",
+        "#c7158577"
+      ]
+    };
+  },
+  computed: {
+    username() {
+      let username = sessionStorage.getItem("fk_username");
+      if (username != "" && username != null && username != "undefined") {
+        return username ? username : this.name;
+      } else {
+        // this.$router.push("/login");
       }
     }
-  };
+  },
+  methods: {
+    // 用户名下拉菜单选择事件
+    handleCommand(command) {
+      if (command == "loginout") {
+        this.$store
+          .dispatch("Logout")
+          .then(() => {
+            // this.$router.push({ path: "/login" });
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+        sessionStorage.removeItem("fk_username");
+      } else {
+        this.$router.push("/" + command);
+      }
+    },
+    // 侧边栏折叠
+    collapseChage() {
+      this.collapse = !this.collapse;
+      bus.$emit("collapse", this.collapse);
+    },
+    // 全屏事件
+    handleFullScreen() {
+      let element = document.documentElement;
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      } else {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+      }
+      this.fullscreen = !this.fullscreen;
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .header {
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    height: 50px;
-    font-size: 22px;
-    color: #fff;
-    background: #000;
-  }
+.header {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  font-size: 22px;
+  color: #fff;
+  background: #000;
+}
 
-  .header-btn {
-    float: left;
-    padding: 0 21px;
-    cursor: pointer;
-    line-height: 50px;
-  }
+.header-btn {
+  float: left;
+  padding: 0 21px;
+  cursor: pointer;
+  line-height: 50px;
+}
 
-  .header-logo {
-    float: left;
-    width: 250px;
-    line-height: 50px;
-  }
+.header-logo {
+  float: left;
+  width: 250px;
+  line-height: 50px;
+}
 
-  .header-right {
-    float: right;
-    padding-right: 50px;
-    display: flex;
-    height: 50px;
-    align-items: center;
-  }
+.header-right {
+  float: right;
+  padding-right: 50px;
+  display: flex;
+  height: 50px;
+  align-items: center;
+}
 
-  .header-user-avator {
-    margin-right: 10px;
-  }
+.header-user-avator {
+  margin-right: 10px;
+}
 
-  .header-user-avator img {
-    display: block;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
+.header-user-avator img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
 
-  .header-fullscreen {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    border-radius: 15px;
-    cursor: pointer;
-    transform: rotate(45deg);
-    margin-right: 10px;
-    font-size: 24px;
-  }
+.header-fullscreen {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+  transform: rotate(45deg);
+  margin-right: 10px;
+  font-size: 24px;
+}
 
-  .btn-bell {
-    margin-top: 5px;
-  }
+.btn-bell {
+  margin-top: 5px;
+}
 
-  .user-name {
-    margin-right: 10px;
-    color: #fff;
-    cursor: pointer;
-  }
+.user-name {
+  margin-right: 10px;
+  color: #fff;
+  cursor: pointer;
+}
 
-  .header .menu {
-    float: left;
-    line-height: 50px;
-  }
+.header .menu {
+  float: left;
+  line-height: 50px;
+}
 </style>

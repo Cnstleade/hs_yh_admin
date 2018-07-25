@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { httpUpdatePassWord } from "../../../service/http";
 export default {
   name: "editPassword",
@@ -86,6 +87,13 @@ export default {
       }
     };
   },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   methods: {
     resetForm() {},
     submitForm(formName) {
@@ -93,6 +101,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           httpUpdatePassWord(
+            this.loginId,
             this.ruleForm.password_confirm,
             this.ruleForm.password_old
           )

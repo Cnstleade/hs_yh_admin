@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { Message } from "element-ui";
 import { config } from "../../../util/config";
 export default {
@@ -114,6 +115,13 @@ export default {
       },
       tableData: []
     };
+  },
+    computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
   },
   methods: {
     onSearch() {
@@ -153,6 +161,7 @@ export default {
       let arry = [];
       arry.push(row.id);
       let postDate = {
+           loginId:this.loginId,
         ids: arry,
         type: false
       };
@@ -162,7 +171,7 @@ export default {
         data: postDate,
         success: function(data) {
           Message({
-            message: data,
+            message: data.message,
             center: true
           });
           _this.queryPeopleApproval(this.currentPage, this.pageSize);

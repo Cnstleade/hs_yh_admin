@@ -167,6 +167,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getLendlist, httpExeceedtimeapplydetail } from "../../../service/http";
 import { timeFormat } from "../../../config/time";
 export default {

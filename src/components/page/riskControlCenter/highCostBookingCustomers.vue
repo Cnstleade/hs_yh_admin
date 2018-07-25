@@ -232,9 +232,9 @@
                       <el-col :span="5">电子合同:
                         <el-button type="primary">点击查看</el-button>
                       </el-col>
-                      <el-col :span="4">钱包联系人:
+                      <!-- <el-col :span="4">钱包联系人:
                         <el-button type="primary">93</el-button>
-                      </el-col>
+                      </el-col> -->
                     </el-row>
                   </div>
                 </template>

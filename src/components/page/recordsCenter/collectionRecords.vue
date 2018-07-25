@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import axios from "axios";
 import { getCollectionCount } from "../../../service/http";
 import Timer from "../../../config/timer";
@@ -150,11 +151,18 @@ export default {
       index: 0
     };
   },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
+  },
   methods: {
-    getData(begainTimeString, endTimeString) {
+    getData(loginId, begainTimeString, endTimeString) {
       let _this = this;
       this.loading = true;
-      getCollectionCount(begainTimeString, endTimeString)
+      getCollectionCount(loginId, begainTimeString, endTimeString)
         .then(res => {
           let data = res.data;
           let tableData = data;
@@ -176,6 +184,7 @@ export default {
     handleSearch() {
       if (this.preMonth && this.preMonth) {
         this.getData(
+          this.loginId,
           this.month + "-01 00:00:00",
           this.preMonth + "-01 00:00:00"
         );

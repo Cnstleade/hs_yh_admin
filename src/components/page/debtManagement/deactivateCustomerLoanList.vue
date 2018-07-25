@@ -57,6 +57,7 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { timeFormat } from "../../../config/time";
 export default {
   data() {

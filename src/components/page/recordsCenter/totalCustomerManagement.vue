@@ -175,7 +175,7 @@
                                     border
                                     style="width: 100%"
                             >
-                                <el-table-column prop="realName" label="姓名" align="center" ></el-table-column>
+                                <el-table-column prop="realName" label="姓名" align="center" width="120"></el-table-column>
                                 <el-table-column prop="status"  align="center" label="状态"   width="150"
                                   >
                                   <template slot-scope="scope">
@@ -187,17 +187,17 @@
                                 <el-table-column prop="idcard" label="身份证号" align="center" width="180"></el-table-column>
                                 <el-table-column prop="phoneNumber" label="手机号" align="center" width="140"></el-table-column>
                                 <el-table-column prop="bankcard" label="银行卡号" align="center" width="180" ></el-table-column>
-                                <el-table-column prop="wxNumber" label="微信号" align="center" ></el-table-column>
-                                <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column>
+                                <el-table-column prop="wxNumber" label="微信号" align="center" width="180" ></el-table-column>
+                                <!-- <el-table-column prop="qqNumber" label="QQ" align="center" ></el-table-column> -->
                                 <el-table-column prop="detailAddress" label="地址" align="center" width="500"></el-table-column>
-                                <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
+                                <!-- <el-table-column prop="mariage"  align="center" label="婚姻状况"  width="100"
                                  >
                                   <template slot-scope="scope">
                                       <el-tag
                                           :type="scope.row.mariage===1?'':scope.row.mariage===2?'success':'danger'"
                                       >{{scope.row.mariage===1?'未婚':scope.row.mariage===2?'已婚':'离婚'}}</el-tag>
                                   </template>                     
-                                </el-table-column>    
+                                </el-table-column>     -->
                                 <el-table-column prop="eduBack"  align="center" label="教育背景"   width="100"
                                   >
                                   <template slot-scope="scope">
@@ -733,13 +733,13 @@ export default {
                   : "",
               label: "身份证反面"
             },
-            {
-              src:
-                data.custIdcardImageList && data.custIdcardImageList[0]
-                  ? data.custIdcardImageList[0].handStorageUrl
-                  : "",
-              label: "手持照"
-            }
+            // {
+            //   src:
+            //     data.custIdcardImageList && data.custIdcardImageList[0]
+            //       ? data.custIdcardImageList[0].handStorageUrl
+            //       : "",
+            //   label: "手持照"
+            // }
           ];
           _this.qbData.push(data.walletMessage);
           _this.fqzdData = data.withDrawDOList;

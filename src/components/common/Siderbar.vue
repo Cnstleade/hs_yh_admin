@@ -48,7 +48,7 @@ export default {
           bus.$emit("error", false);
         })
         .catch(err => {
-          // this.$message.error("请联系管理员或者重新登录");
+          // this.$message.error("获取菜单栏失败请联系管理员或重新登录");
           // this.$router.push("/login");
           _this.items = [
             {
@@ -62,7 +62,7 @@ export default {
               mname: "客户管理",
               list: [
                 {
-                  nurl: "receiverlist",
+                  nurl: "myWorkbench",
                   mname: "借贷人列表"
                 }
               ]

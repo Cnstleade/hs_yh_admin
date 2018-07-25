@@ -63,7 +63,8 @@
                     <el-table-column label="审核人" align="center">
                       <template slot-scope="scope">
                         <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
-                          <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button>
+                          未分配
+                          <!-- <el-button type="info" size="mini" @click="allotOperator(scope.row)">分配</el-button> -->
                         </div>
                         <span v-else>
                           {{scope.row.operatorName}}
@@ -500,15 +501,15 @@
                   </span>
                 </el-col>
                 <el-col :xl="8" :lg="8">
-                  <label>婚姻状况</label>
+                  <!-- <label>婚姻状况</label>
                   <span>
                     {{customerInformation.custUserDOList.mariage===1?'未婚'
                     :customerInformation.custUserDOList.mariage===2?'已婚':'离婚'}}
-                  </span>
+                  </span> -->
                 </el-col>
                 <el-col :xl="8" :lg="8">
                   <label>创建时间</label>
-                  <span>{{customerInformation.custUserDOList.createTime}}</span>
+                  <span>{{customerInformation.custUserDOList.createTime| dateServer}}</span>
                 </el-col>
               </el-row>
               <el-row>
@@ -585,13 +586,12 @@
                              @click="clickImg($event,imgInfo.reverseStorageUrl)">
                       </span>
                     </p>
-                    <p class="imgInfo">
-                      <!--<label>手持身份证照</label>-->
+                    <!-- <p class="imgInfo">
                       <span class="img">
                         <img :src="imgInfo.handStorageUrl" width="100%"
                              @click="clickImg($event,imgInfo.handStorageUrl)">
                       </span>
-                    </p>
+                    </p> -->
 
                     <!-- 放大图片 -->
                     <big-img v-if="showImg" @clickit="viewImg" :imgSrc="imgSrc"></big-img>
@@ -1726,6 +1726,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import {
   httpLoanapply,
   httpGetOverList,
@@ -1836,6 +1837,19 @@ export default {
           hasVoice: "yes"
         }
       ],
+      // 查询审核员列表
+      queryAssessorList() {
+        $.ajax({
+          type: "GET",
+          url: config.baseURL + "/sys/getRoleName",
+          success: data => {
+            this.assessorList = data;
+          },
+          error: err => {
+            console.log(err.status);
+          }
+        });
+      },
 
       // 钱包信息
       walletInfo: {
@@ -1975,10 +1989,11 @@ export default {
         .then(res => {
           let data = res.data;
           this.customerInformation = data;
-          this.walletInfo.joinDate = data.applyTime; // 注册时间
-          this.walletInfo.loginDate = data.createTime; // 登陆时间
-          this.walletInfo.creditLine = data.applyAmt; //  授信额度
-          this.walletInfo.auditMoney = data.approveAmt; //  审核金额
+
+          this.walletInfo.joinDate = data.custUserDOList.createTime; //注册时间
+          this.walletInfo.loginDate = data.lastLoginTime; //登陆时间
+          this.walletInfo.creditLine = data.applyAmt; //授信额度
+          this.walletInfo.auditMoney = data.approveAmt; //审核金额
           this.contacs = data.credit.custMobileList; // 通讯录信息
           this.amount = data.credit.contactsCount;
         })
@@ -2093,15 +2108,16 @@ export default {
       // 获取当前图片地址
       this.imgSrc = src;
     },
-       // 审核人分配
+    // 审核人分配
     allotOperator(data) {
       // console.log(data.id);
       this.assessorId = data.id;
       this.dialogAssessor = true;
     },
-       // 提交审核员信息
+    // 提交审核员信息
     submitAssessorForm() {
       let params = {
+        loginId: this.loginId,
         id: this.assessorId,
         Userid: this.assessorForm.assessor
       };
@@ -2127,10 +2143,18 @@ export default {
           console.log(err.status);
         }
       });
-    },
+    }
+  },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      "loginId"
+      // ...
+    ])
   },
   mounted() {
     this.getData(this.npage, this.pagesize);
+    this.queryAssessorList();
   }
 };
 </script>
